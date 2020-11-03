@@ -12,14 +12,16 @@
         <a class="nav-item nav-link disabled" href="#">Disabled</a>
       </div> -->
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <router-link to="/dashboard" class="nav-item nav-link active"  >Dashboard </router-link>
+        <li class="nav-item">
+          <router-link to="/dashboard" class="nav-item nav-link active"><fa icon="columns" /> Dashboard </router-link>
+        </li>
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="nav-item mx-4">
+          <router-link to="/search" class="nav-item nav-link active"  ><fa icon="search" /> Search</router-link>
         </li>
       </ul>
-      <!-- <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-        <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
-      </ul> -->
     </div>
   </nav>
 </template>
