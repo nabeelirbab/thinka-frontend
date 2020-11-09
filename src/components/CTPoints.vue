@@ -1,8 +1,9 @@
 <template>
   <div :class="size ? 'size-' + size : ''" class="font-weight bold text-nowrap">
     <fa v-if="points >= 50" icon="thumbs-up" class="text-success" /> 
-    <fa v-else icon="thumbs-down" class="text-danger" /> 
-    {{points}}
+    <fa v-else icon="thumbs-down" class="text-danger" />
+    <span class="text-dark">{{points}}</span> 
+    
   </div>
 </template>
 <script>

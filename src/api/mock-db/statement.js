@@ -17,27 +17,77 @@ let entries = [{
   ct_points: 40,
   subscribers: [1, 2, 3, 4],
   children: [{
-    id: 4,
+    id: 6,
     statement_id: 2,
     text: 'Etiam fringilla odio sit amet enim bibendum, vel eleifend dolor malesuada. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.',
     user_id: 3,
+        user: {
+      id: 3,
+      name: 'Dave Davidson'
+    },
     created_at: '10/1/2020 2:30',
     ct_points: 70,
-    subscribers: [1, 2, 3]
+    subscribers: [1, 2, 3],
+    children: [{
+      id: 7,
+      statement_id: 2,
+      
+      text: 'Curabitur venenatis, odio ac maximus auctor, odio lacus sollicitudin diam, vel volutpat sem arcu vitae ipsum. Aliquam sodales nec neque sed porttitor. Sed pharetra, massa nec mattis facilisis, nisl risus vehicula nibh, sit amet malesuada.',
+      user_id: 3,
+          user: {
+        id: 3,
+        name: 'Dave Davidson'
+      },
+      created_at: '10/1/2020 3:30',
+      ct_points: 30,
+      subscribers: [1, 3]
+    }]
   }, {
-    id: 5,
+    id: 8,
     statement_id: 2,
     text: 'Nullam bibendum, nulla eget bibendum vehicula, risus risus bibendum orci, eu blandit eros sapien in sem. Mauris scelerisque nisi non enim laoreet, ac pulvinar libero iaculis.',
     user_id: 3,
+        user: {
+      id: 3,
+      name: 'Dave Davidson'
+    },
     created_at: '10/1/2020 3:30',
     ct_points: 30,
-    subscribers: [1, 3]
+    subscribers: [1, 3],
+    children: [{
+      id: 4,
+      statement_id: 2,
+      
+      text: 'Colutpat venenatis, odio ac maximus auctor, odio lacus sollicitudin diam, vel volutpat sem arcu vitae ipsum. Aliquam sodales nec neque sed porttitor. Sed pharetra, massa nec mattis facilisis, nisl risus vehicula nibh, sit amet malesuada.',
+      user_id: 3,
+          user: {
+        id: 3,
+        name: 'Dave Davidson'
+      },
+      created_at: '10/1/2020 3:30',
+      ct_points: 30,
+      subscribers: [1, 3],
+      children: [{
+        id: 5,
+        statement_id: 2,
+        text: 'Aliquam sodales nec neque sed porttitor. Sed pharetra, massa nec mattis facilisis, nisl risus vehicula nibh, sit amet malesuada. Colutpat venenatis, odio ac maximus auctor, odio lacus sollicitudin diam, vel volutpat sem arcu vitae ipsum. Aliquam sodales nec neque sed porttitor.',
+        user_id: 3,
+            user: {
+          id: 3,
+          name: 'Dave Davidson'
+        },
+        created_at: '10/1/2020 3:30',
+        ct_points: 30,
+        subscribers: [1, 3]
+      }]
+    }]
   }]
 }, {
   id: 3,
   statement_id: 1,
-  text: 'Water contains nutrients',
+  text: 'Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos',
   user_id: 2,
+  relation: '-',
   created_at: '10/2/2020 3:30',
   ct_points: 40,
   subscribers: [1, 2]

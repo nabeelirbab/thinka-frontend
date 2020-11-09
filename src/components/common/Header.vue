@@ -15,14 +15,25 @@
         <li class="nav-item">
           <router-link to="/dashboard" class="nav-item nav-link active"><fa icon="columns" /> Dashboard </router-link>
         </li>
-        
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="nav-item">
-          <router-link to="/search" class="nav-item nav-link active"  ><fa icon="search" /> Search</router-link>
+          <router-link v-if="user" to="/search" class="nav-item nav-link active"  ><fa icon="search" /> Search</router-link>
+          <router-link v-else-if="authenticationStatus === 'unauthenticated'" to="/login" class="nav-item nav-link active bg-primary rounded text-white"  >Log In</router-link>
         </li>
       </ul>
 
     </div>
   </nav>
 </template>
+<script>
+import Auth from '@/core/auth'
+export default {
+  data(){
+    return {
+      user: Auth.user(),
+      authenticationStatus: Auth.status()
+    }
+  }
+}
+</script>

@@ -12,11 +12,22 @@
 <script>
 import 'bootstrap'
 import '@/assets/style/custom-theme.scss'
+import '@/assets/style/util.scss'
+import '@/assets/style/thinka-custom.scss'
 import Header from '@/components/common/Header'
+import Auth from '@/core/auth'
 export default {
   name: 'App',
   components: {
     Header
+  },
+  mounted(){
+    Auth.chechAuth()
+  },
+  methods: {
+    test(){
+      console.log('Auth', Auth, Auth.chechAuth)
+    }
   }
 }
 </script>

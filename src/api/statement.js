@@ -1,4 +1,4 @@
-import API from './api'
+import API from '@/core/api'
 class Statement extends API {
   apiName = 'statement'
   get(param = null){

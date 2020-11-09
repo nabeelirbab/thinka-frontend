@@ -82,7 +82,12 @@
   </div>
 </template>
 <script>
+import Auth from '@/core/auth'
 export default {
-
+  data(){
+    return {
+      user: Auth.user()
+    }
+  }
 }
 </script>

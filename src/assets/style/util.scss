@@ -1,0 +1,48 @@
+
+.c-pointer{
+  cursor: pointer!important
+}
+.c-text{
+  cursor: text
+}
+.bg-transparent{
+  background-color: transparent!important
+}
+.bg-whitesmoke{
+  background-color: whitesmoke
+}
+.no-box-shadow{
+  box-shadow: none;
+}
+.form-control-no-border:focus {
+  border-color:#eee;
+  outline: 0;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.w-80{
+  width: 79.9%
+}
+.w-20{
+  width: 19.9%
+}
+li.borderless { border-top: 0 none; }
+
+.text-hover-underline:hover {
+  text-decoration: underline
+}
+.text-sm-center{
+  text-align: inherit!important;
+}
+@media(max-width:768px) { /*SM Screen*/
+  .w-sm-100 {
+    width: 100%
+  }
+  .px-sm-0 {
+    padding-left: 0px!important;
+    padding-right: 0p!important;
+  }
+  .text-sm-center {
+    text-align: center
+  }
+}
