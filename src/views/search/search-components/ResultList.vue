@@ -25,9 +25,42 @@ export default {
   },
   methods: {
     _search(filter = null){
-      StatementAPI.get(filter).then(result => {
+      let param = {
+        select: {
+          relation: {
+            select: {
+              ...[
+                'logic_tree_id',
+                'statement_id_2',
+                'statement_id_1',
+              ],
+              statement_1: {
+                select: ['id', 'text', 'created_at']
+              }
+            }
+          },
+          statement_type: {
+            select: ['description']
+          },
+          logic_tree: {
+            select: ['description', 'is_public', 'statement_id']
+          },
+          ...(['text', 'synopsis', 'comment', 'created_at', 'updated_at'])
+        }
+      }
+      if(filter){
+        param['condition'] = [{
+          column: 'text',
+          clause: 'like',
+          value: '%' + filter + '%'
+        }]
+      }
+      this.statements = []
+      StatementAPI.retrieve(param).then(result => {
         console.log('result', result)
-        this.statements = result
+        if(result['data']){
+          this.statements = result['data']
+        }
       })
     }
   }

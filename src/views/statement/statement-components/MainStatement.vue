@@ -1,8 +1,8 @@
 <template>
   <div class="">
-    <div class="mb-2">
+    <!-- <div class="mb-2">
       <div v-if="parentStatement" class="text-nowrap text-truncate">Go to <router-link :to="'/statement/' + parentStatement['id']" class="font-italic" >{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</router-link></div>
-    </div>
+    </div> -->
     <!-- <div class="d-flex justify-content-between mb-2">
       <div class="">
         <NoProfile :name="statement['user']['name']" />
@@ -22,12 +22,12 @@
             <!-- 111aaaaaaaaaaa asdasdas dasd asda -->
             <!-- 222aaaaaaaaaaa asdasdas dasd asdas asdasjdoi1jsad aoidj -->
             <!-- 333aaaaaaaaaaa asdasdas dasd asdas asdasjdoijsad aoidjaosdj oiasjdoqwheqwoieh aaaas -->
-            {{statement['text']}}
+            {{statement['text']}} {{statement['id']}}
           </div>
           <div>
-            <div v-if="selectedStatementId === statementId || parentStatement" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
-              <CTPoints v-if="selectedStatementId === statementId" :points="statement['ct_points']" class="ml-auto" />
-              <router-link v-else-if="parentStatement" :to="'/statement/' + parentStatement['id']" class="text-primary"><fa icon="undo-alt" /></router-link>
+            <div v-if="selectedStatementId === statementId || parentStatementId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+              <CTPoints v-if="selectedStatementId === statementId" :points="ctPoints" class="ml-auto" />
+              <router-link v-else-if="parentStatementId" :to="'/statement/' + logicTreeId + '/'+ parentStatementId" class="text-primary"><fa icon="undo-alt" /></router-link>
             </div>
           </div>
         </div>
@@ -49,7 +49,8 @@ export default {
     // NoProfile
   },
   props: {
-    statement: Object
+    statement: Object,
+    logicTreeId: Number
   },
   mounted(){
     window.addEventListener('scroll', this.isScrolling);
@@ -88,7 +89,6 @@ export default {
       if(this.stickStatementHeightLimit < 85){
         this.stickStatementHeightLimit = 85
       }
-      console.log('windowPercentage', this.stickStatementHeightLimit)
       if(newData){
         this.stickySeeMore = this.statementTextHeight > this.stickStatementHeightLimit ? true : null
       }
@@ -106,8 +106,11 @@ export default {
     statementId(){
       return typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
     },
-    parentStatement(){
-      return typeof this.statement['statement'] !== 'undefined' && this.statement['statement'] ? this.statement['statement'] : null
+    parentStatementId(){
+      return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation']['statement_id_1'] : null
+    },
+    ctPoints(){
+      return typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'
     }
   }
 }

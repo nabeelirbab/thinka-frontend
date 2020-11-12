@@ -3,7 +3,7 @@
     <h2>Dashboard</h2>
     <p>Good day! In your dashboard, you will see different information and functionality to help and guide you in using <strong class="text-uppercase">Thinka.io</strong>.</p>
     <div class='text-center mb-2'>
-      <button class="btn btn-lg btn-primary text-uppercase mx-1 mb-2"><fa icon="project-diagram" /> Create New Tree</button>
+      <router-link to="/new-statement" class="btn btn-lg btn-primary text-uppercase mx-1 mb-2"><fa icon="project-diagram" /> Create New Tree</router-link>
       <router-link to="/search" class="btn btn-lg btn-outline-primary text-uppercase mx-1 mb-2"><fa icon="search" /> Search A Tree</router-link>
     </div>
     <div class="row">

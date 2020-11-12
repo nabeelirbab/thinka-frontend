@@ -1,16 +1,17 @@
 <template>
   <div>
+    
     <div
       :class="statementClass" 
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
-      @click="selectedStatementId = selectedStatementId ===  statement['id'] ? 0 : statement['id']"
+      @click="selectedStatementId = selectedStatementId ===  statementId ? 0 : statementId"
     >
       <div class="d-flex align-items-center px-2">
         <div v-if="showImpact || showScope">
           <div class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px">
             <small v-if="showImpact">100%</small>
             <small v-if="showScope" style="line-height: 1">
-              {{statement['id'] % 3 ? 'All But One' : (statement['id'] % 2 ? 'All ' : 'Some')}}
+              {{statementId % 3 ? 'All But One' : (statementId % 2 ? 'All ' : 'Some')}}
             </small>
           </div>
         </div>
@@ -24,9 +25,9 @@
             <small class="text-nowrap d-none d-md-block">{{statement['created_at']}}</small>
             <CTPoints :points="statement['ct_points']" />
           </div> -->
-          <div class="d-flex text-justify px-1" >
-              <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">^</div>
-              <div class="text-dark text-justify pr-2 mb-1">{{statement['text']}}</div>
+          <div class="d-flex text-justify align-items-center px-1" >
+              <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
+              <div class="text-dark text-justify pr-2 mb-1">{{statementText}} [{{statementId}}]</div>
               <!--  -->
           </div>
           <!-- <div class="d-flex justify-content-between">
@@ -40,14 +41,14 @@
           <div v-if="showOpinion || isActive || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
-            <router-link v-else :to="'/statement/' + statement['id']" tag="div" ><fa icon="eye" /></router-link>
+            <router-link v-else :to="'/statement/' + logicTreeId + '/' + statementId" tag="div" ><fa icon="eye" /></router-link>
           </div>
         </div>
       </div>
     </div>
-    <CreateSubStatement v-if="createSubStatementParentId === statement['id']" :is-positive-statement="isPositiveStatement" :level="level + 1"/>
-    <template v-for="(children, index) in statement['children']" :key="'children' + index">
-      <SubStatement :statement="children" :level="level + 1" />
+    <CreateSubStatement v-if="createSubStatementParentId === statementId" :is-positive-statement="isPositiveStatement" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
+    <template v-for="(children, index) in statementChildren" :key="'children' + index">
+      <SubStatement :is-positive-statement="isPositiveStatement" :statement="children" :logic-tree-id="logicTreeId" :level="level + 1" @save="newSubStatementSaved($event, index)" />
     </template>
   </div>
 </template>
@@ -56,6 +57,7 @@
 import SubStatement from './SubStatement'
 import GlobalData from '../global-data'
 import CreateSubStatement from './CreateSubStatement'
+import RelationTypeAPI from '@/api/relation-type'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -67,22 +69,36 @@ export default {
   },
   props: {
     level: Number,
+    isPositiveStatement: {
+      type: Boolean,
+      required: true
+    },
+    logicTreeId: Number,
     statement: {
       type: Object,
       required: true
-    },
+    }
+  },
+  emits: {
+    save: null
   },
   data(){
-    const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
+    // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     return {
-      isPositiveStatement: isPositiveStatement,
       ...GlobalData,
       statementClass: {
-        'negative-statement': !isPositiveStatement,
-        'positive-statement': isPositiveStatement,
+        'negative-statement': !this.isPositiveStatement,
+        'positive-statement': this.isPositiveStatement,
         'border ': false
-      }
+      },
+      relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.values['data'] ? RelationTypeAPI.cachedData.values['data'] : []
     }
+  },
+  methods: {
+    newSubStatementSaved(event, index){
+      event['mappingIndex'].push(index)
+      this.$emit('save', event)
+    },
   },
   watch: {
     selectedStatementId(){
@@ -91,10 +107,28 @@ export default {
   },
   computed: {
     parentStatement(){
-      return typeof this.statement['statement'] !== 'undefined' && this.statement['statement'] ? this.statement['statement'] : null
+      return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation'] : null
     },
     isActive(){
-      return this.statement['id'] === this.selectedStatementId
+      return this.statementId === this.selectedStatementId
+    },
+    statementId(){
+      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['id'] : 'ERROR: Statement text not found'
+    },
+    statementText(){
+      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['text'] : 'ERROR: Statement text not found'
+    },
+    statementChildren(){
+      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['recursive_down_relations'] : []
+    },
+    relationTypeSymbol(){
+      const relationTypeId = this.statement['relation_type_id']
+      const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
+      if(relationTypeIndex >= 0){
+        return this.relationTypes[relationTypeIndex]['symbol']
+      }else{
+        return '??'
+      }
     }
   }
 }

@@ -22,7 +22,15 @@ class Auth {
   status(){
     return authenticationStatus
   }
-  chechAuth(test){
+  generateHeader(){
+    const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
+    return {
+      headers: {
+        'Authorization':  'Bearer ' + storedAuth['accessToken']
+      }
+    }
+  }
+  chechAuth(){
     isRefreshing.value = false
     authenticationStatus.value = 'authenticating'
     if(localStorage.getItem(localStorageKey)){
@@ -51,10 +59,8 @@ class Auth {
         }
       })
     }else{
-      console.log('b')
       authenticationStatus.value = 'unauthenticated'
     }
-    return test 
   }
   startSession(ttl, immediate = true){
     isRefreshing.value = false
@@ -67,6 +73,12 @@ class Auth {
       }, (ttl) * 1000)
     }
   }
+  sessionExpired(){
+    this.logout()
+  }
+  logout(){
+    user.value = null
+  }
   refreshToken(){
     if(localStorage.getItem(localStorageKey)){
       const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
@@ -76,9 +88,9 @@ class Auth {
         }
       }
       isRefreshing.value = true
-      axios.post(refreshPath, {}, header).then(response => {
+      axios.post(refreshPath, {}, header).then(() => {
         isRefreshing.value = false
-        console.log('refresh', response)
+        // console.log('refresh', response)
         this.refreshIntervalInstance = setTimeout(() => {
           this.refreshToken()
         }, (storedAuth['ttl'] * 1) * 1000)

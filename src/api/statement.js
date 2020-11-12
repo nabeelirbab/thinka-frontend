@@ -4,6 +4,9 @@ class Statement extends API {
   get(param = null){
     return this.retrieve(param)
   }
+  retrieveTree(statementId){
+    this.apiRequest('/retrieve-tree', {id: statementId})
+  }
 }
 const statement = new Statement()
 export default statement

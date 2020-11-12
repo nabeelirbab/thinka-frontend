@@ -19,7 +19,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li class="nav-item">
           <router-link v-if="user" to="/search" class="nav-item nav-link active"  ><fa icon="search" /> Search</router-link>
-          <router-link v-else-if="authenticationStatus === 'unauthenticated'" to="/login" class="nav-item nav-link active bg-primary rounded text-white"  >Log In</router-link>
+          <router-link v-else-if="authenticationStatus === 'unauthenticated'" to="/login" class="nav-item nav-link active bg-primary rounded text-white px-2"  >Log In</router-link>
         </li>
       </ul>
 

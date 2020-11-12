@@ -123,7 +123,6 @@ entries.map(entry => {
 export default {
   entries: entries,
   getById: (id) => {
-    console.log('hey', id, idIndexLookUp)
     return typeof idIndexLookUp[id] !== 'undefined' ? entries[idIndexLookUp[id]] : null
   }
 }

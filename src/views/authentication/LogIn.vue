@@ -31,8 +31,8 @@ import Auth from '@/core/auth'
 export default {
   data(){
     return {
-      email: 'juancruz@gmail.com',
-      password: '123456',
+      email: '',
+      password: '',
       mismatched: false,
       isLoading: false
     }
