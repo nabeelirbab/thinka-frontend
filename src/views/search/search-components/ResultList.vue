@@ -1,31 +1,59 @@
 <template>
-  <div>
-    <div class="mb-2">
-      Results: {{statements.length}}
+  <div class="mb-4 pb-2">
+    <div v-if="isLoading" class="text-center">
+      Searching... <fa icon="spinner" spin />
     </div>
-    <template v-for="(statement, index) in statements" :key="'result' + index">
-      <ResultItem :statement="statement" />
-    </template>
+    <div v-else class="mb-4">
+      <div class="mb-2">
+        Results: {{totalPageResult}}
+      </div>
+      <template v-for="(statement, index) in statements" :key="'result' + index">
+        <ResultItem :statement="statement" />
+      </template>
+      <nav v-if="totalPageResult" aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+          <li class="page-item disabled">
+            <a class="page-link" href="#" tabindex="-1"><fa icon="chevron-left"></fa></a>
+          </li>
+          <li class="page-item"><a class="page-link" href="#">1</a></li>
+          <li class="page-item">
+            <a class="page-link" href="#"><fa icon="chevron-right"/></a>
+          </li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </template>
 <script>
 import StatementAPI from '@/api/statement.js'
 import ResultItem from './result-list-components/ResultItem'
+import Auth from '@/core/auth'
+const itemsPerPage = 20
 export default {
   components: {
     ResultItem
   },
+  emits: ['is-loading'],
   mounted(){
-    this._search()
+    
   },
   data(){
     return {
-      statements: []
+      user: Auth.user(),
+      isLoading: false,
+      statements: [],
+      page: 1,
+      totalPageResult: 0,
+      currentFilter: null
     }
   },
   methods: {
     _search(filter = null){
+      this.currentFilter = filter
+      this.isLoading = true
       let param = {
+        limit: itemsPerPage,
+        offset: (this.page - 1) * itemsPerPage,
         select: {
           relation: {
             select: {
@@ -49,19 +77,38 @@ export default {
         }
       }
       if(filter){
-        param['condition'] = [{
-          column: 'text',
-          clause: 'like',
-          value: '%' + filter + '%'
-        }]
+        if(typeof filter['statementText'] !== 'undefined' && filter['statementText'] !== ''){
+          param['condition'] = [{
+            column: 'text',
+            clause: 'like',
+            value: '%' + filter['statementText'] + '%'
+          }]
+        } 
+        if(typeof filter['mineOnly'] !== 'undefined' && filter['mineOnly'] !== false && this.user){
+          param['condition'] = [{
+            column: 'user_id',
+            value: this.user['id']
+          }]
+        }
       }
       this.statements = []
       StatementAPI.retrieve(param).then(result => {
-        console.log('result', result)
+        console.log('data', result)
         if(result['data']){
           this.statements = result['data']
         }
+        if(typeof result['additional_data']['total_result'] !== 'undefined'){
+          this.totalPageResult = result['additional_data']['total_result']
+        }
+      }).finally(() => {
+        this.isLoading = false
       })
+    }
+  },
+  watch: {
+    isLoading(newData){
+      console.log('isLoading?', newData)
+      this.$emit('is-loading', newData)
     }
   }
 }

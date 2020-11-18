@@ -1,20 +1,19 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-2 px-2" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
-    <div>
-      <select v-model="statement.relation.relation_type_id" class="border border-danger rounded bg-transparent text-danger font-weight-bold">
+  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-2 px-2" :style-d="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
+    <!-- <div v-if="isSupport === null" class="w-100 text-center">
+      <button @click="isSupport = true" class="btn btn btn-outline-dark mx-1 my-1"><fa icon="plus" /> Support</button> or
+      <button @click="isSupport = false" class="btn btn btn-outline-dark mx-1 my-1"><fa icon="minus" /> Rebut</button>
+    </div> -->
+    <div class="flex-fill px-2">
+      <select v-model="statement.relation.relation_type_id" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">
         <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
-          <option :value="relationType['id']">{{relationType['symbol']}}</option>
+          <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
         </template>
-        <!-- <option value="2">+</option>
-        <option value="1">-</option>
-        <option value="4">&</option>
-        <option value="12">^</option>
-        <option value="13">*</option> -->
       </select>
+      <textarea v-model="statement.text" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
     </div>
-    <textarea v-model="statement.text" class="w-100 bg-transparent border-0 ml-2" :placeholder="'Type your statement here...'" rows="2"></textarea>
     <div class="mx-2">
-      <button @click="save" :disabled="statement.text.length < 3" class="btn btn-success "><fa icon="save" /></button>
+      <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success"><fa :icon="isLoading ? 'spinner' : 'save'" :spin="isLoading" /></button>
     </div>
   </div>
 </template>
@@ -39,10 +38,13 @@ export default {
   },
   data(){
     return {
+      isSupport: null,
       isLoading: false,
       statement: {
         relation: {
-          relation_type_id: '2',
+          relation_type_id: this.isPositiveStatement ? '2' : '1',
+          relevance_window: this.isPositiveStatement ? 0 : 1,
+          relevance_row: 0,
           logic_tree_id: this.logicTreeId,
           statement_id_1: this.statementId
         },
@@ -69,6 +71,7 @@ export default {
           this.reset()
         }
         this.isLoading = false
+        this.isSupport = null
       })
     },
     reset(){
@@ -76,9 +79,15 @@ export default {
       this.statement['relation']['relation_type_id'] = '2'
     }
   },
+  watch: {
+    'statement.relation.relation_type_id'(newData){
+      const selectedRelationTypeIndex = this.findArrayIndex(newData, this.relationTypes, 'id')
+      this.statement.relation.relevance_row = selectedRelationTypeIndex >= 0 ? this.relationTypes[selectedRelationTypeIndex]['relevance'] : -1
+    }
+  },
   computed: {
     relationTypes(){
-      return RelationTypeAPI.cachedData.values && typeof RelationTypeAPI.cachedData.values['data'] ? RelationTypeAPI.cachedData.values['data'] : []
+      return RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : []
     }
   }
 }

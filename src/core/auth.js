@@ -24,10 +24,14 @@ class Auth {
   }
   generateHeader(){
     const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-    return {
-      headers: {
-        'Authorization':  'Bearer ' + storedAuth['accessToken']
+    if(storedAuth){
+      return {
+        headers: {
+          'Authorization':  'Bearer ' + storedAuth['accessToken']
+        }
       }
+    }else{
+      return {}
     }
   }
   chechAuth(){

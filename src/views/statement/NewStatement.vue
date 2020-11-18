@@ -1,11 +1,11 @@
 <template>
   <div class="px-2 px-md-4 py-2">
     <div class="bg-primary text-white px-2 pb-3 pt-3 statement-radius">
-      <input v-model="statement.logic_tree.name" placeholder="Logic Tree" class="form-control mb-2" />
+      <!-- <input v-model="statement.logic_tree.name" placeholder="Logic Tree Name" class="form-control mb-2" /> -->
       <div class="mb-2">
         <select v-model="statement.statement_type_id" class="form-control">
           <option value="0">Please select</option>
-          <template v-for="statementType in statementTypes" :key="'statementId' + statementType['id']">
+          <template v-for="(statementType, index) in statementTypes" :key="'statementId' + index">
             <option :value="statementType['id']">{{statementType['description']}} </option>
           </template>
         </select>
@@ -53,6 +53,7 @@ export default {
     save(){
       this.isLoading = true
       this.statement['logic_tree']['is_public'] = this.statement.is_public
+      this.statement['logic_tree']['name'] = this.statement.text
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){
           this.$router.push('/statement/' + result['data']['logic_tree']['id'] + '/' + result['data']['id'])
@@ -66,7 +67,7 @@ export default {
       }
       StatementTypeAPI.retrieve(param).then(result => {
         console.log(result)
-        this.statementTypes = result
+        this.statementTypes = result['data']
       })
     }
   }

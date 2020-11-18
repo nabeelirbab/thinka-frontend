@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Theme Font 2';
+  src: url('../Proxima Nova W01 Bold.ttf')
+};
+
+.font-style-2 {
+  font-family: 'Theme Font 2'!important;
+}
 .positive-statement {
   background-color: #f5dfdf
 }
@@ -9,4 +17,10 @@
 }
 .statement-radius {
   border-radius: 18px
+}
+.lead {
+  font-size: 1.2287em
+}
+.btn {
+  border-radius: 1.3em
 }

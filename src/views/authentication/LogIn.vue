@@ -4,12 +4,12 @@
       <form>
         <div v-if="mismatched" class="alert alert-danger">Email and Password mismatched</div>
         <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
-          <input v-model="email" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+          <label >Email address</label>
+          <input v-model="email" @keydown.enter="focusOnPassword" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
         </div>
         <div class="form-group">
           <label for="exampleInputPassword1">Password</label>
-          <input v-model="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+          <input ref="passwordField" v-model="password" @keydown.enter="logIn" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
         </div>
         <div class="text-center">
           <template v-if="!isLoading">
@@ -23,6 +23,9 @@
           </template>
         </div>
       </form>
+    </div>
+    <div class="text-center" >
+      <img src="@/assets/images/login.png" class="w-100 mt-4" style="max-width:500px"/>
     </div>
   </div>
 </template>
@@ -38,8 +41,11 @@ export default {
     }
   },
   methods: {
+    focusOnPassword(){
+      this.$refs.passwordField.focus()
+    },
     logIn(){
-      // this.isLoading = true
+      this.isLoading = true
       this.mismatched = false
       Auth.logIn(this.email, this.password).then(result => {
         console.log(this.$router.push('/dashboard'), result)

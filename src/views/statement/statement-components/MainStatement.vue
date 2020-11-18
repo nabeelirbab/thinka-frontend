@@ -22,7 +22,7 @@
             <!-- 111aaaaaaaaaaa asdasdas dasd asda -->
             <!-- 222aaaaaaaaaaa asdasdas dasd asdas asdasjdoi1jsad aoidj -->
             <!-- 333aaaaaaaaaaa asdasdas dasd asdas asdasjdoijsad aoidjaosdj oiasjdoqwheqwoieh aaaas -->
-            {{statement['text']}} {{statement['id']}}
+            {{statement['text']}} ({{parentStatementId}}) [{{statement['id']}}]
           </div>
           <div>
             <div v-if="selectedStatementId === statementId || parentStatementId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
@@ -71,6 +71,7 @@ export default {
   },
   methods: {
     statementClicked(){
+      this.selectedStatementData = this.statement
       this.selectedStatementId = this.selectedStatementId === this.statementId ? null : this.statementId
     },
     isScrolling(){
@@ -100,6 +101,9 @@ export default {
         }, 500)
       },
       immediate: true
+    },
+    statementTextHeight(){
+      this.$emit('height-changed', this.statementTextHeight)
     }
   },
   computed: {

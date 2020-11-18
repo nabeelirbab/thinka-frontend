@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-top:4.5em">
+  <div style="padding-top:74px">
     <Header />
     <div>
       <div>
@@ -19,7 +19,7 @@ import '@/assets/style/util.scss'
 import '@/assets/style/thinka-custom.scss'
 import Header from '@/components/common/Header'
 import Auth from '@/core/auth'
-import Maintanables from '@/api/maintainables'
+import Maintanables from '@/api/maintainables' // maintainables do not require authentication
 export default {
   name: 'App',
   components: {

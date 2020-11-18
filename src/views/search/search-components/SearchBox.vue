@@ -1,13 +1,37 @@
 <template>
-  <div class="input-group  mb-3">
-    <input type="text" class="form-control" placeholder="Type statement keywords...">
-    <div class="input-group-append">
-      <button class="btn btn-outline-secondary" type="button" id="button-addon2"><fa icon="search" /> Search</button>
+  <div class="mb-3">
+    <div>
+      <div @click="searchForm.mineOnly = !searchForm.mineOnly" class="form-check c-pointer">
+        <input v-model="searchForm.mineOnly" type="checkbox" class="form-check-input" >
+        <label class="form-check-label" >Show My Statements Only</label>
+      </div>
+    </div>
+    <div class="input-group ">
+      <input v-model="searchForm.statementText" type="text" class="form-control" placeholder="Type statement keywords...">
+      <div class="input-group-append">
+        <button @click="search" :disabled="isLoading" class="btn btn-outline-secondary" type="button" id="button-addon2"><fa icon="search" /> Search</button>
+      </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-
+  emits: ['search'],
+  props: {
+    isLoading: Boolean
+  },
+  data(){
+    return {
+      searchForm: {
+        statementText: '',
+        mineOnly: false
+      }
+    }
+  },
+  methods: {
+    search(){
+      this.$emit('search', this.searchForm)
+    }
+  }
 }
 </script>

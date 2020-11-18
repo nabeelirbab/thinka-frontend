@@ -3,7 +3,7 @@ import Auth from '@/core/auth'
 import { ref } from 'vue'
 export default class API {
   apiName
-  cachedData = ref(null) // if true, stores all data retrieved here for reusing
+  cachedData = ref(null) // stores all data retrieved here for reusing
   basePath = process.env.VUE_APP_API_URL // . 'http://localhost/thinka-api/public/api/'
   mockAPI = {
     'statement': require('../api/mock-db/statement.js').default
@@ -23,13 +23,13 @@ export default class API {
     return new Promise((resolve, reject) => {
       axios.post(this.basePath + this.apiName + '/retrieve', parameter, Auth.generateHeader()).then(response => {
         if(cache){
-          this.cachedData.values = response['data']
+          this.cachedData.value = response['data']
         }
         resolve(response['data'])
       }).catch(errorResult => {
         if(errorResult.response.status === 401){
           Auth.sessionExpired()
-          alert('Session Expired')
+          // alert('Session Expired')
         }
         reject(errorResult)
       })
@@ -38,6 +38,15 @@ export default class API {
   create(parameter){
     return new Promise((resolve, reject) => {
       axios.post(this.basePath + this.apiName + '/create', parameter, Auth.generateHeader()).then(response => {
+        resolve(response['data'])
+      }).catch(errorResult => {
+        reject(errorResult)
+      })
+    })
+  }
+  update(parameter){
+    return new Promise((resolve, reject) => {
+      axios.post(this.basePath + this.apiName + '/update', parameter, Auth.generateHeader()).then(response => {
         resolve(response['data'])
       }).catch(errorResult => {
         reject(errorResult)

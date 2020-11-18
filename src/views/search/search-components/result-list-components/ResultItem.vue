@@ -7,8 +7,8 @@
     <div class="d-flex justify-content-between">
       <div>
         <router-link :to="'/statement/' + logicTreeId + '/' + statement['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
-        <p v-if="statement['synopsis'] && statement['synopsis'] !== ''">{{statement['synopsis']}}</p>
-        <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary">{{statement['comment']}}</p>
+        <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
+        <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p>
       </div>
       <CTPoints :points="statement['ct_points']" />
     </div>
