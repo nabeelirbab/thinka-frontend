@@ -48,7 +48,7 @@ export default {
           relevance_window: this.isPositiveStatement ? 0 : 1,
           relevance_row: 0,
           logic_tree_id: this.logicTreeId,
-          statement_id_1: this.statementId
+          is_public: true
         },
         statement_type_id: 1,
         text: ''

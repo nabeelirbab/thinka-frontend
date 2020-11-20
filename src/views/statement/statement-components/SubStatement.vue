@@ -39,10 +39,10 @@
           </div> -->
         </div>
         <div>
-          <div v-if="showOpinion || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+          <div v-if="showOpinion || showCTOpinion || isActive" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
-            <!-- <router-link v-else :to="'/branch/' + relation['id']" tag="div" ><fa icon="eye" /></router-link> -->
+            <router-link v-else :to="'/branch/' + relation['id']" tag="div" ><fa icon="eye" /></router-link>
           </div>
         </div>
       </div>

@@ -3,10 +3,13 @@
     <div v-if="isLoading" class="text-center">
       Please wait... <fa icon="spinner" spin />
     </div>
-    <div v-else-if="statement" >
+    <div v-else-if="statement === null">
+      Statement Not Found
+    </div>
+    <div v-show="!isLoading && statement" >
       <TopToolbar :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" />
       <div class="container py-2">
-        <MainStatement @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
+        <MainStatement v-if="statement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
         <div class="toolbar-bottom-space">
           <div class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <template v-for="(children, index) in positiveStatements" :key="'children' + index">
@@ -28,9 +31,7 @@
       </div>
       <Toolbar  class="fixed toolbar" />
     </div>
-    <div v-else>
-      Statement Not Found
-    </div>
+    
   </div>
 </template>
 <script>
@@ -57,12 +58,15 @@ export default {
     TopToolbar,
     Toolbar
   },
+  mounted(){
+  },
   data(){
     return {
       isLoading: false,
       statement: null,
       selectedStatementId: GlobalData.selectedStatementId,
       statementTextFilter: GlobalData.statementTextFilter,
+      backHistory: GlobalData.backHistory,
       mainStatementHeight: 0,
       positiveStatementHeight: 100
     }
@@ -88,9 +92,6 @@ export default {
       const param = {
         id: relationId * 1,
         select: {
-          // relations: {
-          //   select: ['logic_tree_id', 'statement_id_1', 'statement_id_2', 'relation_type_id', 'relevance_window']
-          // },
           logic_tree: {
             select: ['description', 'is_public']
           },
@@ -101,7 +102,7 @@ export default {
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id']
           },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id_2', 'statement_id_1', 'relation_type_id', 'relevance_window'])
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window'])
         }
       }
       RelationAPI.retrieve(param).then(result => {
@@ -115,7 +116,7 @@ export default {
         statement: {
           select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id']
         },
-        ...(['relation_type_id', 'statement_id_1', 'statement_id_2', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row'])
+        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row'])
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {
@@ -131,13 +132,12 @@ export default {
     //     id: statementId * 1,
     //     select: {
     //       relations: {
-    //         select: ['logic_tree_id', 'statement_id_1', 'statement_id_2', 'relation_type_id', 'relevance_window']
+    //         select: ['logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window']
     //       },
     //       relation: {
     //         select: [
     //           'logic_tree_id',
-    //           'statement_id_2',
-    //           'statement_id_1',
+    //           'statement_id',
     //         ]
     //       },
     //       logic_tree: {
@@ -203,7 +203,7 @@ export default {
       return totaRelevanceWindowHeight - this.mainStatementHeight
     },
     parentRelationId(){
-      return this.statement['parent_relation_id']
+      return this.statement ? this.statement['parent_relation_id'] : null
     },
     statementId(){
       return this.$route.params.relationId * 1

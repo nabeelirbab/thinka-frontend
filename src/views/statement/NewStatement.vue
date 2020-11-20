@@ -39,7 +39,6 @@ export default {
         relation: {
           relation_type_id: 11, // Fact
           relevance_window: 0,
-          statement_id_1: null
         },
         statement_type_id: '0',
         logic_tree: {

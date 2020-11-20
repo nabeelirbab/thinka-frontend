@@ -69,13 +69,13 @@ export default {
               statement: {
                 select: ['id', 'text', 'created_at']
               },
-              ...(['id', 'statement_id_2', 'logic_tree_id'])
+              ...(['id', 'statement_id', 'logic_tree_id'])
             }
           },
           logic_tree: {
             select: ['description', 'is_public', 'statement_id']
           },
-          ...(['logic_tree_id', 'statement_id_2', 'statement_id_1'])
+          ...(['logic_tree_id', 'statement_id'])
         }
       }
       if(filter){

@@ -7,6 +7,8 @@ const showScope = ref(false)
 const showCTOpinion = ref(false)
 const createSubStatementParentId = ref(0) // parent id of an active create sub statement
 const statementTextFilter = ref('')
+const backHistory = ref([])
+const forwardHistory = ref([])
 watch(selectedStatementId, (id) => {
   if(id === 0 || id === null){
     showImpact.value = false
@@ -41,5 +43,7 @@ export default {
   showScope: showScope,
   createSubStatementParentId: createSubStatementParentId,
   showCTOpinion: showCTOpinion,
-  statementTextFilter: statementTextFilter
+  statementTextFilter: statementTextFilter,
+  backHistory: backHistory,
+  forwardHistory: forwardHistory
 }

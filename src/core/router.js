@@ -1,5 +1,6 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from "@/views/Home.vue";
+import Branch from "@/views/Branch.vue";
 import Dashboard from "@/views/dashboard/Dashboard.vue";
 import Search from "@/views/search/Search";
 import Statement from "@/views/statement/Statement.vue";
@@ -14,6 +15,11 @@ const routes = [
     path: "/",
     name: "Home",
     component: Home,
+  },
+  {
+    path: "/branch",
+    name: "Branch",
+    component: Branch,
   },
   {
     path: "/dashboard",

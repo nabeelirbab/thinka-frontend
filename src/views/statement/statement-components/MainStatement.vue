@@ -25,9 +25,9 @@
             {{statement['text']}} ({{parentRelationId}}) [{{relation['id']}}]
           </div>
           <div>
-            <div v-if="selectedStatementId === relation['id']" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
-              <CTPoints v-if="selectedStatementId === relation['id']" :points="ctPoints" class="ml-auto" />
-              <!-- <router-link v-else-if="parentRelationId" :to="'/branch/'+ parentRelationId" class="text-primary"><fa icon="chevron-left" /></router-link> -->
+            <div v-if="selectedStatementId === relation['id'] || parentRelationId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+              <CTPoints v-if="selectedStatementId === relation['id']" :points="ctPoints * 1" class="ml-auto" />
+              <router-link v-else-if="parentRelationId" :to="'/branch/'+ parentRelationId" class="text-primary"><fa icon="undo-alt" /></router-link>
             </div>
           </div>
         </div>
@@ -52,6 +52,7 @@ export default {
     relation: Object,
     logicTreeId: Number
   },
+  emits: ['height-changed'],
   mounted(){
     window.addEventListener('scroll', this.isScrolling);
   },
