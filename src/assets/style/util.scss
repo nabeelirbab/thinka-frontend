@@ -34,6 +34,14 @@ li.borderless { border-top: 0 none; }
 .text-sm-center{
   text-align: inherit!important;
 }
+.rounded-l-oval {
+  border-top-left-radius: 1.3em!important;
+  border-bottom-left-radius: 1.3em!important;
+}
+.rounded-r-oval {
+  border-top-right-radius: 1.3em!important;
+  border-bottom-right-radius: 1.3em!important;
+}
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {
     width: 100%

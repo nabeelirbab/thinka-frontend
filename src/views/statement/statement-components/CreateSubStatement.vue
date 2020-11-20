@@ -23,6 +23,7 @@ import RelationTypeAPI from '@/api/relation-type'
 export default {
   props: {
     isPositiveStatement: Boolean,
+    parentRelationId: Number,
     level: Number,
     logicTreeId: {
       type: Number,
@@ -42,6 +43,7 @@ export default {
       isLoading: false,
       statement: {
         relation: {
+          parent_relation_id: this.parentRelationId,
           relation_type_id: this.isPositiveStatement ? '2' : '1',
           relevance_window: this.isPositiveStatement ? 0 : 1,
           relevance_row: 0,
@@ -66,12 +68,13 @@ export default {
           let newSubStatement = JSON.parse(JSON.stringify(param))
           newSubStatement['id'] = result['data']['id']
           newSubStatement['relation']['id'] = result['data']['relation']['id']
-          console.log('newSubStatement', newSubStatement)
           this.$emit('save', JSON.parse(JSON.stringify(newSubStatement)))
           this.reset()
         }
         this.isLoading = false
         this.isSupport = null
+      }).catch(() => {
+        this.isLoading = false
       })
     },
     reset(){

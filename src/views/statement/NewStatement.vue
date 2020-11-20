@@ -36,6 +36,11 @@ export default {
     return {
       statementTypes: [],
       statement: {
+        relation: {
+          relation_type_id: 11, // Fact
+          relevance_window: 0,
+          statement_id_1: null
+        },
         statement_type_id: '0',
         logic_tree: {
           name: '',
@@ -52,11 +57,13 @@ export default {
   methods: {
     save(){
       this.isLoading = true
+      this.statement['relation']['is_public'] = this.statement.is_public
       this.statement['logic_tree']['is_public'] = this.statement.is_public
       this.statement['logic_tree']['name'] = this.statement.text
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){
-          this.$router.push('/statement/' + result['data']['logic_tree']['id'] + '/' + result['data']['id'])
+          console.log('success', result['data'])
+          this.$router.push('/branch/' + result['data']['relation']['id'])
         }
         this.isLoading = false
       })

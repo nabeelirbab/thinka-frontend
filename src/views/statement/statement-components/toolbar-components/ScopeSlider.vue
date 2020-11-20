@@ -6,7 +6,7 @@
     </div>
     <div class="text-nowrap" style="width:26px">
       <span v-if="scope > 0" class='mr-2'>{{scopes[findArrayIndex(scope, scopes, 'id')]['description']}}</span>
-      <button v-if="scope !== null" :disabled="isLoading" @click="save" class="btn btn-sm text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
+      <button v-if="scope !== null" :disabled="isLoading" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
     </div>
   </div>
 </template>
@@ -37,7 +37,7 @@ export default {
       }
       StatementAPI.update(param).then(result => {
         if(result['data'] && this.selectedStatementId){
-          this.selectedStatementData['recursive_down_statement']['scope_id'] = this.scope
+          this.selectedStatementData['statement']['scope_id'] = this.scope
         }
       }).finally(() => {
         this.isLoading = false
@@ -48,8 +48,8 @@ export default {
     selectedStatementId: {
       handler(){
         if(this.selectedStatementData){
-          this.scope = this.selectedStatementData['recursive_down_statement']['scope_id']
-          this.isPublic = this.selectedStatementData['recursive_down_statement']['is_public']
+          this.scope = this.selectedStatementData['statement']['scope_id']
+          this.isPublic = this.selectedStatementData['statement']['is_public']
         }else{
           this.scope = null
           this.isPublic = false

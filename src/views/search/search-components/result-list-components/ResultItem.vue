@@ -6,7 +6,7 @@
     </div>
     <div class="d-flex justify-content-between">
       <div>
-        <router-link :to="'/statement/' + logicTreeId + '/' + statement['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
+        <router-link :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
         <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
         <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p>
       </div>
@@ -27,26 +27,29 @@ export default {
     CTPoints
   },
   props: {
-    statement: {
+    relation: {
       type:Object,
       required: true
     },
   },
   computed: {
+    statement(){
+      return this.relation['statement']
+    },
     parentStatement(){
-      return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] && this.statement['relation']['statement_1'] ? this.statement['relation']['statement_1'] : null
+      return this.relation['parent_relation'] && this.relation['parent_relation']['statement'] ? this.relation['parent_relation']['statement'] : null
     },
     logicTreeId(){
-      if(this.statement['relation'] && typeof this.statement['relation']['logic_tree_id'] !== 'undefined'){
-        return this.statement['relation']['logic_tree_id']
-      }else if(this.statement['logic_tree']){
-        return this.statement['logic_tree']['id']
+      if(this.relation && typeof this.relation['logic_tree_id'] !== 'undefined'){
+        return this.relation['logic_tree_id']
+      }else if(this.relation['logic_tree']){
+        return this.relation['logic_tree']['id']
       }else{
         return null
       }
     },
     subscribers(){
-      return typeof this.statement['subscribers'] === 'undefined' ? [] : this.statement['subscribers']
+      return 1 // typeof this.statement['subscribers'] === 'undefined' ? [] : this.statement['subscribers']
     }
   }
 }

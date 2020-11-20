@@ -6,6 +6,8 @@ import Statement from "@/views/statement/Statement.vue";
 import NewStatement from "@/views/statement/NewStatement.vue";
 import Registration from "@/views/authentication/Registration.vue";
 import LogIn from "@/views/authentication/LogIn.vue";
+import Bookmarks from "@/views/bookmarks/Bookmarks.vue";
+import Notification from "@/views/notification/Notification.vue";
 
 const routes = [
   {
@@ -21,18 +23,38 @@ const routes = [
   {
     path: "/search",
     name: "Search",
-    component: Search,
+    component: Search
   },
   {
-    path: "/statement/:logicTreeId/:statementId",
+    path: "/folder/:logicTreeId/:relationId",
     name: "Statement",
     component: Statement,
 
   },
   {
+    path: "/branch/:relationId",
+    name: "Statement",
+    component: Statement,
+    meta: {
+      hideBranding: true
+    }
+  },
+  {
     path: "/new-statement",
     name: "NewStatement",
     component: NewStatement,
+
+  },
+  {
+    path: "/bookmarks",
+    name: "Bookmarks",
+    component: Bookmarks,
+
+  },
+  {
+    path: "/notification",
+    name: "Notification",
+    component: Notification,
 
   },
   {

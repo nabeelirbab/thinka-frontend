@@ -24,3 +24,15 @@
 .btn {
   border-radius: 1.3em
 }
+.btn-square {
+  border-radius: 0px!important;
+  text-align: center
+}
+
+.btn-circle { // used for icons
+  text-align: center;
+  border-radius: 50%;
+  height:39px;
+  width:39px;
+  padding: 0px
+}

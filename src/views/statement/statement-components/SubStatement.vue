@@ -1,7 +1,9 @@
 <template>
   <div>
     <div
-      :class="statementClass" 
+    
+      v-show="statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0"
+      :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
@@ -10,7 +12,7 @@
           <div class="text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
             <small v-if="showImpact">100%</small>
             <small v-if="showScope" style="line-height: 1">
-              {{localStatementData['recursive_down_statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['recursive_down_statement']['scope_id'], scopes, 'id')]['description'] : null}}
+              {{localStatementData['statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
           </div>
         </div>
@@ -26,7 +28,7 @@
           </div> -->
           <div class="d-flex text-justify align-items-center px-1" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify pr-2 mb-1">{{statementText}} ={{statement['id']}}=[{{statementId}}]</div>
+              <div class="text-dark text-justify pr-2 mb-1">{{statementText}} ={{statement['id']}}=[{{relation['id']}}]</div>
               <!--  -->
           </div>
           <!-- <div class="d-flex justify-content-between">
@@ -37,15 +39,15 @@
           </div> -->
         </div>
         <div>
-          <div v-if="showOpinion || isActive || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+          <div v-if="showOpinion || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
-            <router-link v-else :to="'/statement/' + logicTreeId + '/' + statementId" tag="div" ><fa icon="eye" /></router-link>
+            <!-- <router-link v-else :to="'/branch/' + relation['id']" tag="div" ><fa icon="eye" /></router-link> -->
           </div>
         </div>
       </div>
     </div>
-    <CreateSubStatement v-if="createSubStatementParentId === statementId" :is-positive-statement="isPositiveStatement" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
+    <CreateSubStatement v-if="createSubStatementParentId === relation['id']" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <template v-for="(children, index) in statementChildren" :key="'children' + index">
       <SubStatement :is-positive-statement="isPositiveStatement" :statement="children" :logic-tree-id="logicTreeId" :level="level + 1" @save="newSubStatementSaved($event, index)" />
     </template>
@@ -59,7 +61,6 @@ import CreateSubStatement from './CreateSubStatement'
 import RelationTypeAPI from '@/api/relation-type'
 import ScopeAPI from '@/api/scope'
 
-const us = require('underscore')
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -105,7 +106,7 @@ export default {
     },
     statementClicked(){
       this.selectedStatementData = this.localStatementData
-      this.selectedStatementId = this.selectedStatementId === this.statementId ? 0 : this.statementId
+      this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? 0 : this.relation['id']
     }
   },
   watch: {
@@ -114,7 +115,7 @@ export default {
     },
     statement: {
       handler(){
-        this.localStatementData = us.clone(this.statement)
+        this.localStatementData = JSON.parse(JSON.stringify(this.statement))
       },
       immediate: true
     }
@@ -124,16 +125,19 @@ export default {
       return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation'] : null
     },
     isActive(){
-      return this.statementId === this.selectedStatementId
+      return this.relation['id'] === this.selectedStatementId
     },
     statementId(){
-      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['id'] : 'ERROR: Statement text not found'
+      return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['id'] : 'ERROR: Statement text not found'
     },
     statementText(){
-      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['text'] : 'ERROR: Statement text not found'
+      return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['text'] : 'ERROR: Statement text not found'
     },
     statementChildren(){
-      return typeof this.statement['recursive_down_statement'] !== 'undefined' ? this.statement['recursive_down_statement']['recursive_down_relations'] : []
+      return typeof this.statement['relations'] !== 'undefined' ? this.statement['relations'] : []
+    },
+    relation(){
+      return this.statement
     },
     relationTypeSymbol(){
       const relationTypeId = this.statement['relation_type_id']

@@ -6,8 +6,9 @@ const showOpinion = ref(false)
 const showScope = ref(false)
 const showCTOpinion = ref(false)
 const createSubStatementParentId = ref(0) // parent id of an active create sub statement
+const statementTextFilter = ref('')
 watch(selectedStatementId, (id) => {
-  if(id === 0){
+  if(id === 0 || id === null){
     showImpact.value = false
     showOpinion.value = false
     showScope.value = false
@@ -15,6 +16,11 @@ watch(selectedStatementId, (id) => {
     selectedStatementData.value = null
   }else{
     createSubStatementParentId.value = 0
+  }
+})
+watch(statementTextFilter, (searchText) => {
+  if(searchText !== '' && selectedStatementData.value && selectedStatementData.value['statement']['text'].indexOf(searchText) === -1){
+    selectedStatementId.value = 0
   }
 })
 watch(showImpact, (value) => {
@@ -34,5 +40,6 @@ export default {
   showOpinion: showOpinion,
   showScope: showScope,
   createSubStatementParentId: createSubStatementParentId,
-  showCTOpinion: showCTOpinion
+  showCTOpinion: showCTOpinion,
+  statementTextFilter: statementTextFilter
 }

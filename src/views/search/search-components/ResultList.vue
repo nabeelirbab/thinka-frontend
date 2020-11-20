@@ -7,8 +7,8 @@
       <div class="mb-2">
         Results: {{totalPageResult}}
       </div>
-      <template v-for="(statement, index) in statements" :key="'result' + index">
-        <ResultItem :statement="statement" />
+      <template v-for="(relation, index) in relations" :key="'result' + index">
+        <ResultItem :relation="relation" />
       </template>
       <nav v-if="totalPageResult" aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
@@ -25,7 +25,8 @@
   </div>
 </template>
 <script>
-import StatementAPI from '@/api/statement.js'
+// import StatementAPI from '@/api/statement.js'
+import RelationAPI from '@/api/relation.js'
 import ResultItem from './result-list-components/ResultItem'
 import Auth from '@/core/auth'
 const itemsPerPage = 20
@@ -41,7 +42,7 @@ export default {
     return {
       user: Auth.user(),
       isLoading: false,
-      statements: [],
+      relations: [],
       page: 1,
       totalPageResult: 0,
       currentFilter: null
@@ -55,31 +56,32 @@ export default {
         limit: itemsPerPage,
         offset: (this.page - 1) * itemsPerPage,
         select: {
-          relation: {
+          statement: {
             select: {
-              ...[
-                'logic_tree_id',
-                'statement_id_2',
-                'statement_id_1',
-              ],
-              statement_1: {
-                select: ['id', 'text', 'created_at']
-              }
+              statement_type: {
+                select: ['description']
+              },
+              ...(['statement_type_id', 'text', 'synopsis', 'comment', 'created_at', 'updated_at'])
             }
           },
-          statement_type: {
-            select: ['description']
+          parent_relation: {
+            select: {
+              statement: {
+                select: ['id', 'text', 'created_at']
+              },
+              ...(['id', 'statement_id_2', 'logic_tree_id'])
+            }
           },
           logic_tree: {
             select: ['description', 'is_public', 'statement_id']
           },
-          ...(['text', 'synopsis', 'comment', 'created_at', 'updated_at'])
+          ...(['logic_tree_id', 'statement_id_2', 'statement_id_1'])
         }
       }
       if(filter){
         if(typeof filter['statementText'] !== 'undefined' && filter['statementText'] !== ''){
           param['condition'] = [{
-            column: 'text',
+            column: 'statement.text',
             clause: 'like',
             value: '%' + filter['statementText'] + '%'
           }]
@@ -91,11 +93,11 @@ export default {
           }]
         }
       }
-      this.statements = []
-      StatementAPI.retrieve(param).then(result => {
+      this.relations = []
+      RelationAPI.retrieve(param).then(result => {
         console.log('data', result)
         if(result['data']){
-          this.statements = result['data']
+          this.relations = result['data']
         }
         if(typeof result['additional_data']['total_result'] !== 'undefined'){
           this.totalPageResult = result['additional_data']['total_result']

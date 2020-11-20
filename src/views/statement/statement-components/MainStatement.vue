@@ -22,12 +22,12 @@
             <!-- 111aaaaaaaaaaa asdasdas dasd asda -->
             <!-- 222aaaaaaaaaaa asdasdas dasd asdas asdasjdoi1jsad aoidj -->
             <!-- 333aaaaaaaaaaa asdasdas dasd asdas asdasjdoijsad aoidjaosdj oiasjdoqwheqwoieh aaaas -->
-            {{statement['text']}} ({{parentStatementId}}) [{{statement['id']}}]
+            {{statement['text']}} ({{parentRelationId}}) [{{relation['id']}}]
           </div>
           <div>
-            <div v-if="selectedStatementId === statementId || parentStatementId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
-              <CTPoints v-if="selectedStatementId === statementId" :points="ctPoints" class="ml-auto" />
-              <router-link v-else-if="parentStatementId" :to="'/statement/' + logicTreeId + '/'+ parentStatementId" class="text-primary"><fa icon="undo-alt" /></router-link>
+            <div v-if="selectedStatementId === relation['id']" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+              <CTPoints v-if="selectedStatementId === relation['id']" :points="ctPoints" class="ml-auto" />
+              <!-- <router-link v-else-if="parentRelationId" :to="'/branch/'+ parentRelationId" class="text-primary"><fa icon="chevron-left" /></router-link> -->
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default {
     // NoProfile
   },
   props: {
-    statement: Object,
+    relation: Object,
     logicTreeId: Number
   },
   mounted(){
@@ -72,7 +72,7 @@ export default {
   methods: {
     statementClicked(){
       this.selectedStatementData = this.statement
-      this.selectedStatementId = this.selectedStatementId === this.statementId ? null : this.statementId
+      this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? null : this.relation['id']
     },
     isScrolling(){
       const headerHeight = 60
@@ -82,7 +82,7 @@ export default {
   },
   watch: {
     selectedStatementId(){
-      this.showCTOpinion = this.selectedStatementId === this.statementId
+      this.showCTOpinion = this.selectedStatementId === this.relation['id']
     },
     isSticky(newData){
       this.stickySeeMore = null
@@ -107,11 +107,14 @@ export default {
     }
   },
   computed: {
+    statement(){
+      return this.relation['statement']
+    },
     statementId(){
       return typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
     },
-    parentStatementId(){
-      return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation']['statement_id_1'] : null
+    parentRelationId(){
+      return this.relation['parent_relation_id']
     },
     ctPoints(){
       return typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'

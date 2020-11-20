@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-top:74px">
+  <div :class="hideBranding ? 'no-branding-top-padding' : 'top-padding'" style="">
     <Header />
     <div>
       <div>
@@ -41,9 +41,25 @@ export default {
     test(){
       console.log('Auth', Auth, Auth.chechAuth)
     }
+  },
+  computed: {
+    hideBranding(){
+      return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
+    }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.no-branding-top-padding {
+  padding-top:41px!important
+}
+.top-padding {
+  padding-top:79px
+}
+@media (min-width: 768px) {
+  .top-padding {
+    padding-top:41px
+  }
+}
 </style>
