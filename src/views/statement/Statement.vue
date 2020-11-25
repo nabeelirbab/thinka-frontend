@@ -7,7 +7,7 @@
       Statement Not Found
     </div>
     <div v-show="!isLoading && statement" >
-      <TopToolbar :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" />
+      <TopToolbar :main-relation="statement ? statement : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" />
       <div class="container py-2 bg-white">
         <MainStatement v-if="statement" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
         <div @click="selectMainStatement" class="toolbar-bottom-space">
@@ -103,6 +103,9 @@ export default {
             select: this.generateRecursiveRelationsSelect(1),
             sort: [{column: 'relevance_row', order: 'asc'}]
           },
+          user_relation_bookmarks: {
+            select: ['user_id', 'relation_id', 'sub_relation_id']
+          },
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id']
           },
@@ -112,6 +115,7 @@ export default {
       RelationAPI.retrieve(param).then(result => {
         if(result['data']){
           this.statement = result['data']
+          console.log(result['data'])
           setTimeout(() => {
             this.resizePositiveStatement()
             this.setDefaultSeparator()
@@ -135,13 +139,11 @@ export default {
       for(let x = 0; x < positiveChildren.length; x++){
         positiveInnerHeight += positiveChildren[x].offsetHeight
       }
-
       if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
         this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight) * -1)
       }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
         this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
       }
-      console.log(negativeInnerHeight, positiveInnerHeight)
     },
     generateRecursiveRelationsSelect(currentDeep, deep = 10){
       let selectParam = {

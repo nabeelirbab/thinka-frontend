@@ -53,6 +53,15 @@ export default class API {
       })
     })
   }
+  delete(parameter){
+    return new Promise((resolve, reject) => {
+      axios.post(this.basePath + this.apiName + '/delete', parameter, Auth.generateHeader()).then(response => {
+        resolve(response['data'])
+      }).catch(errorResult => {
+        reject(errorResult)
+      })
+    })
+  }
   apiRequest(path, parameter){
     return new Promise((resolve, reject) => {
       axios.post(this.basePath + path, parameter).then(response => {

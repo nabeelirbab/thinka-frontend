@@ -61,7 +61,7 @@ export default {
               statement_type: {
                 select: ['description']
               },
-              ...(['statement_type_id', 'text', 'synopsis', 'comment', 'created_at', 'updated_at'])
+              ...(['statement_type_id', 'text', 'synopsis', 'comment', 'created_at', 'updated_at', 'statement_type_id'])
             }
           },
           parent_relation: {

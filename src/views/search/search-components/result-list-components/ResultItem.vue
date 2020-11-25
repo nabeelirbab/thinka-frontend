@@ -1,7 +1,10 @@
 <template>
-  <div class="border rounded px-3 py-2 mb-2 ">
+  <div class="hover-border-dark border rounded px-3 py-2 mb-2 ">
     <div class="d-flex justify-content-between">
-      <small class="text-nowrap text-truncate">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
+      <div class="flex-fill">
+        <small class="text-nowrap text-truncate">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
+        <div><small><em>{{statement['statement_type']['description']}}</em></small></div>
+      </div>
       <small class="text-nowrap">{{formatDate(statement['created_at'])}}</small>
     </div>
     <div class="d-flex justify-content-between">
@@ -14,8 +17,8 @@
     </div>
     <div>
       <div>
-        <small class="badge badge-pill badge-primary mr-1 text-nowrap">Created by <strong>{{statement['user'] ? statement['user']['name'] : null}}</strong></small>
-        <small class="badge badge-pill badge-success text-nowrap"><strong>{{subscribers.length}}</strong> Subscribers</small>
+        <!-- <small class="badge badge-pill badge-primary mr-1 text-nowrap">Created by <strong>{{statement['user'] ? statement['user']['name'] : null}}</strong></small> -->
+        <!-- <small class="badge badge-pill badge-success text-nowrap"><strong>{{subscribers.length}}</strong> Subscribers</small> -->
       </div>
     </div>
   </div>
@@ -54,3 +57,8 @@ export default {
   }
 }
 </script>
+<style>
+.hover-border-dark:hover {
+  border: 1px solid!important
+}
+</style>

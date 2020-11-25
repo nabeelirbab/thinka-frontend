@@ -19,6 +19,9 @@
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn btn-info btn-square"><fa icon="bookmark" /></button>
+      </div>
+      <div>
         <button class="btn btn-info btn-square"><fa icon="ellipsis-v" /></button>
       </div>
     </div>
@@ -26,8 +29,13 @@
 </template>
 <script>
 import GlobalData from '@/views/statement/global-data'
+import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 export default {
   props: {
+    mainRelation: {
+      type: Object,
+      required: true
+    },
     statementId: Number,
     parentRelationId: Number,
     selectedStatementId: {
@@ -36,7 +44,6 @@ export default {
     }
   },
   mounted(){
-    console.log('mounted', this.backHistory)
     // if(this.backHistory.length && this.backHistory[0] !== this.relationId){
     //   this.backHistory = [this.relationId]
     //   localStorage.setItem('back_history', JSON.stringify(this.backHistory))
@@ -50,7 +57,9 @@ export default {
       typingTimeout: 0,
       statementTextFilter: GlobalData.statementTextFilter,
       backHistory: GlobalData.backHistory,
-      forwardHistory: GlobalData.forwardHistory
+      forwardHistory: GlobalData.forwardHistory,
+      isBookmarkLoading: true,
+      rootBookmarkId: null
     }
   },
   methods: {
@@ -80,9 +89,50 @@ export default {
       this.isGoingForward = true
       const relationId = this.forwardHistory.shift()
       this.$router.push('/branch/' + relationId)
+    },
+    bookmark(){
+      this.isBookmarkLoading = true
+      if(!this.rootBookmarkId){
+        const param = {
+          relation_id: this.mainRelation['id']
+        }
+        UserRelationBookmarkAPI.create(param).then(result => {
+          console.log('bookmark', result)
+          if(result['data']){
+            this.rootBookmarkId = result['data']['id']
+          }
+          this.isBookmarkLoading = false
+        }).catch(() => {
+          this.isBookmarkLoading = false
+        })
+      }else{
+        UserRelationBookmarkAPI.delete({ id: this.rootBookmarkId}).then(result => {
+          console.log('delete bookmark', result)
+          if(result['data']['id']){
+            this.rootBookmarkId = null
+          }
+          this.isBookmarkLoading = false
+        }).catch(() => {
+          this.isBookmarkLoading = false
+        })
+      }
     }
   },
   watch: {
+    mainRelation: {
+      handler(mainRelation){
+        this.rootBookmarkId = null
+        if(mainRelation && typeof mainRelation['user_relation_bookmarks'] !== 'undefined'){
+          mainRelation['user_relation_bookmarks'].forEach(userRelationBookmark => {
+            if(userRelationBookmark['sub_relation_id'] === null){
+              this.rootBookmarkId = userRelationBookmark['id']
+            }
+          })
+        }
+        this.isBookmarkLoading = false
+      },
+      immediate: true
+    },
     showSearchText(){
       if(this.showSearchText === true){
         setTimeout(() => {
@@ -96,7 +146,6 @@ export default {
           if(this.forwardHistory.length && !this.isGoingBack && !this.isGoingForward){
             this.forwardHistory = []
           }
-          console.log('this.backHistory.length', this.backHistory.length, localStorage.getItem('back_history'))
           if(this.backHistory.length === 0 && localStorage.getItem('back_history')){
             this.backHistory = JSON.parse(localStorage.getItem('back_history'))
           }
@@ -132,6 +181,6 @@ export default {
     padding: 0px;
     color: white;
     border: 2px white solid;
-    padding-top:5px;
+    padding-top:3px;
   }
 </style>
