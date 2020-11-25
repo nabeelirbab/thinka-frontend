@@ -11,16 +11,16 @@
         <div class="card">
           <h5 class="card-header"><fa icon="cloud" /> Thinka Tank</h5>
           <div class="card-body">
-            <p class="card-text">Thinka Tanks group Logic Trees like a playlist for users subscription, chat, and to assist collaboration</p>
+            <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
             <table class="table ">
               <tbody>
                 <tr>
-                  <td>Plant Lovers</td>
-                  <td>Logics that relates to plants. From house plants to farm</td>
+                  <td>Plant Lovers Tank</td>
+                  <td>This tank relates to plants. Join us!</td>
                 </tr>
                 <tr>
                   <td>Politics</td>
-                  <td>Logics that relates to politics such as debate, or polical point of view, political candidate</td>
+                  <td>We work on critical thinking trees for politics such as policy debate or evaluation of political candidates.</td>
                 </tr>
               </tbody>
             </table>
@@ -38,15 +38,15 @@
               <tbody>
                 <tr>
                   <td>James Smith</td>
-                  <td>Created a new statement</td>
+                  <td>Apples are good for your health.</td>
                 </tr>
                 <tr>
                   <td>Paul Walker</td>
-                  <td>& Has supported a statement</td>
+                  <td>Were the moon landings fake?</td>
                 </tr>
                 <tr>
                   <td>John Doe</td>
-                  <td>& Has supported a statement</td>
+                  <td>Lockdowns are a terrible solution for anything.</td>
                 </tr>
               </tbody>
             </table>
@@ -64,7 +64,7 @@ export default {
     Trending
   },
   mounted(){
-    
+
   },
   data(){
     return {

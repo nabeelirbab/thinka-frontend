@@ -4,9 +4,9 @@
     <div class="text-center" style="width:250px">
       <vue-slider v-model="impact" :min="-100" :max="100" style="width:150px; margin-left:20px"/>
       <div class="text-center">
-        <span class="float-left">Proof</span>
+        <span class="float-left">Proven</span>
         <span >None</span>
-        <span class="float-right">Rebuttal</span>
+        <span class="float-right">Disproven</span>
       </div>
     </div>
     <div class="pl-1 mr-1">{{impact}}%</div>
