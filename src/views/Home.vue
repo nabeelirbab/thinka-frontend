@@ -1,5 +1,5 @@
 <template>
-  <div class="text-justify">
+  <div class="text-justify bg-white">
     <div class="row no-gutters">
       <div class="col-12 col-md-6 w-100 max-height bg-dark banner" style="overflow:hidden">
       </div>
@@ -16,6 +16,16 @@
     </div>
   </div>
 </template>
+<script>
+import Auth from '@/core/auth'
+export default {
+  mounted(){
+    if(Auth.user().value){
+      this.$router.push('/dashboard')
+    }
+  }
+}
+</script>
 <style scoped>
 .banner {
   background: url('~@/assets/images/home-banner.png') no-repeat center top; 

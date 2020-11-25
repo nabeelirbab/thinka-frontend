@@ -1,12 +1,15 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center bg-white border border-secondary p-2 mb-1 pb-4">
-    <div class="pr-3 font-weight-bold">Scope</div>
-    <div class="text-center mr-2" style="width:250px">
-      <vue-slider v-model="scope" :disabled="isLoading" :v-data="scopes" :marks="true" :hide-label="true" data-value="id" data-label="description" />
+  <div class=" bg-white border border-secondary p-2 mb-1 pb-4">
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="pr-3 font-weight-bold">Scope</div>
+      <div class="text-center mr-2 flex-fill">
+        <vue-slider v-model="scope" :disabled="isLoading" :v-data="scopes" :marks="true" :hide-label="true" data-value="id" data-label="description" />
+      </div>
+      <button v-if="user && user['id'] * 1 === selectedStatementData['user_id'] * 1" :disabled="isLoading || scope === null" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
     </div>
-    <div class="text-nowrap" style="width:26px">
-      <span v-if="scope > 0" class='mr-2'>{{scopes[findArrayIndex(scope, scopes, 'id')]['description']}}</span>
-      <button v-if="scope !== null" :disabled="isLoading" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
+    <div class="text-nowrap text-center">
+      <span v-if="scope > 0">{{scopes[findArrayIndex(scope, scopes, 'id')]['description']}}</span>
+      <span v-else>Unspecified</span>
     </div>
   </div>
 </template>
@@ -16,6 +19,7 @@ import 'vue-slider-component/theme/antd.css'
 import ScopeAPI from '@/api/scope'
 import StatementAPI from '@/api/statement'
 import GlobalData from '@/views/statement/global-data'
+import Auth from '@/core/auth'
 export default {
   components: {
     VueSlider
@@ -25,7 +29,8 @@ export default {
       isLoading: false,
       scope: null,
       isPublic: false,
-      ...GlobalData
+      ...GlobalData,
+      user: Auth.user()
     }
   },
   methods: {

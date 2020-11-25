@@ -1,19 +1,24 @@
 <template>
-  <div class="d-md-flex fixed-top font-weight-bold border-bottom align-items-center py-1 bg-white">
+  <div class="d-md-flex fixed-top font-weight-bold border-bottom align-items-center py-1 bg-white" style="min-height: 46px!important">
     <div v-if="!hideBranding" class="px-2 w-sm-100 d-flex align-items-center">
       <router-link :to="user ? '/dashboard' : '/'" class="navbar-brand py-0 text-uppercase text-primary" style="font-size:1.60875em">Thinka.io</router-link>
       <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link>
+      <div v-else class="flex-fill text-right d-md-none">
+        <UserInfo />
+      </div>
     </div>
-    <div class="d-flex flex-fill">
+    <div class="d-flex flex-fill px-2" >
       <LogInForm v-if="user === null" class="ml-auto d-none d-md-block" />
-      <div v-else class="d-flex justify-content-around  w-100 container" >
-        <router-link v-if="user" to="/dashboard" :class="routePath === '/dashboard' ? '' : 'text-secondary'" class="shadow-none py-1"><fa icon="home" /> </router-link>
-        <router-link v-if="user" to="/search" :class="routePath === '/search' ? '' : 'text-secondary'" class="shadow-none py-1"  tag="button"><fa icon="search" /></router-link>
-        <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? '' : 'text-secondary'" class="shadow-none py-1"  tag="button"><fa icon="tree" /></router-link>
-        <router-link v-if="user" to="/bookmarks" :class="routePath === '/bookmarks' ? '' : 'text-secondary'" class="shadow-none py-1"  tag="button"><fa icon="bookmark" /></router-link>
-        <router-link v-if="user" to="/notification" :class="routePath === '/notification' ? '' : 'text-secondary'" class="shadow-none py-1"  tag="button"><fa icon="bell" /></router-link>
+      <div v-else class="d-flex justify-content-around align-items-center  w-100 container" >
+        <router-link v-if="user" to="/dashboard" :class="routePath === '/dashboard' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 px-1"><fa icon="home" /> </router-link>
+        <router-link v-if="user" to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 px-1"  tag="button"><fa icon="search" /></router-link>
+        <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 px-1"  tag="button"><fa icon="tree" /></router-link>
+        <router-link v-if="user" to="/bookmarks" :class="routePath === '/bookmarks' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 px-1"  tag="button"><fa icon="bookmark" /></router-link>
+        <router-link v-if="user" to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 px-1"  tag="button"><fa icon="bell" /></router-link>
         <router-link v-if="user" to="/search" class="text-secondary shadow-none py-1"  tag="button"><fa icon="bars" /></router-link>
       </div>
+      <UserInfo v-if="user && !hideBranding" class="d-none d-md-inline-block mx-2" />
+
       <!-- <div class="navbar-nav">
         
         <a class="nav-item nav-link" href="#">Features</a>
@@ -37,14 +42,17 @@
       </ul> -->
 
     </div>
+    
   </div>
 </template>
 <script>
 import Auth from '@/core/auth'
 import LogInForm from './header-components/LogInForm'
+import UserInfo from './header-components/UserInfo'
 export default {
   components: {
-    LogInForm
+    LogInForm,
+    UserInfo
   },
   mounted(){
   },
@@ -56,6 +64,7 @@ export default {
   },
   
   methods: {
+    
   },
   watch: {
     routePath(){
@@ -66,7 +75,7 @@ export default {
       return this.$route['path']
     },
     hideBranding(){
-      return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
+      return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding'] && this.authenticationStatus === 'authenticated'
     }
   }
 }

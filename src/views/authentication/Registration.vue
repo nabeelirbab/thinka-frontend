@@ -1,59 +1,62 @@
 <template>
-  <div class="mt-4 pt-4">
-    <div class="row">
-      <div class="col-12 col-md-5 offset-md-3">
-        <div class="p-4 border ml-auto" style="max-width:500px">
-          <form>
-            <h5 class="mb-3">Registration Form</h5>
-            <div class="form-group row">
-              <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">First Name</label>
-              <div class="col-sm-12">
-                <input v-model="firstName" :class="typeof validationErrors['firstName'] !== 'undefined' ? 'is-invalid' : ''" class="form-control " type="text"  placeholder="First Name">
-                <div class="invalid-feedback">
-                  {{validationErrors['firstName']}}
+  <div class="pt-4 registrationPage bg-white ">
+    <div class="container">
+
+      <div class="row pt-4 ">
+        <div class="col-12 col-md-6 offset-md-2">
+          <div class="p-4 border mx-auto " style="max-width:500px">
+            <form>
+              <h5 class="mb-3">Registration Form</h5>
+              <div class="form-group row">
+                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">First Name</label>
+                <div class="col-sm-12">
+                  <input v-model="firstName" :class="typeof validationErrors['firstName'] !== 'undefined' ? 'is-invalid' : ''" class="form-control " type="text"  placeholder="First Name">
+                  <div class="invalid-feedback">
+                    {{validationErrors['firstName']}}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Last Name</label>
-              <div class="col-sm-12">
-                <input v-model="lastName" :class="typeof validationErrors['lastName'] !== 'undefined' ? 'is-invalid' : ''" type="text" class="form-control" placeholder="Last Name">
-                <div class="invalid-feedback">
-                  {{validationErrors['lastName']}}
+              <div class="form-group row">
+                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Last Name</label>
+                <div class="col-sm-12">
+                  <input v-model="lastName" :class="typeof validationErrors['lastName'] !== 'undefined' ? 'is-invalid' : ''" type="text" class="form-control" placeholder="Last Name">
+                  <div class="invalid-feedback">
+                    {{validationErrors['lastName']}}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Email</label>
-              <div class="col-sm-12">
-                <input v-model="email" :class="typeof validationErrors['email'] !== 'undefined' ? 'is-invalid' : ''" type="email" class="form-control" placeholder="Your Email">
-                <div class="invalid-feedback">
-                  {{validationErrors['email']}}
+              <div class="form-group row">
+                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Email</label>
+                <div class="col-sm-12">
+                  <input v-model="email" :class="typeof validationErrors['email'] !== 'undefined' ? 'is-invalid' : ''" type="email" class="form-control" placeholder="Your Email">
+                  <div class="invalid-feedback">
+                    {{validationErrors['email']}}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="form-group row">
-              <label for="inputPassword" class="col-sm-12 col-form-label font-weight-bold">Password</label>
-              <div class="col-sm-12">
-                <input v-model="password" :class="typeof validationErrors['password'] !== 'undefined' ? 'is-invalid' : ''" type="password" class="form-control" id="inputPassword" placeholder="Password" min="4">
-                <div class="invalid-feedback">
-                  {{validationErrors['password']}}
+              <div class="form-group row">
+                <label for="inputPassword" class="col-sm-12 col-form-label font-weight-bold">Password</label>
+                <div class="col-sm-12">
+                  <input v-model="password" :class="typeof validationErrors['password'] !== 'undefined' ? 'is-invalid' : ''" type="password" class="form-control" id="inputPassword" placeholder="Password" min="4">
+                  <div class="invalid-feedback">
+                    {{validationErrors['password']}}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="text-center">
-              <span v-if="isLoading">Registering...</span>
-              <div v-else-if="hasRegistered">
-                <fa icon="check" /> Your account has been registered! <br />
-                <button @click="logIn" type="button" class="btn btn-success font-weight-bold mt-1">Log In</button>
+              <div class="text-center">
+                <span v-if="isLoading">Registering...</span>
+                <div v-else-if="hasRegistered">
+                  <fa icon="check" /> Your account has been registered! <br />
+                  <button @click="logIn" type="button" class="btn btn-success font-weight-bold mt-1">Log In</button>
+                </div>
+                <button v-else @click="register" type="button" class="btn btn-primary btn-lg"> Register Now</button>
               </div>
-              <button v-else @click="register" type="button" class="btn btn-primary btn-lg"> Register Now</button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
-      <div class="col-12 col-md-4" style="padding-right: 80px">
-        <img src="@/assets/images/register.png" class="w-100" style="margin-top:180px;"/>
+        <div class="col-12 col-md-4 text-center text-md-left">
+          <img src="@/assets/images/register.png" class="img-fluid" style="margin-top:50px; max-width: 200px"/>
+        </div>
       </div>
     </div>
   </div>
@@ -151,3 +154,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.registrationPage {
+  min-height: calc(100vh - 46px)
+}
+</style>

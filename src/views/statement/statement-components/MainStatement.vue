@@ -12,7 +12,7 @@
       
     </div> -->
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox" @click="statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '')" class="limitBoxborder bg-primary text-white px-3 pb-3 pt-3 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''">
+    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-3 pt-3 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''">
       <div class="d-flex justify-content-between">
       </div>
       <div class=" font-weight-bold text-white pr-2">
@@ -71,7 +71,7 @@ export default {
     }
   },
   methods: {
-    statementClicked(){
+    _statementClicked(){
       this.selectedStatementData = this.statement
       this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? null : this.relation['id']
     },
@@ -100,6 +100,7 @@ export default {
         setTimeout(() => {
           this.statementTextHeight = (this.$refs.mainStatementBox).offsetHeight
         }, 500)
+        this.selectedStatementId = null
       },
       immediate: true
     },
@@ -108,6 +109,9 @@ export default {
     }
   },
   computed: {
+    isSelected(){
+      return this.relation && this.selectedStatementId === this.relation['id']
+    },
     statement(){
       return this.relation['statement']
     },
@@ -128,7 +132,6 @@ export default {
   margin-top: 63px;
   margin-left: 4px;
   margin-right: 4px;
-  
 }
 .mainStatement.limitBox {
   /* max-height: 15vh!important; */

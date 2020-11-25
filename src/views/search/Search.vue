@@ -1,5 +1,5 @@
 <template>
-  <div class="container pt-4">
+  <div class="container pt-4 height-max bg-white">
     <SearchBox @search="search" :is-loading="isLoading"/>
     <ResultList ref="resultList" @is-loading="isLoading = $event" />
   </div>

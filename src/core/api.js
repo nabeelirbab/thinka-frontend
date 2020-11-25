@@ -62,4 +62,17 @@ export default class API {
       })
     })
   }
+  post(path, parameter = {}){
+    return new Promise((resolve, reject) => {
+      axios.post(this.basePath + this.apiName + path, parameter, Auth.generateHeader()).then(response => {
+        resolve(response['data'])
+      }).catch(errorResult => {
+        if(errorResult.response.status === 401){
+          Auth.sessionExpired()
+          // alert('Session Expired')
+        }
+        reject(errorResult)
+      })
+    })
+  }
 }

@@ -11,7 +11,6 @@
           </div>
           <input ref="searchText" v-model="searchText" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
-        
       </div>
       <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button btn-info btn-square btn py-1 px-1">
         <div><fa icon="chevron-left" /></div>
@@ -35,6 +34,13 @@ export default {
       type: Number,
       default: 0
     }
+  },
+  mounted(){
+    console.log('mounted', this.backHistory)
+    // if(this.backHistory.length && this.backHistory[0] !== this.relationId){
+    //   this.backHistory = [this.relationId]
+    //   localStorage.setItem('back_history', JSON.stringify(this.backHistory))
+    // }
   },
   data(){
     return {
@@ -60,7 +66,6 @@ export default {
       }, 750)
     },
     search(){
-      console.log('searching now')
       this.statementTextFilter = this.searchText
       this.isLoading = false
     },
@@ -68,6 +73,7 @@ export default {
       this.isGoingBack = true
       this.forwardHistory.unshift(this.backHistory.pop())
       const relationId = this.backHistory.pop()
+      localStorage.setItem('back_history', JSON.stringify(this.backHistory))
       this.$router.push('/branch/' + relationId)
     },
     goForward(){
@@ -85,13 +91,19 @@ export default {
       }
     },
     relationId: {
-      handler(newData, oldData){
-        console.log(newData, oldData)
-        if(newData){
+      handler(newData){
+        if(!isNaN(newData)){
           if(this.forwardHistory.length && !this.isGoingBack && !this.isGoingForward){
             this.forwardHistory = []
           }
-          this.backHistory.push(newData)
+          console.log('this.backHistory.length', this.backHistory.length, localStorage.getItem('back_history'))
+          if(this.backHistory.length === 0 && localStorage.getItem('back_history')){
+            this.backHistory = JSON.parse(localStorage.getItem('back_history'))
+          }
+          if(!this.backHistory.length || this.backHistory[this.backHistory.length - 1] !== newData){
+            this.backHistory.push(newData)
+          }
+          localStorage.setItem('back_history', JSON.stringify(this.backHistory))
         }
         this.isGoingBack = false
         this.isGoingForward = false

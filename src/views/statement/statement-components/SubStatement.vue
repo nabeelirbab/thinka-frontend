@@ -110,7 +110,7 @@ export default {
     }
   },
   watch: {
-    selectedStatementId(){
+    isActive(){
       this.statementClass['border'] = this.isActive
     },
     statement: {

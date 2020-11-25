@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Theme Font 2';
-  src: url('../Proxima Nova W01 Bold.ttf')
+  src: url('../NotoSans-Bold.ttf')
 };
 
 .font-style-2 {
@@ -35,4 +35,14 @@
   height:39px;
   width:39px;
   padding: 0px
+}
+
+.container {
+  max-width: 900px!important;
+}
+body {
+  background-color: whitesmoke;
+}
+.height-max{
+  min-height: calc(100vh - 46px)
 }

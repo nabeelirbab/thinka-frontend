@@ -1,12 +1,16 @@
 <template>
-  <div :class="hideBranding ? 'no-branding-top-padding' : 'top-padding'" style="">
+  <div :class="hasMenu && !hideBranding ? 'has-menu-top-padding' : 'top-padding'" style="">
     <Header />
-    <div>
-      <div>
+    <div class="d-flex align-items-stretch">
+      <div class=" flex-fill">
         <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center">
           Please wait... <fa icon="spinner" spin />
         </div>
-        <router-view v-else></router-view>
+        <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
+        <div v-else class="text-center w-100 pt-4">
+          <div>You need to login to see this page</div>
+          <router-link to="/login" class="btn btn-primary">Log In</router-link>
+        </div>
       </div>
     </div>
   </div>
@@ -43,23 +47,29 @@ export default {
     }
   },
   computed: {
+    routeRequireUser(){
+      return typeof this.$route['meta']['auth'] !== 'undefined' && typeof this.$route['meta']['auth']['require_user'] !== 'undefined' && this.$route['meta']['auth']['require_user']
+    },
     hideBranding(){
       return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
+    },
+    hasMenu(){
+      return this.authenticationStatus === 'authenticated'
     }
   }
 }
 </script>
 
 <style scoped>
-.no-branding-top-padding {
-  padding-top:41px!important
-}
 .top-padding {
-  padding-top:79px
+  padding-top:46px
+}
+.has-menu-top-padding {
+  padding-top: 76px;
 }
 @media (min-width: 768px) {
-  .top-padding {
-    padding-top:41px
+  .has-menu-top-padding {
+    padding-top: 46px;
   }
 }
 </style>

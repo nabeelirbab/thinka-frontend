@@ -1,5 +1,5 @@
 <template>
-  <div class="container py-4">
+  <div class="container py-4 bg-white height-max">
     <h2>Dashboard</h2>
     <p>Good day! In your dashboard, you will see different information and functionality to help and guide you in using <strong class="text-uppercase">Thinka.io</strong>.</p>
     <div class='text-center mb-2'>
@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="col-12 col-md-6 pb-3">
-        <Trending />
+          <Trending />
       </div>
       <div class="col-12 col-md-6 pb-3">
         <div class="card">
@@ -62,6 +62,9 @@ import Trending from './dashboard-components/Trending'
 export default {
   components: {
     Trending
+  },
+  mounted(){
+    
   },
   data(){
     return {

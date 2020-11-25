@@ -95,7 +95,6 @@ export default {
       }
       this.relations = []
       RelationAPI.retrieve(param).then(result => {
-        console.log('data', result)
         if(result['data']){
           this.relations = result['data']
         }
@@ -109,7 +108,6 @@ export default {
   },
   watch: {
     isLoading(newData){
-      console.log('isLoading?', newData)
       this.$emit('is-loading', newData)
     }
   }

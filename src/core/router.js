@@ -25,11 +25,16 @@ const routes = [
     path: "/dashboard",
     name: "Dashboard",
     component: Dashboard,
+    meta: {
+      auth: {
+        require_user: true
+      }
+    }
   },
   {
     path: "/search",
     name: "Search",
-    component: Search
+    component: Search,
   },
   {
     path: "/folder/:logicTreeId/:relationId",
@@ -49,19 +54,31 @@ const routes = [
     path: "/new-statement",
     name: "NewStatement",
     component: NewStatement,
-
+    meta: {
+      auth: {
+        require_user: true
+      }
+    }
   },
   {
     path: "/bookmarks",
     name: "Bookmarks",
     component: Bookmarks,
-
+    meta: {
+      auth: {
+        require_user: true
+      }
+    }
   },
   {
     path: "/notification",
     name: "Notification",
     component: Notification,
-
+    meta: {
+      auth: {
+        require_user: true
+      }
+    }
   },
   {
     path: "/register",

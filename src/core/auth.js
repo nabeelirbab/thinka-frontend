@@ -82,6 +82,8 @@ class Auth {
   }
   logout(){
     user.value = null
+    localStorage.removeItem(localStorageKey)
+    authenticationStatus.value = 'unauthenticated'
   }
   refreshToken(){
     if(localStorage.getItem(localStorageKey)){
@@ -117,7 +119,15 @@ class Auth {
           userId: userData['id'],
           ttl: ttl, // time to live in seconds
         }))
-        user.value = userData
+        let userInformation = userData['user']
+        user.value = {
+          id: userData['id'],
+          email: userData['email'],
+          status: userData['status'],
+          first_name: userInformation['first_name'],
+          last_name: userInformation['last_name']
+        }
+        authenticationStatus.value = 'authenticated'
         this.startSession(ttl, false)
         resolve(userData)
       }).catch(error => {

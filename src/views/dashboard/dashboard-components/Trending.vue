@@ -1,28 +1,51 @@
 <template>
-  <div class="card">
-    <h5 class="card-header"><fa icon="chart-line" /> Trending</h5>
-    <div class="card-body">
+  <div class="border rounded">
+    <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="chart-line" /> Trending</h5>
+    <div class="p-4">
       <p class="card-text">The list below shows the most active conclusions</p>
-      <table class="table ">
-        <tbody>
-          <tr>
-            <td>Most plants grow in soil</td>
-            <td>12</td>
-          </tr>
-          <tr>
-            <td>Some people believe that the Earth is flat</td>
-            <td>10</td>
-          </tr>
-          <tr>
-            <td>Water is healthy for the body</td>
-            <td>10</td>
-          </tr>
-          <tr>
-            <td>This tree in the desert has no water and grows</td>
-            <td>9</td>
-          </tr>
-        </tbody>
-      </table>
+      <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
+      <div >
+        <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
+          <div class="flex-fill text-break">
+            <small>{{formatDate(trend['updated_at'])}}</small> <br />
+            {{trend['text']  + trend['text']  + trend['text']  + trend['text']  + trend['text']}}
+          </div>
+          <div class="pl-2">
+            <router-link :to="'/branch/' + trend['id']" class="btn btn-sm btn-outline-info text-nowrap"><fa icon="eye" /> Open</router-link>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
+<script>
+import RelationAPI from '@/api/relation'
+export default {
+  mounted(){
+    this.getTrending();
+  },
+  data(){
+    return {
+      isLoading: true,
+      trending: []
+    }
+  },
+  methods: {
+    getTrending(){
+      this.trending = []
+      this.isLoading = true
+      RelationAPI.post('/trending').then(result => {
+        console.log('result', result)
+        if(result['data']){
+          this.trending = result['data']
+        }
+        this.isLoading = false
+      }).catch(() => {
+        this.isLoading = false
+      })
+    }
+  }
+}
+</script>
+<style scoped>
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <button :class="active ? 'btn-success' : 'btn-primary'" class="btn-icon-circle btn-lg">
+    <button :class="(active ? 'btn-success' : 'btn-primary') + ' ' + (disabled ? 'disabled': '')" :disabled="disabled" class="btn btn-icon-circle btn-lg">
       <fa :icon="icon" />
     </button> <br />
       {{text}}
@@ -9,6 +9,10 @@
 <script>
 export default {
   props: {
+    disabled: {
+      type: Boolean,
+      default: false
+    },
     icon: String,
     text: String,
     active: {

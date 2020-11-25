@@ -1,5 +1,5 @@
 <template>
-  <div class=" ">
+  <div class="">
     <div v-if="isLoading" class="text-center">
       Please wait... <fa icon="spinner" spin />
     </div>
@@ -8,30 +8,29 @@
     </div>
     <div v-show="!isLoading && statement" >
       <TopToolbar :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" />
-      <div class="container py-2">
-        <MainStatement v-if="statement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
-        <div class="toolbar-bottom-space">
-          <div class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+      <div class="container py-2 bg-white">
+        <MainStatement v-if="statement" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
+        <div @click="selectMainStatement" class="toolbar-bottom-space">
+          <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <template v-for="(children, index) in positiveStatements" :key="'children' + index">
               <SubStatement :is-positive-statement="true" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
             <CreateSubStatement v-if="selectedStatementId === statementId"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
-            <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No Sub Statement'}}</small></div>
+            <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
-          <div class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+          <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <template v-for="(children, index) in negativeStatements" :key="'children' + index">
               <SubStatement  :is-positive-statement="false" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
             <CreateSubStatement v-if="selectedStatementId === statementId"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
-            <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No Sub Statement'}}</small></div>
+            <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
           </div>
         </div>
 
       </div>
-      <Toolbar  class="fixed toolbar" />
+      <Toolbar class="fixed toolbar" />
     </div>
-    
   </div>
 </template>
 <script>
@@ -68,10 +67,15 @@ export default {
       statementTextFilter: GlobalData.statementTextFilter,
       backHistory: GlobalData.backHistory,
       mainStatementHeight: 0,
-      positiveStatementHeight: 100
+      positiveStatementHeight: 100,
     }
   },
   methods: {
+    selectMainStatement($e){
+      if($e.target === this.$refs.positiveWindow || $e.target === this.$refs.negativeWindow){
+        this.$refs.mainStatement._statementClicked()
+      }
+    },
     initialize(relationId){
       // this.retrieveTree(statementId)
       // this.retrieveRecursiveTree(statementId)
@@ -102,21 +106,49 @@ export default {
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id']
           },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window'])
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id'])
         }
       }
       RelationAPI.retrieve(param).then(result => {
-        this.statement = result['data']
-      }).finally(() => {
+        if(result['data']){
+          this.statement = result['data']
+          setTimeout(() => {
+            this.resizePositiveStatement()
+            this.setDefaultSeparator()
+          }, 1000)
+          this.isLoading = false
+        }else{
+          this.isLoading = false
+        }
+      }).catch(() => {
         this.isLoading = false
       })
+    },
+    setDefaultSeparator(){
+      const negativeChildren = this.$refs.negativeWindow.children
+      let negativeInnerHeight = 0
+      for(let x = 0; x < negativeChildren.length; x++){
+        negativeInnerHeight += negativeChildren[x].offsetHeight
+      }
+      const positiveChildren = this.$refs.positiveWindow.children
+      let positiveInnerHeight = 0
+      for(let x = 0; x < positiveChildren.length; x++){
+        positiveInnerHeight += positiveChildren[x].offsetHeight
+      }
+
+      if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
+        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight) * -1)
+      }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
+        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
+      }
+      console.log(negativeInnerHeight, positiveInnerHeight)
     },
     generateRecursiveRelationsSelect(currentDeep, deep = 10){
       let selectParam = {
         statement: {
           select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id']
         },
-        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row'])
+        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row', 'user_id'])
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {
@@ -126,32 +158,6 @@ export default {
       }
       return selectParam
     },
-    // retrieveRecursiveTree(statementId){
-    //   this.isLoading = true
-    //   const param = {
-    //     id: statementId * 1,
-    //     select: {
-    //       relations: {
-    //         select: ['logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window']
-    //       },
-    //       relation: {
-    //         select: [
-    //           'logic_tree_id',
-    //           'statement_id',
-    //         ]
-    //       },
-    //       logic_tree: {
-    //         select: ['description', 'is_public']
-    //       },
-    //       ...(['text', 'synopsis', 'comment'])
-    //     }
-    //   }
-    //   StatementAPI.get(param).then(result => {
-    //     this.statement = result['data']
-    //   }).finally(() => {
-    //     this.isLoading = false
-    //   })
-    // },
     addNewSubStatement(newSubStatement, parentStatement = null){
       if(parentStatement === null){
         let recursiveDownRelations = newSubStatement['relation']
@@ -187,6 +193,7 @@ export default {
       immediate: true
     },
     mainStatementHeight(){
+      console.log('mainstatementheight', this.mainStatementHeight)
       setTimeout(() => {
         this.resizePositiveStatement()
       }, 5)
@@ -194,10 +201,10 @@ export default {
   },
   computed: {
     totaRelevanceWindowHeight(){
-      const headerHeight = 73.8 // px
+      const headerHeight = 90 // px
       const separatorHeight = 18 // px
       const bodyTopPadding = 8 // px
-      const toolbarHeight = 72 //px
+      const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
       const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight
       return totaRelevanceWindowHeight - this.mainStatementHeight

@@ -13,6 +13,7 @@ export default {
   props: {
     yRange: Number
   },
+  emits: ['move'],
   mounted(){
     window.addEventListener('touchend', this.dragEnd, false)
     window.addEventListener('mouseup', this.dragEnd, false)
@@ -34,6 +35,9 @@ export default {
     }
   },
   methods: {
+    _setOffset(value){
+      this.yOffset = value
+    },
     _getYOffset(){
       return this.yOffset
     },
@@ -60,7 +64,6 @@ export default {
   },
   watch: {
     yOffset(){
-      console.log(this.windowHeight, this.yOffset)
       this.$emit('move', this.yOffset)
     }
   },

@@ -1,9 +1,9 @@
 <template>
   <div class="">
     <div class="form-inline">
-      <input v-model="email" class="form-control mr-sm-2" type="input" placeholder="Email">
-      <input v-model="password" @keypress.enter="logIn" class="form-control mr-sm-2" type="password" placeholder="Password">
-      <button :disabled="!hasCredentials || isLoading" @click="logIn" class="btn btn-primary font-style-2 px-4" type="button">Log In</button>
+      <input v-model="email" class="form-control mr-sm-2" type="input" placeholder="Email" style="height:36px; padding-top:9px">
+      <input v-model="password" @keypress.enter="logIn" class="form-control mr-sm-2" type="password" placeholder="Password" style="height:36px; padding-top:9px">
+      <button :disabled="!hasCredentials || isLoading" @click="logIn" class="btn btn-primary font-style-2 px-4" type="button" style="height:36px; padding-top:6px">Log In</button>
     </div>
     <div v-if="mismatched" class="text-danger"><small><fa icon="exclamation" /> Email & Password mismatched!</small></div>
   </div>
