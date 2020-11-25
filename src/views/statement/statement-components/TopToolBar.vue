@@ -2,7 +2,7 @@
   <div class="bg-info">
     <div class="d-flex container px-2 align-items-center">
       <div class="flex-fill">
-        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-info btn-square border-none"><fa icon="search" /></button>
+        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size"><fa icon="search" /></button>
         <div v-else class="input-group input-group-sm ">
           <div class="input-group-preppend rounded-l-oval" >
             <span v-if="isLoading" class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-0" style="font-size: 1.02em;"><fa icon="spinner" spin /></span>
@@ -12,17 +12,17 @@
           <input ref="searchText" v-model="searchText" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
-      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button btn-info btn-square btn py-1 px-1">
+      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
         <div><fa icon="chevron-left" /></div>
       </button>
-      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button btn-info btn-square btn py-1 px-1">
+      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
-        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn btn-info btn-square"><fa icon="bookmark" /></button>
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square"><fa icon="bookmark" /></button>
       </div>
       <div>
-        <button class="btn btn-info btn-square"><fa icon="ellipsis-v" /></button>
+        <button class="btn icon-size py-1 text-white btn-square"><fa icon="ellipsis-v" /></button>
       </div>
     </div>
   </div>
@@ -182,5 +182,8 @@ export default {
     color: white;
     border: 2px white solid;
     padding-top:3px;
+  }
+  .icon-size {
+    font-size:1.3em
   }
 </style>
