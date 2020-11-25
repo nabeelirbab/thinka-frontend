@@ -12,7 +12,7 @@
       <div v-else class="d-flex justify-content-around align-items-center  w-100 container px-2" >
         <router-link v-if="user" to="/dashboard" :class="routePath === '/dashboard' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"><fa icon="home" /> </router-link>
         <router-link v-if="user" to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="search" /></router-link>
-        <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="tree" /></router-link>
+        <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><CustomIcon icon="tree" /></router-link>
         <router-link v-if="user" to="/bookmarks" :class="routePath === '/bookmarks' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bookmark" /></router-link>
         <router-link v-if="user" to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
         <router-link v-if="user" to="/search" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
@@ -49,10 +49,12 @@
 import Auth from '@/core/auth'
 import LogInForm from './header-components/LogInForm'
 import UserInfo from './header-components/UserInfo'
+import CustomIcon from '@/components/CustomIcon'
 export default {
   components: {
     LogInForm,
-    UserInfo
+    UserInfo,
+    CustomIcon
   },
   mounted(){
   },
@@ -80,7 +82,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 @media (min-width: 768px) {
   .header-icon {
     font-size: 1.16em
