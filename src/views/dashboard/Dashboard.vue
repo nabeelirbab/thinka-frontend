@@ -7,6 +7,11 @@
       <router-link to="/search" class="btn btn-lg btn-outline-primary text-uppercase mx-1 mb-2"><fa icon="search" /> Search A Tree</router-link>
     </div>
     <div class="row">
+
+      <div class="col-12 col-md-6 pb-3">
+          <Trending />
+      </div>
+
       <div class="col-12 col-md-6 pb-3">
         <div class="card">
           <h5 class="card-header"><fa icon="cloud" /> Thinka Tank</h5>
@@ -26,9 +31,6 @@
             </table>
           </div>
         </div>
-      </div>
-      <div class="col-12 col-md-6 pb-3">
-          <Trending />
       </div>
       <div class="col-12 col-md-6 pb-3">
         <div class="card">
