@@ -4,9 +4,9 @@
     <div class="text-center" style="width:250px">
       <vue-slider v-model="opinion" :min="-100" :max="100" style="width:150px; margin-left:20px"/>
       <div class="text-center">
-        <span class="float-left">Agree</span>
+        <span class="float-left">Disagree</span>
         <span >Neutral</span>
-        <span class="float-right">Disagree</span>
+        <span class="float-right">Agree</span>
       </div>
     </div>
     <div class="pl-1 mr-1">{{opinion}}%</div>
