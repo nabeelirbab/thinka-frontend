@@ -2,27 +2,27 @@
   <div class="bg-info">
     <div class="d-flex container px-2 align-items-center">
       <div class="flex-fill">
-        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size"><fa icon="search" /></button>
+        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size" title="Search this tree."><fa icon="search" /></button>
         <div v-else class="input-group input-group-sm ">
           <div class="input-group-preppend rounded-l-oval" >
             <span v-if="isLoading" class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-0" style="font-size: 1.02em;"><fa icon="spinner" spin /></span>
-            <button v-else-if="searchText !== ''" @click="clearSearchText" class="rounded-l-oval border-r-none btn bg-white text-danger pl-3 pr-0 pt-1" type="button" style="height:2.31em;"><fa icon="trash" /></button>
+            <button v-else-if="searchText !== ''" @click="clearSearchText" class="rounded-l-oval border-r-none btn bg-white text-danger pl-3 pr-0 pt-1" type="button" style="height:2.31em;" title="Clear search text."><fa icon="trash" /></button>
             <span v-else class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-none border-0" style="font-size: 1.02em;"><fa icon="search" /></span>
           </div>
           <input ref="searchText" v-model="searchText" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
-      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
+      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Back.">
         <div ><fa icon="chevron-left" /></div>
       </button>
-      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
+      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Forward.">
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
-        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-1"><fa icon="bookmark" /></button>
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-1" title="Add bookmark."><fa icon="bookmark" /></button>
       </div>
       <div>
-        <button class="btn icon-size py-1 text-white btn-square px-2"><fa icon="ellipsis-v" /></button>
+        <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button>
       </div>
     </div>
   </div>
