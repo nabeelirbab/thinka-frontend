@@ -1,7 +1,7 @@
 <template>
   <div class="">
     
-    <div class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
+    <div v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
       <ImpactSlider v-if="showImpact" />
       <OpinionSlider v-if="showOpinion" />
       <ScopeSlider v-if="showScope" />
@@ -41,6 +41,7 @@ export default {
   data(){
     return {
       authenticationStatus: Auth.status(),
+      user: Auth.user(),
       ...GlobalData
     }
   }

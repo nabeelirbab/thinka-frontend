@@ -5,7 +5,7 @@
       <div class="text-center mr-2 flex-fill">
         <vue-slider v-model="scope" :disabled="isLoading" :v-data="scopes" :marks="true" :hide-label="true" data-value="id" data-label="description" />
       </div>
-      <button v-if="user && user['id'] * 1 === selectedStatementData['user_id'] * 1" :disabled="isLoading || scope === null" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
+      <button v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1" :disabled="isLoading || scope === null" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
     </div>
     <div class="text-nowrap text-center">
       <span v-if="scope > 0">{{scopes[findArrayIndex(scope, scopes, 'id')]['description']}}</span>
@@ -37,7 +37,7 @@ export default {
     save(){
       this.isLoading = true
       const param = {
-        id: this.selectedStatementId,
+        id: this.selectedStatementData['statement']['id'],
         scope_id: this.scope
       }
       StatementAPI.update(param).then(result => {
@@ -50,15 +50,17 @@ export default {
     }
   },
   watch: {
-    selectedStatementId: {
+    selectedStatementData: {
       handler(){
         if(this.selectedStatementData){
+          console.log('this.selectedStatementData', this.selectedStatementData)
           this.scope = this.selectedStatementData['statement']['scope_id']
           this.isPublic = this.selectedStatementData['statement']['is_public']
         }else{
           this.scope = null
           this.isPublic = false
         }
+        console.log('selectedStatementData', this.selectedStatementData)
       },
       immediate: true
     }

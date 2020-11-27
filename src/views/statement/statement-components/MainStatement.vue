@@ -62,6 +62,7 @@ export default {
   data(){
     return {
       selectedStatementId: GlobalData.selectedStatementId,
+      selectedStatementData: GlobalData.selectedStatementData,
       showCTOpinion: GlobalData.showCTOpinion,
       isSticky: false,
       stickySeeMore: null,
@@ -72,8 +73,8 @@ export default {
   },
   methods: {
     _statementClicked(){
-      this.selectedStatementData = this.statement
       this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? null : this.relation['id']
+      this.selectedStatementData = this.relation
     },
     isScrolling(){
       const headerHeight = 60

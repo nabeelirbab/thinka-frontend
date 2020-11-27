@@ -16,7 +16,7 @@
             <template v-for="(children, index) in positiveStatements" :key="'children' + index">
               <SubStatement :is-positive-statement="true" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
-            <CreateSubStatement v-if="selectedStatementId === statementId"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="selectedStatementId === statementId && authenticationStatus === 'authenticated'"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
@@ -24,7 +24,7 @@
             <template v-for="(children, index) in negativeStatements" :key="'children' + index">
               <SubStatement  :is-positive-statement="false" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
-            <CreateSubStatement v-if="selectedStatementId === statementId"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="selectedStatementId === statementId && authenticationStatus === 'authenticated'"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
           </div>
         </div>

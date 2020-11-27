@@ -22,7 +22,7 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="publish" :class="mainRelation['is_public'] ? 'text-primary' : ''" :disabled="isPublishing || (user && relationUserId !== user['id']) || mainRelation['is_public']" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
+        <button v-if="mainRelation" @click="publish" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing || (user && relationUserId !== user['id'])" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button>
@@ -30,6 +30,7 @@
     </div>
   </div>
   <LogInModal ref="logInModal" />
+  <Prompt ref="prompt" />
 </template>
 <script>
 import Auth from '@/core/auth'
@@ -37,9 +38,11 @@ import GlobalData from '@/views/statement/global-data'
 import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 import RelationAPI from '@/api/relation'
 import LogInModal from '@/components/login/LogInModal'
+import Prompt from '@/components/Prompt'
 export default {
   components: {
-    LogInModal
+    LogInModal,
+    Prompt
   },
   props: {
     mainRelation: {
@@ -107,21 +110,42 @@ export default {
     },
     publish(){
       this.isPublishing = true
-      const param = {
-        id: this.mainRelation['id'],
-        is_public: true,
-        sub_relations: this.subRelationIds
-      }
-      console.log('submitting')
-      RelationAPI.post('/publish', param).then(result => {
-        console.log('okay')
-        if(result['data']){
-          location.reload()
-        }
-      }).catch(error => {
-        console.error(error)
-        this.isPublishing = false
-      })
+      const publishMessage = `
+        <p>So you're ready to publish, well done! Currently this tree is private and so it can still be modified. Once published you will not be able to change your tree. So if you continue all the statements and logic will be fixed and will be visible to anyone.</p>
+        <p>Are you sure you want to publish this tree now?</p>
+      `
+      const unpublishMessage = '<p>Unpublishing the tree will make it private and there can no longer be seen by other users</p>Are you sure you want to unplish this tree?'
+      this.$refs.prompt._open(
+        this.mainRelation['is_public'] ? unpublishMessage: publishMessage,
+        [{
+          label: this.mainRelation['is_public'] ? 'Unpublish': 'Publish',
+          class: this.mainRelation['is_public'] ? 'btn-danger' : 'btn-success',
+          callback: () => {
+            const param = {
+              id: this.mainRelation['id'],
+              is_public: !this.mainRelation['is_public'],
+              sub_relations: this.subRelationIds
+            }
+            console.log('submitting')
+            RelationAPI.post('/publish', param).then(result => {
+              if(result['data']){
+                location.reload()
+              }
+            }).catch(error => {
+              console.error(error)
+              this.isPublishing = false
+            })
+          }
+        }, {
+          label: 'No',
+          class: 'btn-outline-dark',
+          callback: () => {
+            this.isPublishing = false
+          }
+        }],
+        this.mainRelation['is_public'] ? 'Unpblishing Tree...' : 'Publishing Tree...'
+      )
+      
     },
     bookmark(){
       this.isBookmarkLoading = true
