@@ -3,11 +3,12 @@
     <div v-if="isLoading" class="text-center">
       Please wait... <fa icon="spinner" spin />
     </div>
-    <div v-else-if="statement === null">
-      Statement Not Found
+    <div v-else-if="statement === null" class="text-center mt-4">
+      <fa icon="exclamation-triangle" /> Statement Not Found or is Private <br />
+      <LogInModal v-if="authenticationStatus === 'unauthenticated'" :has-button="true" />
     </div>
     <div v-show="!isLoading && statement" >
-      <TopToolbar :main-relation="statement ? statement : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" />
+      <TopToolbar :main-relation="statement ? statement : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" :sub-relation-ids="subRelationIds" />
       <div class="container py-2 bg-white">
         <MainStatement v-if="statement" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
         <div @click="selectMainStatement" class="toolbar-bottom-space">
@@ -36,7 +37,7 @@
 <script>
 // import VueResizable from 'vue-resizable'
 import WindowSeparator from './statement-components/WindowSeperator.vue'
-import StatementAPI from '@/api/statement.js'
+// import StatementAPI from '@/api/statement.js'
 import RelationAPI from '@/api/relation.js'
 import MainStatement from './statement-components/MainStatement'
 import SubStatement from './statement-components/SubStatement'
@@ -45,7 +46,8 @@ import CreateSubStatement from './statement-components/CreateSubStatement'
 import Toolbar from './statement-components/Toolbar'
 import TopToolbar from './statement-components/TopToolBar'
 import GlobalData from './global-data'
-
+import LogInModal from '@/components/login/LogInModal'
+import Auth from '@/core/auth'
 export default {
   components: {
     // VueResizable,
@@ -55,7 +57,8 @@ export default {
     CreateSubStatement,
     // AddStatementOption,
     TopToolbar,
-    Toolbar
+    Toolbar,
+    LogInModal
   },
   mounted(){
   },
@@ -68,6 +71,8 @@ export default {
       backHistory: GlobalData.backHistory,
       mainStatementHeight: 0,
       positiveStatementHeight: 100,
+      subRelationIds: [],
+      authenticationStatus: Auth.status()
     }
   },
   methods: {
@@ -77,24 +82,16 @@ export default {
       }
     },
     initialize(relationId){
-      // this.retrieveTree(statementId)
       // this.retrieveRecursiveTree(statementId)
       this.retrieveRelation(relationId)
       this.selectedStatementId = 0
       this.statementTextFilter = ''
     },
-    retrieveTree(statementId){
-      this.isLoading = true
-      StatementAPI.retrieveTree({id: statementId}).then(result => {
-        this.statement = result
-      }).finally(() => {
-        this.isLoading = false
-      })
-    },
     retrieveRelation(relationId){
       this.isLoading = true
+      this.subRelationIds = []
+      this.statement = null
       const param = {
-        id: relationId * 1,
         select: {
           logic_tree: {
             select: ['description', 'is_public']
@@ -109,13 +106,18 @@ export default {
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id']
           },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id'])
-        }
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public'])
+        },
+        condition: [{
+          column: 'id',
+          value: relationId * 1
+        }]
       }
       RelationAPI.retrieve(param).then(result => {
-        if(result['data']){
-          this.statement = result['data']
-          console.log(result['data'])
+        console.log(result['data'])
+        if(result['data'] && result['data'].length){
+          this.statement = result['data'][0]
+          this.subRelationIds = this.getSubRelationIds(this.statement)
           setTimeout(() => {
             this.resizePositiveStatement()
             this.setDefaultSeparator()
@@ -124,9 +126,20 @@ export default {
         }else{
           this.isLoading = false
         }
-      }).catch(() => {
+      }).catch((error) => {
+        console.error(error)
         this.isLoading = false
       })
+    },
+    getSubRelationIds(relation){
+      let ids = []
+      relation['relations'].forEach(relation => {
+        ids.push({id: relation['id']})
+        if(relation['relations'].length){
+          ids = ids.concat(this.getSubRelationIds(relation))
+        }
+      })
+      return ids
     },
     setDefaultSeparator(){
       const negativeChildren = this.$refs.negativeWindow.children
@@ -140,7 +153,7 @@ export default {
         positiveInnerHeight += positiveChildren[x].offsetHeight
       }
       if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
-        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight) * -1)
+        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 50) * -1)
       }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
         this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
       }
@@ -150,7 +163,7 @@ export default {
         statement: {
           select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id']
         },
-        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row', 'user_id'])
+        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row', 'user_id', 'is_public'])
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {

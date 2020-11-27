@@ -1,8 +1,7 @@
 <template>
   <div class="btn-group pt-md-1">
-    <button type="button" class="btn border-0 shadow-none" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <fa icon="user-circle" style="font-size:1em" /> <span class="d-md-none">{{toPascal(user['first_name'])}}</span>
-      
+    <button type="button" class="btn border-0 shadow-none py-1 d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <fa icon="user-circle" class="mr-1" style="font-size:1.7em" /> <span class="d-md-none">{{toPascal(user['first_name'])}}</span>
     </button>
     <div class="dropdown-menu dropdown-menu-right px-3">
       <div class="text-center py-2">{{user['email']}}</div>

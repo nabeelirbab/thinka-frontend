@@ -9,6 +9,7 @@ import Registration from "@/views/authentication/Registration.vue";
 import LogIn from "@/views/authentication/LogIn.vue";
 import Bookmarks from "@/views/bookmarks/Bookmarks.vue";
 import Notification from "@/views/notification/Notification.vue";
+import MoreMenu from "@/views/more-menu/MoreMenu";
 
 const routes = [
   {
@@ -74,6 +75,16 @@ const routes = [
     path: "/notification",
     name: "Notification",
     component: Notification,
+    meta: {
+      auth: {
+        require_user: true
+      }
+    }
+  },
+  {
+    path: "/more-menu",
+    name: "MoreMenu",
+    component: MoreMenu,
     meta: {
       auth: {
         require_user: true

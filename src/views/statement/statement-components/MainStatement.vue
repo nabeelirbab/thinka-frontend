@@ -22,7 +22,7 @@
             <!-- 111aaaaaaaaaaa asdasdas dasd asda -->
             <!-- 222aaaaaaaaaaa asdasdas dasd asdas asdasjdoi1jsad aoidj -->
             <!-- 333aaaaaaaaaaa asdasdas dasd asdas asdasjdoijsad aoidjaosdj oiasjdoqwheqwoieh aaaas -->
-            {{statement['text']}} ({{parentRelationId}}) [{{relation['id']}}]
+            {{statement ? statement['text'] : 'No Text'}} ({{parentRelationId}}) [{{relation['id']}}]
           </div>
           <div>
             <div v-if="selectedStatementId === relation['id'] || parentRelationId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
@@ -113,10 +113,10 @@ export default {
       return this.relation && this.selectedStatementId === this.relation['id']
     },
     statement(){
-      return this.relation['statement']
+      return typeof this.relation['statement'] !== 'undefined' ? this.relation['statement'] : null
     },
     statementId(){
-      return typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
+      return this.statement && typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
     },
     parentRelationId(){
       return this.relation['parent_relation_id']

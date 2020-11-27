@@ -29,7 +29,7 @@
 import RelationAPI from '@/api/relation.js'
 import ResultItem from './result-list-components/ResultItem'
 import Auth from '@/core/auth'
-const itemsPerPage = 20
+// const itemsPerPage = 20
 export default {
   components: {
     ResultItem
@@ -53,8 +53,8 @@ export default {
       this.currentFilter = filter
       this.isLoading = true
       let param = {
-        limit: itemsPerPage,
-        offset: (this.page - 1) * itemsPerPage,
+        // limit: itemsPerPage,
+        // offset: (this.page - 1) * itemsPerPage,
         select: {
           statement: {
             select: {
@@ -75,8 +75,12 @@ export default {
           logic_tree: {
             select: ['description', 'is_public', 'statement_id']
           },
-          ...(['logic_tree_id', 'statement_id'])
-        }
+          ...(['logic_tree_id', 'statement_id', 'updated_at'])
+        },
+        sort: [{
+          column: 'updated_at',
+          order: 'desc'
+        }]
       }
       if(filter){
         if(typeof filter['statementText'] !== 'undefined' && filter['statementText'] !== ''){

@@ -4,8 +4,9 @@
     <div>
       <div v-if="isLoading">Please wait... <fa icon="spinner" /></div>
       <div v-else-if="userRelationBookmarks.length">
-        <div v-for="userRelationBookmark in userRelationBookmarks" :key="'asd' + userRelationBookmark['id']" class="mb-2 border-bottom p-2">
-          <router-link :to="'/branch/' + userRelationBookmark['relation']['id']" class="text-dark">{{userRelationBookmark['relation']['statement']['text']}}</router-link>
+        <div v-for="userRelationBookmark in userRelationBookmarks" :key="'asd' + userRelationBookmark['id']" class="mb-2">
+          <!-- <router-link :to="'/branch/' + userRelationBookmark['relation']['id']" class="text-dark">{{userRelationBookmark['relation']['statement']['text']}}</router-link> -->
+          <ResultItem :relation="userRelationBookmark['relation']" />
         </div>
       </div>
     </div>
@@ -14,7 +15,11 @@
 <script>
 import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 import Auth from '@/core/auth'
+import ResultItem from '@/views/search/search-components/result-list-components/ResultItem'
 export default {
+  components: {
+    ResultItem
+  },
   mounted(){
     this.initialize()
   },

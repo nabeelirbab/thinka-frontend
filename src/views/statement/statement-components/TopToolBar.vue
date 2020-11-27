@@ -2,35 +2,45 @@
   <div class="bg-info">
     <div class="d-flex container px-2 align-items-center">
       <div class="flex-fill">
-        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size"><fa icon="search" /></button>
+        <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size" title="search"><fa icon="search" /></button>
         <div v-else class="input-group input-group-sm ">
           <div class="input-group-preppend rounded-l-oval" >
             <span v-if="isLoading" class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-0" style="font-size: 1.02em;"><fa icon="spinner" spin /></span>
             <button v-else-if="searchText !== ''" @click="clearSearchText" class="rounded-l-oval border-r-none btn bg-white text-danger pl-3 pr-0 pt-1" type="button" style="height:2.31em;"><fa icon="trash" /></button>
             <span v-else class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-none border-0" style="font-size: 1.02em;"><fa icon="search" /></span>
           </div>
-          <input ref="searchText" v-model="searchText" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
+          <input ref="searchText" v-model="searchText" @keypress.enter="searchText === '' ? showSearchText = false : null" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
-      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
+      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Back History">
         <div ><fa icon="chevron-left" /></div>
       </button>
-      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1">
+      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Forward History">
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
-        <button @click="bookmark" :class="rootBookmarkId ? 'text-warning' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-1"><fa icon="bookmark" /></button>
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
+      </div>
+      <div>
+        <button v-if="mainRelation" @click="publish" :class="mainRelation['is_public'] ? 'text-primary' : ''" :disabled="isPublishing || (user && relationUserId !== user['id']) || mainRelation['is_public']" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <button class="btn icon-size py-1 text-white btn-square px-2"><fa icon="ellipsis-v" /></button>
       </div>
     </div>
   </div>
+  <LogInModal ref="logInModal" />
 </template>
 <script>
+import Auth from '@/core/auth'
 import GlobalData from '@/views/statement/global-data'
 import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
+import RelationAPI from '@/api/relation'
+import LogInModal from '@/components/login/LogInModal'
 export default {
+  components: {
+    LogInModal
+  },
   props: {
     mainRelation: {
       type: Object,
@@ -41,13 +51,15 @@ export default {
     selectedStatementId: {
       type: Number,
       default: 0
-    }
+    },
+    subRelationIds: Array
   },
   mounted(){
     // if(this.backHistory.length && this.backHistory[0] !== this.relationId){
     //   this.backHistory = [this.relationId]
     //   localStorage.setItem('back_history', JSON.stringify(this.backHistory))
     // }
+    
   },
   data(){
     return {
@@ -59,7 +71,10 @@ export default {
       backHistory: GlobalData.backHistory,
       forwardHistory: GlobalData.forwardHistory,
       isBookmarkLoading: true,
-      rootBookmarkId: null
+      rootBookmarkId: null,
+      authenicationStatus: Auth.status(),
+      user: Auth.user(),
+      isPublishing: false
     }
   },
   methods: {
@@ -90,9 +105,31 @@ export default {
       const relationId = this.forwardHistory.shift()
       this.$router.push('/branch/' + relationId)
     },
+    publish(){
+      this.isPublishing = true
+      const param = {
+        id: this.mainRelation['id'],
+        is_public: true,
+        sub_relations: this.subRelationIds
+      }
+      console.log('submitting')
+      RelationAPI.post('/publish', param).then(result => {
+        console.log('okay')
+        if(result['data']){
+          location.reload()
+        }
+      }).catch(error => {
+        console.error(error)
+        this.isPublishing = false
+      })
+    },
     bookmark(){
       this.isBookmarkLoading = true
-      if(!this.rootBookmarkId){
+      if(this.authenicationStatus === 'unauthenticated'){
+        this.$refs.logInModal._open()
+        this.isBookmarkLoading = false
+      }else if(!this.rootBookmarkId){
+        this.isBookmarkLoading = true
         const param = {
           relation_id: this.mainRelation['id']
         }
@@ -159,10 +196,14 @@ export default {
       },
       immediate: true
     },
+    
   },
   computed: {
     relationId(){
       return this.$route.params.relationId * 1
+    },
+    relationUserId(){
+      return typeof this.mainRelation['user_id'] !== 'undefined' ? this.mainRelation['user_id'] : null
     }
   }
 }
