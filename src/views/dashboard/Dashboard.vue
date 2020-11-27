@@ -31,23 +31,21 @@
             </table>
           </div>
         </div>
-      </div>
-      <div class="col-12 col-md-6 pb-3">
         <div class="card">
-          <h5 class="card-header"><fa icon="list" /> User History</h5>
+          <h5 class="card-header"><fa icon="list" />My Thinka Trees</h5>
           <div class="card-body">
             <table class="table ">
               <tbody>
                 <tr>
-                  <td>James Smith</td>
+                  <td>Claim</td>
                   <td>Apples are good for your health.</td>
                 </tr>
                 <tr>
-                  <td>Paul Walker</td>
+                  <td>Question</td>
                   <td>Were the moon landings fake?</td>
                 </tr>
                 <tr>
-                  <td>John Doe</td>
+                  <td>Risk</td>
                   <td>Lockdowns are a terrible solution for anything.</td>
                 </tr>
               </tbody>
