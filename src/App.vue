@@ -3,13 +3,14 @@
     <Header />
     <div class="d-flex align-items-stretch">
       <div class=" flex-fill">
-        <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center">
+        <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center pt-4">
           Please wait... <fa icon="spinner" spin />
         </div>
         <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
         <div v-else class="text-center w-100 pt-4">
           <div>You need to login to see this page</div>
-          <router-link to="/login" class="btn btn-primary">Log In</router-link>
+          <LogInModal :has-button="true" />
+          <!-- <router-link to="/login" class="btn btn-primary">Log In</router-link> -->
         </div>
       </div>
     </div>
@@ -23,11 +24,13 @@ import '@/assets/style/util.scss'
 import '@/assets/style/thinka-custom.scss'
 import Header from '@/components/common/Header'
 import Auth from '@/core/auth'
+import LogInModal from '@/components/login/LogInModal'
 import Maintanables from '@/api/maintainables' // maintainables do not require authentication
 export default {
   name: 'App',
   components: {
-    Header
+    Header,
+    LogInModal
   },
   mounted(){
     Maintanables.prepare().then(() => {

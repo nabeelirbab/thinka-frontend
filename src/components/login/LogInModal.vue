@@ -24,13 +24,22 @@ export default {
       default: false
     }
   },
+  data(){
+    return {
+      logInSuccessCallback: null
+    }
+  },
   methods: {
-    _open(){
+    _open(callback = null){
       this.$refs.modal._open()
+      this.logInSuccessCallback = callback
     },
     logInSuccess(){
-      if(this.refreshOnLogIn){
+      if(this.refreshOnLogIn && typeof this.logInSuccessCallback !== 'function'){
         location.reload()
+      }else{
+        this.$refs.modal._close()
+        this.logInSuccessCallback()
       }
     }
   }

@@ -22,7 +22,7 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="publish" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing || (user && relationUserId !== user['id'])" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
+        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button>
@@ -108,7 +108,24 @@ export default {
       const relationId = this.forwardHistory.shift()
       this.$router.push('/branch/' + relationId)
     },
+    nonAuthorPublish(){
+      this.$refs.prompt._open(
+        'Only the original author can publish or unpublish a tree.',
+        [],
+        'Publish Not Available'
+      )
+    },
     publish(){
+      if(this.user){
+        this.proceedToPublish()
+      }else{
+        this.isPublishing = true
+        this.$refs.logInModal._open(() => {
+          this.proceedToPublish()
+        })
+      }
+    },
+    proceedToPublish(){
       this.isPublishing = true
       const publishMessage = `
         <p>So you're ready to publish, well done! Currently this tree is private and so it can still be modified. Once published you will not be able to change your tree. So if you continue all the statements and logic will be fixed and will be visible to anyone.</p>
@@ -145,35 +162,34 @@ export default {
         }],
         this.mainRelation['is_public'] ? 'Unpblishing Tree...' : 'Publishing Tree...'
       )
-      
     },
     bookmark(){
       this.isBookmarkLoading = true
       if(this.authenicationStatus === 'unauthenticated'){
-        this.$refs.logInModal._open()
-        this.isBookmarkLoading = false
-      }else if(!this.rootBookmarkId){
-        this.isBookmarkLoading = true
-        const param = {
-          relation_id: this.mainRelation['id']
-        }
-        UserRelationBookmarkAPI.create(param).then(result => {
-          console.log('bookmark', result)
-          if(result['data']){
-            this.rootBookmarkId = result['data']['id']
-          }
-          this.isBookmarkLoading = false
-        }).catch(() => {
-          this.isBookmarkLoading = false
+        this.$refs.logInModal._open(() => {
+          this.isBookmarkLoading = true
+          UserRelationBookmarkAPI.checkIfBookmarked(this.mainRelation['id']).then(result => {
+            if(result){
+              this.rootBookmarkId = result
+              this.isBookmarkLoading = false
+            }else{
+              UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelation['id']).then(result => {
+                this.rootBookmarkId = result
+              }).finally(() => {
+                this.isBookmarkLoading = false
+              })
+            }
+          }).catch(error => {
+            console.log(error)
+            this.isBookmarkLoading = false
+          })
         })
-      }else{
-        UserRelationBookmarkAPI.delete({ id: this.rootBookmarkId}).then(result => {
-          console.log('delete bookmark', result)
-          if(result['data']['id']){
-            this.rootBookmarkId = null
-          }
-          this.isBookmarkLoading = false
-        }).catch(() => {
+        this.isBookmarkLoading = false
+      }else {
+        this.isBookmarkLoading = true
+        UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelation['id']).then(result => {
+          this.rootBookmarkId = result
+        }).finally(() => {
           this.isBookmarkLoading = false
         })
       }

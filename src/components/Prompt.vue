@@ -2,8 +2,11 @@
   <modal ref='modal' :closeable="false">
     <div class="text-left">
       <h5 class="mb-3">{{title}}</h5>
-      <div v-html="message"></div>
+      <div v-html="message" class="mb-2"></div>
       <div class="text-center">
+        <template v-if="!actions.length">
+          <button @click="actionChoosen(null)" class="btn btn-outline-dark mx-1">Okay</button>
+        </template>
         <template v-for="(action, index) in actions" :key="'asd' + index">
           <button @click="actionChoosen(action)" :class="typeof action['class'] !== 'undefined' ? action['class'] : 'btn-outline-dark'" class="btn mx-1">{{action['label']}}</button>
         </template>
@@ -40,7 +43,7 @@ export default {
     },
     actionChoosen(action){
       this.$refs.modal._close()
-      if(typeof action['callback'] === 'function'){
+      if(action && typeof action['callback'] === 'function'){
         action['callback']()
       }
     }
