@@ -32,7 +32,7 @@
           </div>
         </div>
         <div class="card">
-          <h5 class="card-header"><fa icon="list" />My Thinka Trees</h5>
+          <h5 class="card-header"><fa icon="list" /> My Trees</h5>
           <div class="card-body">
             <table class="table ">
               <tbody>
