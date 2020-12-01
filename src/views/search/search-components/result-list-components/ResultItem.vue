@@ -1,8 +1,8 @@
 <template>
   <div class="hover-border-dark border rounded px-3 py-2 mb-2 ">
     <div class="d-flex justify-content-between">
-      <div class="flex-fill">
-        <small class="text-nowrap text-truncate">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
+      <div class="flex-fill text-truncate">
+        <small class="text-nowrap ">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
         <div><small><em>{{statement['statement_type']['description']}}</em></small></div>
       </div>
       <small class="text-nowrap">{{formatDate(statement['created_at'])}}</small>
