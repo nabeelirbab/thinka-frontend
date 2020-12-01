@@ -46,6 +46,9 @@ li.borderless { border-top: 0 none; }
   border-top-right-radius: 1.3em!important;
   border-bottom-right-radius: 1.3em!important;
 }
+.text-sm {
+  font-size: 80%
+}
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {
     width: 100%

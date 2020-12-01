@@ -1,26 +1,31 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-2 px-2" :style-d="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
-    <!-- <div v-if="isSupport === null" class="w-100 text-center">
-      <button @click="isSupport = true" class="btn btn btn-outline-dark mx-1 my-1"><fa icon="plus" /> Support</button> or
-      <button @click="isSupport = false" class="btn btn btn-outline-dark mx-1 my-1"><fa icon="minus" /> Rebut</button>
-    </div> -->
-    <div class="flex-fill px-2">
-      <select v-model="statement.relation.relation_type_id" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">
+  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-3 px-3" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
+    <div class="flex-fill ">
+      <select v-model="statement.relation.relation_type_id" :disabled="isLoading" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">
         <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
           <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
         </template>
       </select>
-      <textarea v-model="statement.text" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
+      <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || statement['id']" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
+      <Suggestion ref="suggestion" @select="sugestionSelected" />
     </div>
-    <div class="mx-2">
-      <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success"><fa :icon="isLoading ? 'spinner' : 'save'" :spin="isLoading" /></button>
+    <div class="mx-1">
+      <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success">
+        <fa v-if="isSuccess" icon="check" />
+        <fa v-else-if="isLoading" icon="spinner" spin />
+        <fa v-else icon="save" />
+      </button>
     </div>
   </div>
 </template>
 <script>
 import StatementAPI from '@/api/statement'
 import RelationTypeAPI from '@/api/relation-type'
+import Suggestion from './create-sub-statement-components/Suggestion'
 export default {
+  components: {
+    Suggestion
+  },
   props: {
     isPositiveStatement: Boolean,
     parentRelationId: Number,
@@ -39,8 +44,8 @@ export default {
   },
   data(){
     return {
-      isSupport: null,
       isLoading: false,
+      isSuccess: false,
       statement: {
         relation: {
           parent_relation_id: this.parentRelationId,
@@ -50,13 +55,40 @@ export default {
           logic_tree_id: this.logicTreeId,
           is_public: true
         },
+        id: null,
         statement_type_id: 1,
         text: ''
-      }
+      },
+      
     }
   },
   methods: {
+    test(e){
+      console.log(e)
+    },
+    enterPressed(e){
+      if(!e.shiftKey && e.keyCode === 13){ // 13 is enter
+        this.save()
+      }
+    },
+    isTextTyping(e){
+      if(e.keyCode !== 13){
+        setTimeout(() => {
+          this.$refs.suggestion._isTextTyping(this.$refs.statementText.value)
+        }, 200)
+      }
+    },
+    sugestionSelected(selectedSuggestion){
+      if(selectedSuggestion){
+        this.statement['id'] = selectedSuggestion['id']
+        this.statement['text'] = selectedSuggestion['text']
+      }else{
+        this.statement['id'] = null
+        this.statement['text'] = ''
+      }
+    },
     save(){
+      this.isSuccess = false
       this.isLoading = true
       const param = {
         ...this.statement,
@@ -69,24 +101,34 @@ export default {
           newSubStatement['id'] = result['data']['id']
           newSubStatement['relation']['id'] = result['data']['relation']['id']
           this.$emit('save', JSON.parse(JSON.stringify(newSubStatement)))
-          this.reset()
+          this.isSuccess = true
+          setTimeout(() => {
+            this.reset()
+          }, 600)
+        }else{
+          this.isLoading = false
         }
-        this.isLoading = false
-        this.isSupport = null
       }).catch(() => {
         this.isLoading = false
       })
     },
     reset(){
+      this.isSuccess = false
+      this.isLoading = false
+      this.statement['id'] = null
       this.statement['text'] = ''
       this.statement['relation']['relation_type_id'] = '2'
+      this.$refs.suggestion._reset()
     }
   },
   watch: {
     'statement.relation.relation_type_id'(newData){
       const selectedRelationTypeIndex = this.findArrayIndex(newData, this.relationTypes, 'id')
       this.statement.relation.relevance_row = selectedRelationTypeIndex >= 0 ? this.relationTypes[selectedRelationTypeIndex]['relevance'] : -1
-    }
+    },
+    // 'statement.text'(){
+    //   this.$refs.suggestion._isTextTyping(this.$refs.statementText.value)
+    // }
   },
   computed: {
     relationTypes(){
