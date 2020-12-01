@@ -16,7 +16,7 @@
       <div class="d-flex justify-content-between">
       </div>
       <div class=" font-weight-bold text-white pr-2">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center text-break">
           <div class="text-warning font-weight-bold pr-1" ><h6>*</h6></div>
           <div ref="actualStatementTextDiv" class="text limitText flex-fill" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
             <!-- 111aaaaaaaaaaa asdasdas dasd asda -->

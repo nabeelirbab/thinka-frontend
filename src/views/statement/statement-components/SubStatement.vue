@@ -28,7 +28,7 @@
           </div> -->
           <div class="d-flex text-justify align-items-center px-1" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify pr-2 mb-1">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
+              <div class="text-dark text-justify pr-2 mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
               <!--  -->
           </div>
           <!-- <div class="d-flex justify-content-between">
