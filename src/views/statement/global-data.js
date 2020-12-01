@@ -1,5 +1,7 @@
 import { ref, watch } from 'vue'
 const selectedStatementId = ref(0)
+const mainRelationData = ref(null)
+const deletedRelationId = ref(null)
 const selectedStatementData = ref(null)
 const showImpact = ref(false)
 const showOpinion = ref(false)
@@ -45,5 +47,7 @@ export default {
   showCTOpinion: showCTOpinion,
   statementTextFilter: statementTextFilter,
   backHistory: backHistory,
-  forwardHistory: forwardHistory
+  forwardHistory: forwardHistory,
+  mainRelationData: mainRelationData,
+  deletedRelationId: deletedRelationId
 }

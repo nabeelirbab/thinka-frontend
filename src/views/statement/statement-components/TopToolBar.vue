@@ -114,6 +114,7 @@ export default {
         [],
         'Publish Not Available'
       )
+      this.isPublishing = false
     },
     publish(){
       if(this.user){
@@ -121,7 +122,15 @@ export default {
       }else{
         this.isPublishing = true
         this.$refs.logInModal._open(() => {
-          this.proceedToPublish()
+          this.isPublishing = true
+          setTimeout(() => {
+            if(this.user['id'] * 1 === this.relationUserId){
+              this.proceedToPublish()
+            }else{
+              this.nonAuthorPublish()
+            }
+          }, 1000)
+          
         })
       }
     },

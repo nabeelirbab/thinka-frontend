@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div ref="modal" class="modal fade" tabindex="-1" role="dialog" :data-backdrop="!closeable ? 'static' : true" aria-hidden="true" >
+    <div ref="modal" class="modal fade" tabindex="-1" role="dialog" :data-keyboard="closeable"  :data-backdrop="!closeable ? 'static' : true" aria-hidden="true" >
       <div v-bind:class="'modal-' + size" class="modal-dialog" role="document" :style="paddingTop ? {'padding-top': paddingTop} : {}">
         <div class="modal-content">
           <div v-if="title" class="modal-header">

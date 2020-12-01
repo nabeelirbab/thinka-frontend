@@ -84,4 +84,20 @@ export default class API {
       })
     })
   }
+  fileUpload(uploadLocation, uploadForm){
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'post',
+        url: uploadLocation,
+        data: uploadForm,
+        headers: {'Content-Type': 'multipart/form-data' }
+      })
+      .then(function (response) {
+        resolve(response['data'])
+      })
+      .catch(function (response) {
+          reject(response)
+      });
+    })
+  }
 }

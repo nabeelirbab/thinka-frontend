@@ -20,8 +20,9 @@
         :active="showScope" 
         icon="microscope" text="Scope" title="Show Scope" class="mx-2" />
       <CircleIconButton @click="authenticationStatus === 'authenticated' ? (createSubStatementParentId = selectedStatementId) : null" :active="createSubStatementParentId > 0" :disabled="authenticationStatus !== 'authenticated'" icon="folder-plus" text="Add" title="Add Statement" class="mx-2" />
-      <CircleIconButton icon="folder-minus" :disabled="authenticationStatus !== 'authenticated'" text="Remove" title="Remove Statement" class="mx-2" />
+      <CircleIconButton @click="deleteStatement" icon="folder-minus" :disabled="authenticationStatus !== 'authenticated'" text="Remove" title="Remove Statement" class="mx-2" />
     </div>
+    <DeletePrompt ref="deletePrompt" />
   </div>
 </template>
 <script>
@@ -31,18 +32,25 @@ import ImpactSlider from './toolbar-components/ImpactSlider'
 import OpinionSlider from './toolbar-components/OpinionSlider'
 import ScopeSlider from './toolbar-components/ScopeSlider'
 import Auth from '@/core/auth'
+import DeletePrompt from './toolbar-components/DeletePrompt'
 export default {
   components: {
     CircleIconButton,
     ImpactSlider,
     OpinionSlider,
     ScopeSlider,
+    DeletePrompt
   },
   data(){
     return {
       authenticationStatus: Auth.status(),
       user: Auth.user(),
       ...GlobalData
+    }
+  },
+  methods: {
+    deleteStatement(){
+      this.$refs.deletePrompt._open()
     }
   }
 }

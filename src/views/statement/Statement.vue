@@ -6,17 +6,21 @@
     <div v-else-if="statement === null" class="text-center mt-4">
       <fa icon="exclamation-triangle" /> Statement Not Found or is Private <br />
       <LogInModal v-if="authenticationStatus === 'unauthenticated'" :has-button="true" />
+      <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
     <div v-show="!isLoading && statement" >
       <TopToolbar :main-relation="statement ? statement : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" :sub-relation-ids="subRelationIds" />
       <div class="container py-2 bg-white">
         <MainStatement v-if="statement" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
-        <div @click="selectMainStatement" class="toolbar-bottom-space">
+        <div v-if="statement" @click1="selectMainStatement" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <template v-for="(children, index) in positiveStatements" :key="'children' + index">
               <SubStatement :is-positive-statement="true" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
-            <CreateSubStatement v-if="selectedStatementId === statementId && authenticationStatus === 'authenticated'"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <div v-else class="text-center pt-1">
+              <button @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
+            </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
@@ -24,11 +28,13 @@
             <template v-for="(children, index) in negativeStatements" :key="'children' + index">
               <SubStatement  :is-positive-statement="false" :statement="children" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, children)" />
             </template>
-            <CreateSubStatement v-if="selectedStatementId === statementId && authenticationStatus === 'authenticated'"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <div v-else class="text-center pt-1">
+              <button @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
+            </div>
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
           </div>
         </div>
-
       </div>
       <Toolbar class="fixed toolbar" />
     </div>
@@ -66,13 +72,18 @@ export default {
     return {
       isLoading: false,
       statement: null,
+      mainRelationData: GlobalData.mainRelationData,
       selectedStatementId: GlobalData.selectedStatementId,
       statementTextFilter: GlobalData.statementTextFilter,
+      deletedRelationId: GlobalData.deletedRelationId,
       backHistory: GlobalData.backHistory,
       mainStatementHeight: 0,
       positiveStatementHeight: 100,
-      subRelationIds: [],
-      authenticationStatus: Auth.status()
+      authenticationStatus: Auth.status(),
+      user: Auth.user(),
+      activeCreateWindow: false,
+      subRelationIds: [], // used to update all the sub statements
+      subStatementMap: {} // trace the location of the substatement given the statement id
     }
   },
   methods: {
@@ -114,9 +125,10 @@ export default {
         }]
       }
       RelationAPI.retrieve(param).then(result => {
-        console.log(result['data'])
         if(result['data'] && result['data'].length){
           this.statement = result['data'][0]
+          this.mainRelationData = result['data'][0]
+          this.subStatementMap = {}
           this.subRelationIds = this.getSubRelationIds(this.statement)
           setTimeout(() => {
             this.resizePositiveStatement()
@@ -131,12 +143,13 @@ export default {
         this.isLoading = false
       })
     },
-    getSubRelationIds(relation){
+    getSubRelationIds(relation, parentIds = []){
       let ids = []
-      relation['relations'].forEach(relation => {
+      relation['relations'].forEach((relation, index) => {
         ids.push({id: relation['id']})
+        this.subStatementMap[relation['id']] = parentIds.concat([index])
         if(relation['relations'].length){
-          ids = ids.concat(this.getSubRelationIds(relation))
+          ids = ids.concat(this.getSubRelationIds(relation, this.subStatementMap[relation['id']]))
         }
       })
       return ids
@@ -179,11 +192,13 @@ export default {
         delete newSubStatement['relation']
         recursiveDownRelations['statement'] = newSubStatement
         recursiveDownRelations['relations'] = []
+        recursiveDownRelations['user_id'] = this.user['id']
         this.statement['relations'].push(recursiveDownRelations)
       }else{
         let newRecursiveDownRelations = newSubStatement['event']['relation']
         delete newSubStatement['event']['relation']
         newRecursiveDownRelations['statement'] = newSubStatement['event']
+        newRecursiveDownRelations['user_id'] = this.user['id']
         newRecursiveDownRelations['relations'] = []
         const parentStatementId = parentStatement['statement']['id']
         let currentStatement = this.statement['relations'][this.statementIdIndexLookUp[parentStatementId]]
@@ -193,6 +208,8 @@ export default {
         }
         currentStatement['relations'].push(newRecursiveDownRelations)
       }
+      this.subStatementMap = {}
+      this.subRelationIds = this.getSubRelationIds(this.statement)
     },
     resizePositiveStatement(){
       this.positiveStatementHeight = ((this.totaRelevanceWindowHeight) / 2) + this.$refs.separator._getYOffset()
@@ -208,10 +225,25 @@ export default {
       immediate: true
     },
     mainStatementHeight(){
-      console.log('mainstatementheight', this.mainStatementHeight)
       setTimeout(() => {
         this.resizePositiveStatement()
       }, 5)
+    },
+    selectedStatementId(){
+      this.activeCreateWindow = false
+    },
+    deletedRelationId(deletedRelationId){
+      if(deletedRelationId){
+        const map = this.subStatementMap[deletedRelationId]
+        let currentRelation = this.statement
+        for(let x = 0; x < map.length - 1; x++){
+          const index = map[x]
+          currentRelation = currentRelation['relations'][index]
+        }
+        currentRelation['relations'].splice(map[map.length - 1], 1)
+        this.subStatementMap = {}
+        this.subRelationIds = this.getSubRelationIds(this.statement)
+      }
     }
   },
   computed: {
