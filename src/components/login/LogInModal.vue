@@ -2,6 +2,7 @@
   <button v-if="hasButton" @click="_open" class="btn btn-primary">Log In</button>
   <modal ref='modal' title="Log In">
     <div class="text-left">
+      <div v-if="message" class="mb-3"><fa icon="info-circle" class="text-info" /> {{message}}</div>
       <LogInForm @login="logInSuccess" />
     </div>
   </modal>
@@ -22,7 +23,8 @@ export default {
     hasButton: {
       type: Boolean,
       default: false
-    }
+    },
+    message: String
   },
   data(){
     return {

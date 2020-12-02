@@ -3,13 +3,13 @@
     <div class="d-flex justify-content-between">
       <div class="flex-fill text-truncate">
         <small class="text-nowrap ">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
-        <div><small><em>{{statement['statement_type']['description']}}</em></small></div>
+        <div v-if="statement" style="line-height:0.9em"><small><em>{{statement['statement_type']['description']}}</em></small></div>
       </div>
-      <small class="text-nowrap">{{formatDate(statement['created_at'])}}</small>
+      <small v-if="statement" class="text-nowrap">{{formatDate(statement['created_at'])}}</small>
     </div>
-    <div class="d-flex justify-content-between">
-      <div class="text-break">
-        <router-link :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
+    <div v-if="statement" class="d-flex justify-content-between">
+      <div  class="text-break">
+        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
         <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
         <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p>
       </div>
@@ -37,10 +37,10 @@ export default {
   },
   computed: {
     statement(){
-      return this.relation['statement']
+      return this.relation && this.relation['statement'] ? this.relation['statement'] : null
     },
     parentStatement(){
-      return this.relation['parent_relation'] && this.relation['parent_relation']['statement'] ? this.relation['parent_relation']['statement'] : null
+      return this.relation && this.relation['parent_relation'] && this.relation['parent_relation']['statement'] ? this.relation['parent_relation']['statement'] : null
     },
     logicTreeId(){
       if(this.relation && typeof this.relation['logic_tree_id'] !== 'undefined'){
@@ -59,6 +59,7 @@ export default {
 </script>
 <style>
 .hover-border-dark:hover {
-  border: 1px solid!important
+  background-color: whitesmoke;
+  /* border: 1px solid!important */
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="d-md-flex fixed-top font-weight-bold border-bottom align-items-center py-1 bg-white" style="min-height: 46px!important">
-    <div v-if="!hideBranding" class="px-2 w-sm-100 d-flex align-items-center">
-      <router-link :to="user ? '/dashboard' : '/'" class="navbar-brand py-0 text-uppercase text-primary" style="font-size:1.60875em">Thinka.io</router-link>
+    <div v-if="!hideBranding" class="px-2 w-sm-100 d-flex align-items-center" style="z-index:1">
+      <router-link :to="'/'" class="navbar-brand py-0 text-uppercase text-primary" style="font-size:1.60875em">Thinka.io</router-link>
       <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link>
       <div v-else class="flex-fill text-right d-md-none">
         <UserInfo />
@@ -89,7 +89,11 @@ export default {
   }
   .menuContainer{
     position:absolute;
-    width: 100%
+    width: 100%;
+    /* width: calc(100% - 320px);
+    margin-left: 160px; */
+    /* margin-left: calc(100% - 900px160px); */
+    /* width: calc(100% - 160px) */
   }
   /* .mainMenuItems {
     position:absolute

@@ -9,9 +9,9 @@
         <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
         <div v-else class="text-center w-100 pt-4">
           <div>You need to login to see this page</div>
-          <LogInModal :has-button="true" />
-          <!-- <router-link to="/login" class="btn btn-primary">Log In</router-link> -->
+          <button @click="checkIfLogInRequired" class="btn btn-primary font-style-2 px-4" type="button">Log In</button>
         </div>
+        <LogInModal ref="logInModal" message="You need to log in to use this page or functionality" />
       </div>
     </div>
   </div>
@@ -47,9 +47,31 @@ export default {
   methods: {
     test(){
       console.log('Auth', Auth, Auth.chechAuth)
+    },
+    checkIfLogInRequired(){
+      if(this.routeRequireUser && this.authenticationStatus === 'unauthenticated'){
+        this.$refs.logInModal._open()
+      }
+    }
+  },
+  watch: {
+    authenticationStatus(){
+      this.checkIfLogInRequired()
+    },
+    routePath: {
+      handler(){
+        this.checkIfLogInRequired()
+      },
+      immediate: true
+    },
+    routeRequireUser(){
+      this.checkIfLogInRequired()
     }
   },
   computed: {
+    routePath(){
+      return this.$route['path']
+    },
     routeRequireUser(){
       return typeof this.$route['meta']['auth'] !== 'undefined' && typeof this.$route['meta']['auth']['require_user'] !== 'undefined' && this.$route['meta']['auth']['require_user']
     },
