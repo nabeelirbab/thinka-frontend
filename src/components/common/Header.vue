@@ -7,9 +7,9 @@
         <UserInfo />
       </div>
     </div>
-    <div class="d-flex flex-fill" style="max-height:38px!important">
+    <div v-show="authenticationStatus !== 'authenticating'" class="menuContainer d-flex flex-fill" style="max-height:38px!important">
       <LogInForm v-if="user === null" class="ml-auto d-none d-md-block" />
-      <div v-else class="d-flex justify-content-around align-items-center  w-100 container px-2" >
+      <div v-else class="mainMenuItems d-flex justify-content-around align-items-center container px-0">
         <router-link v-if="user" to="/dashboard" :class="routePath === '/dashboard' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"><fa icon="home" /> </router-link>
         <router-link v-if="user" to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="search" /></router-link>
         <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><CustomIcon icon="tree" /></router-link>
@@ -17,7 +17,7 @@
         <router-link v-if="user" to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
         <router-link v-if="user" to="/more-menu" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
       </div>
-      <UserInfo v-if="user && !hideBranding" class="d-none d-md-inline-block mx-2" />
+      <UserInfo v-if="user && !hideBranding" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
 
       <!-- <div class="navbar-nav">
         
@@ -87,5 +87,23 @@ export default {
   .header-icon {
     font-size: 1.16em
   }
+  .menuContainer{
+    position:absolute;
+    width: 100%
+  }
+  /* .mainMenuItems {
+    position:absolute
+  } */
+}
+@media (min-width: 769px) and (max-width: 1230px) {
+  .mainMenuItems.container{
+    /* margin-left: 160px!important */
+    /* max-width: calc((100% - 320px))!important */
+    margin-left: 130px;
+    margin-right: 65px;
+  }
+  /* .mainMenuItems {
+    position:absolute
+  } */
 }
 </style>

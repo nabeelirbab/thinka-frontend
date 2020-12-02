@@ -84,7 +84,7 @@ export default {
         this.statement['text'] = selectedSuggestion['text']
       }else{
         this.statement['id'] = null
-        this.statement['text'] = ''
+        // this.statement['text'] = ''
       }
     },
     save(){

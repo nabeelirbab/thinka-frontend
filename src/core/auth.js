@@ -81,9 +81,12 @@ class Auth {
     this.logout()
   }
   logout(){
-    user.value = null
-    localStorage.removeItem(localStorageKey)
-    authenticationStatus.value = 'unauthenticated'
+    return new Promise((resolve) => {
+      user.value = null
+      localStorage.removeItem(localStorageKey)
+      authenticationStatus.value = 'unauthenticated'
+      resolve(true)
+    })
   }
   refreshToken(){
     if(localStorage.getItem(localStorageKey)){

@@ -1,19 +1,19 @@
 <template>
   <div class="container py-4 bg-white height-max">
-    <h2>Dashboard</h2>
-    <p>Good day! In your dashboard, you will see different information and functionality to help and guide you in using <strong class="text-uppercase">Thinka.io</strong>.</p>
+    <template v-if="user">
+      <h2>Dashboard</h2>
+      <p>Good day! In your dashboard, you will see different information and functionality to help and guide you in using <strong class="text-uppercase">Thinka.io</strong>.</p>
+    </template>
     <div class='text-center mb-2'>
       <router-link to="/new-statement" class="btn btn-lg btn-primary text-uppercase mx-1 mb-2"><fa icon="project-diagram" /> Create New Tree</router-link>
       <router-link to="/search" class="btn btn-lg btn-outline-primary text-uppercase mx-1 mb-2"><fa icon="search" /> Search A Tree</router-link>
     </div>
-    <div class="row">
-
-      <div class="col-12 col-md-6 pb-3">
-          <Trending />
+    <div class="row no-gutters">
+      <div class="col-12 col-md-8 pr-md-2 pb-3">
+        <Trending />
       </div>
-
-      <div class="col-12 col-md-6 pb-3">
-        <div class="card">
+      <div class="col-12 col-md-4 pb-3">
+        <div class="card mb-2">
           <h5 class="card-header"><fa icon="cloud" /> Thinka Tank</h5>
           <div class="card-body">
             <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>

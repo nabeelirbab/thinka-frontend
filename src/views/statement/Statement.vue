@@ -19,7 +19,7 @@
             </template>
             <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1">
-              <button @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
+              <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
@@ -30,7 +30,7 @@
             </template>
             <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="statement['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1">
-              <button @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
+              <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
           </div>
@@ -166,7 +166,7 @@ export default {
         positiveInnerHeight += positiveChildren[x].offsetHeight
       }
       if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
-        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 50) * -1)
+        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 100) * -1)
       }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
         this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
       }

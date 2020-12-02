@@ -27,9 +27,9 @@ const routes = [
     name: "Dashboard",
     component: Dashboard,
     meta: {
-      auth: {
-        require_user: true
-      }
+      // auth: {
+      //   require_user: true
+      // }
     }
   },
   {
