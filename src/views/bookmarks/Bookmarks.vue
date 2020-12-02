@@ -4,10 +4,12 @@
     <div>
       <div v-if="isLoading">Please wait... <fa icon="spinner" /></div>
       <div v-else-if="userRelationBookmarks.length">
-        <div v-for="userRelationBookmark in userRelationBookmarks" :key="'asd' + userRelationBookmark['id']" class="mb-2">
-          <!-- <router-link :to="'/branch/' + userRelationBookmark['relation']['id']" class="text-dark">{{userRelationBookmark['relation']['statement']['text']}}</router-link> -->
-          <ResultItem :relation="userRelationBookmark['relation']" />
-        </div>
+        <template v-for="userRelationBookmark in userRelationBookmarks" :key="'asd' + userRelationBookmark['id']">
+          <div v-if="userRelationBookmark['relation']" class="mb-2">
+            <!-- <router-link :to="'/branch/' + userRelationBookmark['relation']['id']" class="text-dark">{{userRelationBookmark['relation']['statement']['text']}}</router-link> -->
+            <ResultItem :relation="userRelationBookmark['relation']" />
+          </div>
+        </template>
       </div>
     </div>
   </div>

@@ -32,7 +32,6 @@ export default {
       this.trending = []
       this.isLoading = true
       RelationAPI.post('/trending').then(result => {
-        console.log('result', result)
         if(result['data']){
           this.trending = result['data']
         }

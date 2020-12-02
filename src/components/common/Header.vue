@@ -2,22 +2,22 @@
   <div class="d-md-flex fixed-top font-weight-bold border-bottom align-items-center py-1 bg-white" style="min-height: 46px!important">
     <div v-if="!hideBranding" class="px-2 w-sm-100 d-flex align-items-center" style="z-index:1">
       <router-link :to="'/'" class="navbar-brand py-0 text-uppercase text-primary" style="font-size:1.60875em">Thinka.io</router-link>
-      <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link>
-      <div v-else class="flex-fill text-right d-md-none">
+      <!-- <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link> -->
+      <div class="flex-fill text-right d-md-none">
         <UserInfo />
       </div>
     </div>
     <div v-show="authenticationStatus !== 'authenticating'" class="menuContainer d-flex flex-fill" style="max-height:38px!important">
-      <LogInForm v-if="user === null" class="ml-auto d-none d-md-block" />
-      <div v-else class="mainMenuItems d-flex justify-content-around align-items-center container px-0">
-        <router-link v-if="user" to="/dashboard" :class="routePath === '/dashboard' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"><fa icon="home" /> </router-link>
-        <router-link v-if="user" to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="search" /></router-link>
-        <router-link v-if="user" to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><CustomIcon icon="tree" /></router-link>
-        <router-link v-if="user" to="/bookmarks" :class="routePath === '/bookmarks' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bookmark" /></router-link>
-        <router-link v-if="user" to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
-        <router-link v-if="user" to="/more-menu" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
+      <!-- <LogInForm v-if="user === null" class="ml-auto d-none d-md-block" /> -->
+      <div class="mainMenuItems d-flex justify-content-around align-items-center container px-0">
+        <router-link to="/dashboard" :class="routePath === '/dashboard' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"><fa icon="home" /> </router-link>
+        <router-link to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="search" /></router-link>
+        <router-link to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><CustomIcon icon="tree" /></router-link>
+        <router-link to="/bookmarks" :class="routePath === '/bookmarks' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bookmark" /></router-link>
+        <router-link to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
+        <router-link to="/more-menu" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
       </div>
-      <UserInfo v-if="user && !hideBranding" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
+      <UserInfo v-if="!hideBranding" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
 
       <!-- <div class="navbar-nav">
         
@@ -47,12 +47,12 @@
 </template>
 <script>
 import Auth from '@/core/auth'
-import LogInForm from './header-components/LogInForm'
+// import LogInForm from './header-components/LogInForm'
 import UserInfo from './header-components/UserInfo'
 import CustomIcon from '@/components/CustomIcon'
 export default {
   components: {
-    LogInForm,
+    // LogInForm,
     UserInfo,
     CustomIcon
   },

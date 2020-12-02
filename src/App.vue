@@ -49,14 +49,19 @@ export default {
       console.log('Auth', Auth, Auth.chechAuth)
     },
     checkIfLogInRequired(){
-      if(this.routeRequireUser && this.authenticationStatus === 'unauthenticated'){
-        this.$refs.logInModal._open()
-      }
+      setTimeout(() => {
+        if(this.routePath !== '/' && this.routeRequireUser && this.authenticationStatus === 'unauthenticated' && this.authenticationStatus !== 'authenticating'){
+          this.$refs.logInModal._open()
+        }
+      }, 100)
     }
   },
   watch: {
-    authenticationStatus(){
-      this.checkIfLogInRequired()
+    authenticationStatus: {
+      handler(){
+        this.checkIfLogInRequired()
+      },
+      immediate: true
     },
     routePath: {
       handler(){
@@ -64,9 +69,9 @@ export default {
       },
       immediate: true
     },
-    routeRequireUser(){
-      this.checkIfLogInRequired()
-    }
+    // routeRequireUser(){
+    //   this.checkIfLogInRequired()
+    // }
   },
   computed: {
     routePath(){
