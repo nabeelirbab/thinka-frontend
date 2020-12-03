@@ -4,7 +4,11 @@
       <h5><fa icon="exclamation-triangle" /> You are about to delete this statement</h5>
       <p>You can never access this statement relation once deleted.</p>
       <div class="text-center border border-warning rounded p-2 mb-2">
-        <div><button @click="deleteStatement('partial')" :disabled="isLoading" class="btn btn-warning">Partial Delete</button> <br/> <small>Keep the statements below and make them into root statements</small></div>
+        <div><button @click="deleteStatement('clip')" :disabled="isLoading || selectedStatementData['parent_relation_id'] === null" class="btn btn-warning">Clip Branch</button> <br/> 
+          <small v-if="selectedStatementData['parent_relation_id'] === null">This is already a root statement</small>
+          <small v-else>Detach this branch from its parent</small>
+        </div>
+        <!-- <div><button @click="deleteStatement('partial')" :disabled="isLoading" class="btn btn-warning">Partial Delete</button> <br/> <small>Keep the statements below and make them into root statements</small></div> -->
         <div><button @click="deleteStatement('all')" :disabled="isLoading" class="btn btn-danger">Delete All</button> <br/><small>This statement and below will be deleted</small></div>
       </div>
       <div v-if="!isLoading" @click="close" class="text-center"><button class="btn btn-outline-dark">I changed my mind</button> </div>
@@ -57,7 +61,11 @@ export default {
       RelationAPI.post('/delete-' + type, {id: this.selectedStatementId}).then(result => {
         if(result['data']){
           if(this.mainRelationData['id'] * 1 === this.selectedStatementId * 1){ // main statement is being deleted
-            if(this.mainRelationData['parent_relation_id']){ // if main statement has parent statement
+            if(type === 'clip'){
+              console.log(this.mainRelationData)
+              this.mainRelationData['parent_relation_id'] = null
+              this.$refs.modal._close()
+            }else if(this.mainRelationData['parent_relation_id']){ // if main statement has parent statement
               this.isDeleted = 'go_to_parent'
             }else{
               this.isDeleted = 'go_to_search'

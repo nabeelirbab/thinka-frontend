@@ -1,21 +1,22 @@
 <template>
   <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-3 px-3" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
     <div class="flex-fill ">
-      <select v-model="statement.relation.relation_type_id" :disabled="isLoading" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">
-        <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
-          <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
-        </template>
-      </select>
+      <div class="mb-1">
+        <select v-model="statement.relation.relation_type_id" :disabled="isLoading" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">
+          <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
+            <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
+          </template>
+        </select>
+        <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success py-1 float-right">
+          <fa v-if="isSuccess" icon="check" />
+          <fa v-else-if="isLoading" icon="spinner" spin />
+          <fa v-else icon="save" /> Save
+        </button>
+      </div>
       <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || statement['id']" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
       <Suggestion ref="suggestion" @select="sugestionSelected" />
     </div>
-    <div class="mx-1">
-      <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success">
-        <fa v-if="isSuccess" icon="check" />
-        <fa v-else-if="isLoading" icon="spinner" spin />
-        <fa v-else icon="save" />
-      </button>
-    </div>
+    
   </div>
 </template>
 <script>
@@ -41,6 +42,10 @@ export default {
   },
   emits: {
     save: null
+  },
+  mounted(){
+    console.log('mounted')
+    this.$refs.statementText.focus()
   },
   data(){
     return {
@@ -88,6 +93,7 @@ export default {
       }
     },
     save(){
+      this.$refs.suggestion._stopSuggesting()
       this.isSuccess = false
       this.isLoading = true
       const param = {
@@ -119,6 +125,9 @@ export default {
       this.statement['text'] = ''
       this.statement['relation']['relation_type_id'] = '2'
       this.$refs.suggestion._reset()
+      setTimeout(() => {
+        this.$refs.statementText.focus()
+      }, 200)
     }
   },
   watch: {

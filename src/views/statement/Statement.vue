@@ -11,7 +11,7 @@
     <div v-show="!isLoading && statement" >
       <TopToolbar :main-relation="statement ? statement : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" :sub-relation-ids="subRelationIds" />
       <div class="container py-2 bg-white">
-        <MainStatement v-if="statement" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="statement" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
+        <MainStatement v-if="mainRelationData" ref="mainStatement" @height-changed="mainStatementHeight = $event" :relation="mainRelationData" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
         <div v-if="statement" @click1="selectMainStatement" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <template v-for="(children, index) in positiveStatements" :key="'children' + index">
@@ -67,6 +67,7 @@ export default {
     LogInModal
   },
   mounted(){
+    console.log('mounted')
   },
   data(){
     return {
