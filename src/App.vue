@@ -95,7 +95,7 @@ export default {
   padding-top:46px
 }
 .has-menu-top-padding {
-  padding-top: 76px;
+  padding-top: 84px;
 }
 @media (min-width: 768px) {
   .has-menu-top-padding {

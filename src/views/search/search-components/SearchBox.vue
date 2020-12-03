@@ -20,6 +20,18 @@ export default {
   props: {
     isLoading: Boolean
   },
+  mounted(){
+    let previousSearchFilter
+    try {
+      previousSearchFilter = JSON.parse(localStorage.getItem('search_page_filter'));
+    } catch (exception) {
+      previousSearchFilter = null;
+    }
+    if(previousSearchFilter){
+      this.searchForm = previousSearchFilter
+    }
+    this.search()
+  },
   data(){
     return {
       searchForm: {

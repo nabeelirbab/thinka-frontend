@@ -67,7 +67,6 @@ export default {
     LogInModal
   },
   mounted(){
-    console.log('mounted')
   },
   data(){
     return {
@@ -213,7 +212,9 @@ export default {
       this.subRelationIds = this.getSubRelationIds(this.statement)
     },
     resizePositiveStatement(){
-      this.positiveStatementHeight = ((this.totaRelevanceWindowHeight) / 2) + this.$refs.separator._getYOffset()
+      if(this.$refs.separator){
+        this.positiveStatementHeight = ((this.totaRelevanceWindowHeight) / 2) + this.$refs.separator._getYOffset()
+      }
     }
   },
   watch: {
@@ -221,6 +222,7 @@ export default {
       handler(newData){
         if(newData){
           this.initialize(this.statementId)
+          localStorage.setItem('last_viewed_relation_id', this.statementId)
         }
       },
       immediate: true

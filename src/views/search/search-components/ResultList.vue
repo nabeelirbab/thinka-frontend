@@ -99,6 +99,11 @@ export default {
       }
       this.relations = []
       RelationAPI.retrieve(param).then(result => {
+        if(filter){
+          localStorage.setItem('search_page_filter', JSON.stringify(filter))
+        }else{
+          localStorage.removeItem('search_page_filter')
+        }
         if(result['data']){
           this.relations = result['data']
         }

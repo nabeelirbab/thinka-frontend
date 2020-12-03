@@ -13,7 +13,6 @@ export default {
     ResultList
   },
   mounted(){
-    this.$refs.resultList._search()
   },
   data(){
     return {
@@ -22,7 +21,6 @@ export default {
   },
   methods: {
     search(searchForm){
-      console.log('searching', searchForm)
       this.$refs.resultList._search(searchForm)
     }
   }
