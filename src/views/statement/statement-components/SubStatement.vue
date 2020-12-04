@@ -7,8 +7,8 @@
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
-      <div class="d-flex align-items-center px-2">
-        <div v-if="showImpact || showScope">
+      <div class="d-flex align-items-center p-2">
+        <div v-if="showImpact || showScope" class="pr-1">
           <div class="text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
             <small v-if="showImpact">100%</small>
             <small v-if="showScope" style="line-height: 1">
@@ -16,7 +16,7 @@
             </small>
           </div>
         </div>
-        <div class="flex-fill pr-2 py-2 " :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
+        <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <!-- <div class="d-flex justify-content-between mb-1 ">
             <div>
               <small class="badge badge-pill badge-light mr-1 d-none d-md-inline-block"><fa icon="level-up-alt" rotation="90" /> {{level}}</small>
@@ -26,9 +26,9 @@
             <small class="text-nowrap d-none d-md-block">{{statement['created_at']}}</small>
             <CTPoints :points="statement['ct_points']" />
           </div> -->
-          <div class="d-flex text-justify align-items-center px-1" >
+          <div class="d-flex text-justify align-items-center" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify pr-2 mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
+              <div class="text-dark text-justify mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
               <!--  -->
           </div>
           <!-- <div class="d-flex justify-content-between">
@@ -38,7 +38,7 @@
             <AddStatementOption size="compact" class="text-right" />
           </div> -->
         </div>
-        <div>
+        <div class="pl-1">
           <div v-if="showOpinion || showCTOpinion || isActive" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>

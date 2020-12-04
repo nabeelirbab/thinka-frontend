@@ -1,5 +1,5 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-3 px-3" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
+  <div :class="isPositiveStatement ? 'positive-statement' : 'negative-statement'" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-2" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
     <div class="flex-fill ">
       <div class="mb-1">
         <select v-model="statement.relation.relation_type_id" :disabled="isLoading" class="border border-danger rounded bg-transparent text-danger font-weight-bold mb-1">

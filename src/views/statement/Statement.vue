@@ -126,15 +126,8 @@ export default {
       }
       RelationAPI.retrieve(param).then(result => {
         if(result['data'] && result['data'].length){
-          this.statement = result['data'][0]
           this.mainRelationData = result['data'][0]
-          this.subStatementMap = {}
-          this.subRelationIds = this.getSubRelationIds(this.statement)
-          setTimeout(() => {
-            this.resizePositiveStatement()
-            this.setDefaultSeparator()
-          }, 1000)
-          this.isLoading = false
+          this.setStatement(this.mainRelationData)
         }else{
           this.isLoading = false
         }
@@ -142,6 +135,17 @@ export default {
         console.error(error)
         this.isLoading = false
       })
+    },
+    setStatement(statement){
+      this.statement = statement
+      this.isLoading = true
+      this.subStatementMap = {}
+      this.subRelationIds = this.getSubRelationIds(this.statement)
+      setTimeout(() => {
+        this.resizePositiveStatement()
+        this.setDefaultSeparator()
+      }, 1200)
+      this.isLoading = false
     },
     getSubRelationIds(relation, parentIds = []){
       let ids = []
@@ -219,9 +223,17 @@ export default {
   },
   watch: {
     statementId: {
-      handler(newData){
-        if(newData){
-          this.initialize(this.statementId)
+      handler(statementId){
+        if(statementId){
+          const lastViewRelationId = localStorage.getItem('last_viewed_relation_id')
+          if(lastViewRelationId !== statementId + '' || this.mainRelationData === null){
+            console.log('initialized', this.mainRelationData)
+            this.initialize(statementId)
+          }else{
+            this.setStatement(this.mainRelationData)
+            console.log('not initialized')
+          }
+
           localStorage.setItem('last_viewed_relation_id', this.statementId)
         }
       },

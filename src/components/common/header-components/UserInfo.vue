@@ -12,17 +12,21 @@
       </template>
       <template v-else>
         <div class="text-center" >
-          <router-link to="/login" class="btn py-1 btn-primary w-100">Log In</router-link>
+          <button @click="$emit('open-login')" class="btn py-1 btn-primary w-100">Log In</button>
           <div class="text-center py-0">or</div>
           <router-link to="/register" class="btn py-1 btn-outline-primary w-100">Register</router-link>
         </div>
       </template>
     </div>
+    
   </div>
 </template>
 <script>
 import Auth from '@/core/auth'
 export default {
+  components: {
+  },
+  emits: ['open-login'],
   data(){
     return {
       user: Auth.user(),

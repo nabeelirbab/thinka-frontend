@@ -4,7 +4,7 @@
       <router-link :to="'/'" class="navbar-brand py-0 text-uppercase text-primary" style="font-size:1.60875em">Thinka.io</router-link>
       <!-- <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link> -->
       <div class="flex-fill text-right d-md-none">
-        <UserInfo />
+        <UserInfo @open-login="openLogIn" />
       </div>
     </div>
     <div v-show="authenticationStatus !== 'authenticating'" class="menuContainer d-flex flex-fill" style="max-height:38px!important">
@@ -17,7 +17,7 @@
         <router-link to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
         <router-link to="/more-menu" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
       </div>
-      <UserInfo v-if="!hideBranding" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
+      <UserInfo v-if="!hideBranding" @open-login="openLogIn" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
 
       <!-- <div class="navbar-nav">
         
@@ -42,19 +42,21 @@
       </ul> -->
 
     </div>
-    
   </div>
+  <LogInModal ref="logIn" />
 </template>
 <script>
 import Auth from '@/core/auth'
 // import LogInForm from './header-components/LogInForm'
 import UserInfo from './header-components/UserInfo'
 import CustomIcon from '@/components/CustomIcon'
+import LogInModal from '@/components/login/LogInModal'
 export default {
   components: {
     // LogInForm,
     UserInfo,
-    CustomIcon
+    CustomIcon,
+    LogInModal
   },
   mounted(){
   },
@@ -66,7 +68,9 @@ export default {
   },
   
   methods: {
-    
+    openLogIn(){
+      this.$refs.logIn._open()
+    }
   },
   watch: {
     routePath(){

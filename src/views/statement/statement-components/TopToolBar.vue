@@ -9,7 +9,7 @@
             <button v-else-if="searchText !== ''" @click="clearSearchText" class="rounded-l-oval border-r-none btn bg-white text-danger pl-3 pr-0 pt-1" type="button" style="height:2.31em;" title="Clear search text."><fa icon="trash" /></button>
             <span v-else class="input-group-text rounded-l-oval border-r-none pl-3 pr-0 bg-white border-none border-0" style="font-size: 1.02em;"><fa icon="search" /></span>
           </div>
-          <input ref="searchText" v-model="searchText" @keypress.enter="searchText === '' ? showSearchText = false : null" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
+          <input ref="searchText" v-model="searchText" @keydown.esc="blurSearch" @keypress.enter="searchText === '' ? showSearchText = false : null" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
       <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Back.">
@@ -85,7 +85,14 @@ export default {
       this.searchText = ''
       this.typing()
     },
-    typing(){
+    blurSearch(){
+      this.showSearchText = false
+      this.clearSearchText()
+    },
+    typing(e = null){
+      if(e && (e.keyCode === 27 || e.key === 'Escape')){
+        return true
+      }
       this.isLoading = true
       clearTimeout(this.typingTimeout)
       this.typingTimeout = setTimeout(() => {
@@ -152,7 +159,6 @@ export default {
               is_public: !this.mainRelation['is_public'],
               sub_relations: this.subRelationIds
             }
-            console.log('submitting')
             RelationAPI.post('/publish', param).then(result => {
               if(result['data']){
                 location.reload()

@@ -7,7 +7,7 @@
       </div>
     </div>
     <div class="input-group ">
-      <input @keypress.enter="search" v-model="searchForm.statementText" type="text" class="form-control" placeholder="Type statement keywords...">
+      <input @keydown.esc="clearSearch" @keypress.enter="search" v-model="searchForm.statementText" type="text" class="form-control" placeholder="Type statement keywords...">
       <div class="input-group-append">
         <button @click="search" :disabled="isLoading" class="btn btn-outline-secondary" type="button" id="button-addon2"><fa icon="search" /> Search</button>
       </div>
@@ -29,8 +29,10 @@ export default {
     }
     if(previousSearchFilter){
       this.searchForm = previousSearchFilter
+    }else{
+      this.search()
     }
-    this.search()
+    
   },
   data(){
     return {
@@ -43,6 +45,10 @@ export default {
   methods: {
     search(){
       this.$emit('search', this.searchForm)
+    },
+    clearSearch(){
+      this.searchForm['statementText'] = ''
+      this.search()
     }
   }
 }

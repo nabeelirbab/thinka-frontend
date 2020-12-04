@@ -36,7 +36,13 @@ export default {
   },
   emits: ['is-loading'],
   mounted(){
-    
+    let cachedSearchResult
+    try {
+      cachedSearchResult = JSON.parse(localStorage.getItem('search_page_result_cache'));
+    } catch (exception) {
+      cachedSearchResult = null;
+    }
+    this.relations = cachedSearchResult ? cachedSearchResult : []
   },
   data(){
     return {
@@ -101,8 +107,10 @@ export default {
       RelationAPI.retrieve(param).then(result => {
         if(filter){
           localStorage.setItem('search_page_filter', JSON.stringify(filter))
+          localStorage.setItem('search_page_result_cache', JSON.stringify(result['data']))
         }else{
           localStorage.removeItem('search_page_filter')
+          localStorage.removeItem('search_page_result_cache')
         }
         if(result['data']){
           this.relations = result['data']

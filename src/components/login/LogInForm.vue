@@ -4,11 +4,11 @@
       <div v-if="mismatched" class="alert alert-danger">Email and Password mismatched</div>
       <div class="form-group">
         <label >Email address</label>
-        <input v-model="email" @keydown.enter="focusOnPassword" type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+        <input v-model="email" @keydown.enter="focusOnPassword" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
       </div>
       <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
-        <input ref="passwordField" v-model="password" @keydown.enter="logIn" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" current-password>
+        <input ref="passwordField" v-model="password" @keydown.enter="logIn" type="password" class="form-control" placeholder="Password" current-password>
       </div>
       <div class="text-center">
         <template v-if="!isLoading">

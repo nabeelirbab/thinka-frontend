@@ -3,7 +3,7 @@
     <div class="container">
 
       <div class="row pt-4 ">
-        <div class="col-12 col-md-6 offset-md-2">
+        <div class="col-12">
           <div class="p-4 border mx-auto " style="max-width:500px">
             <form>
               <h5 class="mb-3">Registration Form</h5>
@@ -54,8 +54,8 @@
             </form>
           </div>
         </div>
-        <div class="col-12 col-md-4 text-center text-md-left">
-          <img src="@/assets/images/register.png" class="img-fluid" style="margin-top:50px; max-width: 200px"/>
+        <div class="col-12 text-center">
+          <img src="@/assets/images/register.png" class="img-fluid" style="margin-top:50px;max-width:450px"/>
         </div>
       </div>
     </div>
