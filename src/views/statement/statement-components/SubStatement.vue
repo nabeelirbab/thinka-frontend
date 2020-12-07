@@ -1,13 +1,13 @@
 <template>
   <div>
     <div
-    
+
       v-show="statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
-      <div class="d-flex align-items-center p-2">
+      <div class="d-flex align-items-center p-1">
         <div v-if="showImpact || showScope" class="pr-1">
           <div class="text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
             <small v-if="showImpact">100%</small>
@@ -26,9 +26,9 @@
             <small class="text-nowrap d-none d-md-block">{{statement['created_at']}}</small>
             <CTPoints :points="statement['ct_points']" />
           </div> -->
-          <div class="d-flex text-justify align-items-center" >
+          <div class="d-flex text-justify align-items-center" v-bind:title="titleIds">
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
+              <div class="text-dark text-justify mb-1 text-break">{{statementText}}</div>
               <!--  -->
           </div>
           <!-- <div class="d-flex justify-content-between">
@@ -147,6 +147,9 @@ export default {
       }else{
         return '??'
       }
+    },
+    titleIds(){
+        return '('+this.relation['parent_relation_id']+') [' + this.relation['id'] + ']'
     }
   }
 }

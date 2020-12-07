@@ -2,14 +2,15 @@
   <div class="hover-border-dark border rounded px-3 py-2 mb-2 ">
     <div class="d-flex justify-content-between">
       <div class="flex-fill text-truncate">
-        <small class="text-nowrap ">{{parentStatement ? parentStatement['text'] : 'Root Statement'}}</small>
-        <div v-if="statement" style="line-height:0.9em"><small><em>{{statement['statement_type']['description']}}</em></small></div>
+        <small class="text-nowrap " v-if="parentStatement" >{{parentStatement['text']}}</small>
+        <!-- <div v-if="statement" style="line-height:0.9em"><small><em>{{statement['statement_type']['description']}}</em></small></div> -->
       </div>
       <small v-if="statement" class="text-nowrap">{{formatDate(statement['created_at'])}}</small>
     </div>
     <div v-if="statement" class="d-flex justify-content-between">
       <div  class="text-break">
-        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
+        <span v-if="parentStatement"><fa icon=leaf /></span><span v-else><fa icon=tree /></span>
+        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{'    ' + statement['statement_type']['description'] + ': ' + statement['text']}}</router-link>
         <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
         <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p>
       </div>
