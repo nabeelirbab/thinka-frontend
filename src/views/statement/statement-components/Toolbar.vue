@@ -19,8 +19,17 @@
         @click="showScope = !showScope" 
         :active="showScope" 
         icon="microscope" text="Scope" title="Show Scope" class="mx-2" />
-      <CircleIconButton @click="authenticationStatus === 'authenticated' ? (createSubStatementParentId = selectedStatementId) : null" :active="createSubStatementParentId > 0" :disabled="authenticationStatus !== 'authenticated'" icon="folder-plus" text="Add" title="Add Statement" class="mx-2" />
-      <CircleIconButton @click="deleteStatement" icon="folder-minus" :disabled="authenticationStatus !== 'authenticated'" text="Remove" title="Remove Statement" class="mx-2" />
+      <CircleIconButton 
+        @click="authenticationStatus === 'authenticated' ? (createSubStatementParentId = selectedStatementId) : null" 
+        :active="createSubStatementParentId > 0" 
+        :disabled="(authenticationStatus !== 'authenticated' || (selectedStatementId && mainRelationData && selectedStatementId === mainRelationData['id'])) ? true : false" 
+        icon="folder-plus" text="Add" title="Add Statement" class="mx-2" 
+      />
+      <CircleIconButton 
+        @click="deleteStatement"  
+        :disabled="authenticationStatus !== 'authenticated' ? true : false" 
+        icon="folder-minus" text="Remove" title="Remove Statement" class="mx-2" 
+      />
     </div>
     <DeletePrompt ref="deletePrompt" />
   </div>

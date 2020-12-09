@@ -1,66 +1,67 @@
 <template>
   <div>
     <div
-    
-      v-show="statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0"
+      v-show="!isEditing && (statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0)"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
       <div class="d-flex align-items-center p-2">
-        <div v-if="showImpact || showScope" class="pr-1">
-          <div class="text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
+        <div>
+          <div v-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
             <small v-if="showImpact">100%</small>
             <small v-if="showScope" style="line-height: 1">
               {{localStatementData['statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
           </div>
+          <CircleIconButton v-else-if="isActive && relation && !relation['is_public']" icon="arrows-alt" button-class="btn-light bg-whitesmoke text-primary ml-1 mr-1" />
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
-          <!-- <div class="d-flex justify-content-between mb-1 ">
-            <div>
-              <small class="badge badge-pill badge-light mr-1 d-none d-md-inline-block"><fa icon="level-up-alt" rotation="90" /> {{level}}</small>
-              <small class="badge badge-pill badge-primary mr-1 text-nowrap">By <strong>{{statement['user'] ? statement['user']['name'] : null}}</strong></small>
-              <small class="badge badge-pill badge-warning text-nowrap font-weight-bold">Almost All</small>
-            </div>
-            <small class="text-nowrap d-none d-md-block">{{statement['created_at']}}</small>
-            <CTPoints :points="statement['ct_points']" />
-          </div> -->
           <div class="d-flex text-justify align-items-center" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
               <div class="text-dark text-justify mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
               <!--  -->
           </div>
-          <!-- <div class="d-flex justify-content-between">
-            <div>
-              <small class="badge badge-pill  text-nowrap"><strong>{{statement['subscribers'].length}}</strong> Subscribers</small>
-            </div>
-            <AddStatementOption size="compact" class="text-right" />
-          </div> -->
         </div>
-        <div class="pl-1">
-          <div v-if="showOpinion || showCTOpinion || isActive" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+        <div class="pl-1 d-flex">
+          <div v-if="showOpinion || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
-            <router-link v-else :to="'/branch/' + relation['id']" tag="div" ><fa icon="eye" /></router-link>
           </div>
+          <template v-else-if="isActive">
+            <router-link :to="'/branch/' + relation['id']" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+            <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
+          </template>
         </div>
       </div>
     </div>
-    <CreateSubStatement v-if="createSubStatementParentId === relation['id']" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
-    <template v-for="(children, index) in statementChildren" :key="'children' + index">
-      <SubStatement :is-positive-statement="isPositiveStatement" :statement="children" :logic-tree-id="logicTreeId" :level="level + 1" @save="newSubStatementSaved($event, index)" />
-    </template>
+    <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="isEditing = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
+
+    <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
+
+    <draggable
+      v-if="relationData"
+      :list="statement['relations']"
+      class="dragArea"
+      item-key="id"
+      :group="{ name: groupName }"
+      @end="relationsRearrange"
+    >
+      <template #item="{element, index}">
+        <SubStatement :is-positive-statement="isPositiveStatement" :statement="element" :logic-tree-id="logicTreeId" :level="level + 1" @save="newSubStatementSaved($event, index)" @update="statementUpdated($event, index)" :statement-relation-index-map="statementRelationIndexMap.concat(index)" :group-name="groupName" />
+      </template>
+    </draggable>
   </div>
 </template>
 <script>
 // import CTPoints from '@/components/CTPoints'
 import SubStatement from './SubStatement'
+import draggable from 'vuedraggable'
 import GlobalData from '../global-data'
 import CreateSubStatement from './CreateSubStatement'
 import RelationTypeAPI from '@/api/relation-type'
 import ScopeAPI from '@/api/scope'
-
+import CircleIconButton from '@/components/CircleIconButton'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -68,7 +69,9 @@ export default {
     // CTPoints,
     // AddStatementOption,
     CreateSubStatement,
-    SubStatement
+    SubStatement,
+    draggable,
+    CircleIconButton
   },
   props: {
     level: Number,
@@ -80,15 +83,23 @@ export default {
     statement: {
       type: Object,
       required: true
+    },
+    statementRelationIndexMap: Array,
+    groupName: {
+      type: String,
+      default: 'g1'
     }
   },
   emits: {
-    save: null
+    save: null,
+    update: null
   },
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     return {
       ...GlobalData,
+      isEditing: false,
+      relationData: null,
       scopes: ScopeAPI.cachedData.value['data'],
       localStatementData: {scope: null},
       statementClass: {
@@ -100,6 +111,18 @@ export default {
     }
   },
   methods: {
+    editStatement(){
+      this.isEditing = true
+    },
+    statementEdited(event){
+      console.log('statementEdited', event)
+      this.$emit('update', {event: event, mappingIndex: []});
+      this.isEditing = false
+    },
+    statementUpdated(event, index){
+      event['mappingIndex'].push(index)
+      this.$emit('update', event)
+    },
     newSubStatementSaved(event, index){
       event['mappingIndex'].push(index)
       this.$emit('save', event)
@@ -107,6 +130,9 @@ export default {
     statementClicked(){
       this.selectedStatementData = this.localStatementData
       this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? 0 : this.relation['id']
+    },
+    relationsRearrange(e){
+      console.log('e', e)
     }
   },
   watch: {
@@ -118,7 +144,22 @@ export default {
         this.localStatementData = JSON.parse(JSON.stringify(this.statement))
       },
       immediate: true
-    }
+    },
+    statementRelationIndexMap: {
+      handler(statementRelationIndexMap){
+        this.relationData = null
+        if(statementRelationIndexMap){
+          let currentRelation = this.mainRelationData
+          const map = statementRelationIndexMap
+          for(let x = 0; x < map.length; x++){
+            const index = map[x]
+            currentRelation = currentRelation['relations'][index]
+          }
+          this.relationData = currentRelation
+        }
+      },
+      immediate: true
+    },
   },
   computed: {
     parentStatement(){

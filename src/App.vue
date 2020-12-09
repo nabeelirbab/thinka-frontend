@@ -1,8 +1,8 @@
 <template>
-  <div :class="hasMenu && !hideBranding ? 'has-menu-top-padding' : 'top-padding'" style="">
+  <div :class="!hideBranding ? 'has-menu-top-padding' : 'top-padding'" style="">
     <Header />
     <div class="d-flex align-items-stretch">
-      <div class=" flex-fill">
+      <div class="flex-grow-1" style="min-width:0">
         <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center pt-4">
           Please wait... <fa icon="spinner" spin />
         </div>
@@ -81,10 +81,11 @@ export default {
       return typeof this.$route['meta']['auth'] !== 'undefined' && typeof this.$route['meta']['auth']['require_user'] !== 'undefined' && this.$route['meta']['auth']['require_user']
     },
     hideBranding(){
+      console.log('meta', this.$route['meta'])
       return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
     },
     hasMenu(){
-      return this.authenticationStatus === 'authenticated'
+      return true // this.authenticationStatus === 'authenticated'
     }
   }
 }
@@ -92,12 +93,15 @@ export default {
 
 <style scoped>
 .top-padding {
-  padding-top:46px
+  padding-top:85px
 }
 .has-menu-top-padding {
   padding-top: 84px;
 }
 @media (min-width: 768px) {
+  .top-padding {
+    padding-top:46px
+  }
   .has-menu-top-padding {
     padding-top: 46px;
   }

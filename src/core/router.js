@@ -21,6 +21,9 @@ const routes = [
     path: "/branch",
     name: "Branch",
     component: Branch,
+    meta: {
+      hideBranding: true
+    }
   },
   {
     path: "/dashboard",

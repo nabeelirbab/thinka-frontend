@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <button :class="(active ? 'btn-success' : 'btn-primary') + ' ' + (disabled ? 'disabled': '')" :disabled="disabled" class="btn btn-icon-circle btn-lg">
+    <button :class="(active ? 'btn-success' : buttonClass) + ' ' + (disabled ? 'disabled': '')" :disabled="disabled" class="btn btn-icon-circle btn-lg">
       <fa :icon="icon" />
     </button> <br />
       {{text}}
@@ -15,6 +15,10 @@ export default {
     },
     icon: String,
     text: String,
+    buttonClass: {
+      type: String,
+      default: 'btn-primary'
+    },
     active: {
       type: Boolean,
       default: false
@@ -24,6 +28,7 @@ export default {
 </script>
 <style>
 .btn-icon-circle {
+  font-size:1em;
   width: 35px;
   height: 35px;
   border-radius: 50%;

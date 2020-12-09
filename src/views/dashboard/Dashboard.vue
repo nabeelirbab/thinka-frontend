@@ -31,27 +31,7 @@
             </table>
           </div>
         </div>
-        <div class="card">
-          <h5 class="card-header"><fa icon="list" /> My Trees</h5>
-          <div class="card-body">
-            <table class="table ">
-              <tbody>
-                <tr>
-                  <td>Claim</td>
-                  <td>Apples are good for your health.</td>
-                </tr>
-                <tr>
-                  <td>Question</td>
-                  <td>Were the moon landings fake?</td>
-                </tr>
-                <tr>
-                  <td>Risk</td>
-                  <td>Lockdowns are a terrible solution for anything.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <MyList v-if="user" />
       </div>
     </div>
   </div>
@@ -59,9 +39,11 @@
 <script>
 import Auth from '@/core/auth'
 import Trending from './dashboard-components/Trending'
+import MyList from './dashboard-components/MyList'
 export default {
   components: {
-    Trending
+    Trending,
+    MyList
   },
   mounted(){
 
