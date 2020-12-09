@@ -9,7 +9,7 @@
           <div v-if="!isEditing" class="d-flex align-items-center text-break">
             <div v-if="parentRelationId" class="text-warning font-weight-bold pr-1" ><h6>{{relationTypeSymbol}}</h6></div>
             <div ref="actualStatementTextDiv" class="text limitText flex-fill" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              <fa v-if="parentRelationId" icon="tree"/> <fa v-else icon="tree"/> {{statement ? statement['text'] : 'No Text'}} ({{parentRelationId}}) [{{relation['id']}}]
+              <fa v-if="parentRelationId" icon="tree"/> <fa v-else icon="tree"/> {{statement ? statement['text'] : 'No Text'}}
             </div>
             <div>
               <div v-if="selectedStatementId === relation['id']" class="d-flex">
