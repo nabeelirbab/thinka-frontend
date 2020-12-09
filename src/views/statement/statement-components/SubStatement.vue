@@ -8,18 +8,21 @@
     >
       <div class="d-flex align-items-center p-2">
         <div>
-          <div v-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
+          <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
+            <fa icon="spinner" spin />
+          </CircleLabel>
+          <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
             <small v-if="showImpact">100%</small>
             <small v-if="showScope" style="line-height: 1">
               {{localStatementData['statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
           </div>
-          <CircleIconButton v-else-if="isActive && relation && !relation['is_public']" icon="arrows-alt" button-class="btn-light bg-whitesmoke text-primary ml-1 mr-1" />
+          <CircleIconButton v-else-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1 mr-1" />
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify mb-1 text-break">{{statementText}}</div>
+              <div class="text-dark text-justify mb-1 text-break">{{statementText}} #{{relationData ? relationData['id'] : ''}}</div>
               <!--  -->
           </div>
         </div>
@@ -36,16 +39,21 @@
       </div>
     </div>
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="isEditing = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
-
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
-
     <draggable
       v-if="relationData"
+      :relationid="relationData['id']"
       :list="statement['relations']"
       class="dragArea"
+      relationid1="ey"
+      :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
       item-key="id"
+      handle=".move-icon"
+      detail='yow'
       :group="{ name: groupName }"
-      @end="relationsRearrange"
+      @start="startDragging"
+      @end="endDragging"
+      @change="listChanged"
     >
       <template #item="{element, index}">
         <SubStatement :is-positive-statement="isPositiveStatement" :statement="element" :logic-tree-id="logicTreeId" :level="level + 1" @save="newSubStatementSaved($event, index)" @update="statementUpdated($event, index)" :statement-relation-index-map="statementRelationIndexMap.concat(index)" :group-name="groupName" />
@@ -62,6 +70,8 @@ import CreateSubStatement from './CreateSubStatement'
 import RelationTypeAPI from '@/api/relation-type'
 import ScopeAPI from '@/api/scope'
 import CircleIconButton from '@/components/CircleIconButton'
+import RelationAPI from '@/api/relation'
+import CircleLabel from '@/components/CircleLabel'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -71,7 +81,8 @@ export default {
     CreateSubStatement,
     SubStatement,
     draggable,
-    CircleIconButton
+    CircleIconButton,
+    CircleLabel
   },
   props: {
     level: Number,
@@ -94,10 +105,15 @@ export default {
     save: null,
     update: null
   },
+  setup(){
+    return {
+      ...GlobalData,
+    }
+  },
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     return {
-      ...GlobalData,
+      
       isEditing: false,
       relationData: null,
       scopes: ScopeAPI.cachedData.value['data'],
@@ -107,7 +123,8 @@ export default {
         'positive-statement': this.isPositiveStatement,
         'border ': false
       },
-      relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : []
+      relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : [],
+      isUpdating: false
     }
   },
   methods: {
@@ -131,8 +148,27 @@ export default {
       this.selectedStatementData = this.localStatementData
       this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? 0 : this.relation['id']
     },
-    relationsRearrange(e){
-      console.log('e', e)
+    startDragging(){
+      this.isDraggingStatement = this.isPositiveStatement === true ? 1 : 2
+      console.log('startDragging')
+    },
+    endDragging(){
+      this.isDraggingStatement = 0
+    },
+    listChanged(event){
+      if(typeof event['added'] !== 'undefined' && this.relationData['relations']){
+        this.isUpdating = true
+        this.relationData['relations'][event['added']['newIndex']]['parent_relation_id'] = this.relationData['id']
+        RelationAPI.update({
+          id: this.relationData['relations'][event['added']['newIndex']]['id'],
+          parent_relation_id: this.relationData['relations'][event['added']['newIndex']]['parent_relation_id'],
+        }).finally(() => {
+          this.mapRelations()
+          this.isUpdating = false
+        })
+      }else{
+        console.log(this.relationData['relations'])
+      }
     }
   },
   watch: {
@@ -166,7 +202,7 @@ export default {
       return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation'] : null
     },
     isActive(){
-      return this.relation['id'] === this.selectedStatementId
+      return this.relationData && this.relationData['id'] * 1 === this.selectedStatementId * 1
     },
     statementId(){
       return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['id'] : 'ERROR: Statement text not found'
@@ -195,3 +231,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.dragArea.isDragging {
+  min-height: 20px;
+  border: 1px dashed;
+  padding: 10px;
+}
+</style>

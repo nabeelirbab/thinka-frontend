@@ -50,7 +50,8 @@ export default {
     }
   },
   emits: {
-    save: null
+    save: null,
+    cancel: null
   },
   mounted(){
     this.$refs.statementText.focus()

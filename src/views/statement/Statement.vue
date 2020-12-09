@@ -15,12 +15,17 @@
         <div v-if="mainRelationData" @click1="selectMainStatement" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
+              :relation-id="mainRelationData['id']"
               :list="mainRelationData['relations']"
               :disable="true"
               class="dragArea"
+              :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
               item-key="id"
+              handle=".move-icon"
               :group="{ name: 'g1' }"
-              @end="relationsRearrange"
+              @start="startDragging(true)"
+              @end="endDragging"
+              @change="listChanged"
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
@@ -37,12 +42,16 @@
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
           <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
+              :relation-id="mainRelationData['id']"
               :list="mainRelationData['relations']"
               :disable="true"
               class="dragArea"
+              :class="(!isDraggingStatement === 2) ? 'isDragging' : ''"
               item-key="id"
               :group="{ name: 'g2' }"
-              @end="relationsRearrange"
+              @start="startDragging(false)"
+              @end="endDragging"
+              @change="listChanged"
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 1">
@@ -94,21 +103,20 @@ export default {
   },
   mounted(){
   },
+  setup(){
+    return {
+      ...GlobalData,
+    }
+  },
   data(){
     return {
       isLoading: false,
-      mainRelationData: GlobalData.mainRelationData,
-      selectedStatementId: GlobalData.selectedStatementId,
-      statementTextFilter: GlobalData.statementTextFilter,
-      deletedRelationId: GlobalData.deletedRelationId,
-      backHistory: GlobalData.backHistory,
       mainStatementHeight: 0,
       positiveStatementHeight: 100,
       authenticationStatus: Auth.status(),
       user: Auth.user(),
       activeCreateWindow: false,
       subRelationIds: [], // used to update all the sub statements
-      subStatementMap: {} // trace the location of the substatement given the statement id
     }
   },
   methods: {
@@ -164,24 +172,12 @@ export default {
     setMainRelation(statement){
       this.statement = statement
       this.isLoading = true
-      this.subStatementMap = {}
-      this.subRelationIds = this.getSubRelationIds(statement)
+      this.subRelationIds = this.mapRelations(statement)
       setTimeout(() => {
         this.resizePositiveStatement()
         this.setDefaultSeparator()
       }, 1200)
       this.isLoading = false
-    },
-    getSubRelationIds(relation, parentIds = []){
-      let ids = []
-      relation['relations'].forEach((relation, index) => {
-        ids.push({id: relation['id']})
-        this.subStatementMap[relation['id']] = parentIds.concat([index])
-        if(relation['relations'].length){
-          ids = ids.concat(this.getSubRelationIds(relation, this.subStatementMap[relation['id']]))
-        }
-      })
-      return ids
     },
     setDefaultSeparator(){
       const negativeChildren = this.$refs.negativeWindow.children
@@ -237,8 +233,7 @@ export default {
         }
         currentStatement['relations'].push(newRecursiveDownRelations)
       }
-      this.subStatementMap = {}
-      this.subRelationIds = this.getSubRelationIds(this.mainRelationData)
+      this.subRelationIds = this.mapRelations(this.mainRelationData)
     },
     updateNewSubStatement(newSubStatement, firstLevelIndex){
       let currentStatement = this.mainRelationData['relations'][firstLevelIndex]
@@ -274,7 +269,31 @@ export default {
     },
     relationsRearrange(e){
       console.log(e)
-      this.getSubRelationIds(this.mainRelationData)
+      this.mapRelations(this.mainRelationData)
+    },
+    startDragging(isPositiveStatement){
+      this.isDraggingStatement = isPositiveStatement === true ? 1 : 2
+      console.log('startDragging')
+    },
+    endDragging(event){
+      console.log('endDragging', event)
+      console.log('endDragging', event.to.getAttribute('relation-id'))
+      this.isDraggingStatement = 0
+    },
+    listChanged(event){
+      if(typeof event['added'] !== 'undefined' && this.mainRelationData['relations']){
+        this.isUpdating = true
+        this.mainRelationData['relations'][event['added']['newIndex']]['parent_relation_id'] = this.mainRelationData['id']
+        RelationAPI.update({
+          id: this.mainRelationData['relations'][event['added']['newIndex']]['id'],
+          parent_relation_id: this.mainRelationData['relations'][event['added']['newIndex']]['parent_relation_id'],
+        }).finally(() => {
+          this.mapRelations()
+          this.isUpdating = false
+        })
+      }else{
+        console.log(this.mainRelationData['relations'])
+      }
     }
   },
   watch: {
@@ -305,7 +324,7 @@ export default {
     },
     deletedRelationId(deletedRelationId){
       if(deletedRelationId){
-        const map = this.subStatementMap[deletedRelationId]
+        const map = this.subRelationMap[deletedRelationId]
         let currentRelation = this.mainRelationData
         for(let x = 0; x < map.length - 1; x++){
           const index = map[x]
@@ -314,23 +333,9 @@ export default {
         console.log(currentRelation['relations'])
         currentRelation['relations'].splice(map[map.length - 1], 1)
         console.log(currentRelation['relations'])
-        this.subStatementMap = {}
-        this.subRelationIds = this.getSubRelationIds(this.mainRelationData)
+        this.subRelationIds = this.mapRelations(this.mainRelationData)
       }
     }
-    // deletedRelationId(deletedRelationId){
-    //   if(deletedRelationId){
-    //     const map = this.subStatementMap[deletedRelationId]
-    //     let currentRelation = this.statement
-    //     for(let x = 0; x < map.length - 1; x++){
-    //       const index = map[x]
-    //       currentRelation = currentRelation['relations'][index]
-    //     }
-    //     currentRelation['relations'].splice(map[map.length - 1], 1)
-    //     this.subStatementMap = {}
-    //     this.subRelationIds = this.getSubRelationIds(this.statement)
-    //   }
-    // }
   },
   computed: {
     totaRelevanceWindowHeight(){
@@ -390,5 +395,10 @@ export default {
 .statement-window {
   overflow-y: auto;
   resize: vertical;
+}
+.dragArea.isDragging {
+  min-height: 20px;
+  border: 1px dashed;
+  padding: 10px;
 }
 </style>

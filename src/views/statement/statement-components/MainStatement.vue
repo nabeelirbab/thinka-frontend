@@ -7,7 +7,7 @@
       <div class=" font-weight-bold text-white pr-2">
         <div >
           <div v-if="!isEditing" class="d-flex align-items-center text-break">
-            <div class="text-warning font-weight-bold pr-1" ><h6>*</h6></div>
+            <div v-if="parentRelationId" class="text-warning font-weight-bold pr-1" ><h6>{{relationTypeSymbol}}</h6></div>
             <div ref="actualStatementTextDiv" class="text limitText flex-fill" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
               <fa v-if="parentRelationId" icon="tree"/> <fa v-else icon="tree"/> {{statement ? statement['text'] : 'No Text'}} ({{parentRelationId}}) [{{relation['id']}}]
             </div>
@@ -39,6 +39,7 @@ import GlobalData from '../global-data'
 import CreateSubStatement from './CreateSubStatement'
 import CircleIconButton from '@/components/CircleIconButton'
 import CircleLabel from '@/components/CircleLabel'
+import RelationTypeAPI from '@/api/relation-type'
 // import NoProfile from '@/components/NoProfile'
 export default {
   components: {
@@ -60,6 +61,7 @@ export default {
     window.removeEventListener('scroll', this.isScrolling);
   },
   data(){
+    console.log('RelationTypeAPI.cachedData', RelationTypeAPI.cachedData)
     return {
       selectedStatementId: GlobalData.selectedStatementId,
       selectedStatementData: GlobalData.selectedStatementData,
@@ -69,7 +71,8 @@ export default {
       stickStatementHeightLimit: 0,
       statementTextHeight: 0,
       isScrollingTimeout: null,
-      isEditing: false
+      isEditing: false,
+      relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
     }
   },
   methods: {
@@ -132,7 +135,16 @@ export default {
     },
     titleIds(){
         return '('+this.relation['parent_relation_id']+') [' + this.relation['id'] + ']'
-    }
+    },
+    relationTypeSymbol(){
+      const relationTypeId = this.relation['relation_type_id']
+      const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
+      if(relationTypeIndex >= 0){
+        return this.relationTypes[relationTypeIndex]['symbol']
+      }else{
+        return '??'
+      }
+    },
   }
 }
 </script>
