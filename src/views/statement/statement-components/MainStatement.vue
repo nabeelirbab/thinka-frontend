@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-3 pt-3 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''">
+    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-3 pt-3 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
       <div class="d-flex justify-content-between">
       </div>
       <div class=" font-weight-bold text-white pr-2">
@@ -9,10 +9,9 @@
           <div v-if="!isEditing" class="d-flex align-items-center text-break">
             <div class="text-warning font-weight-bold pr-1" ><h6>*</h6></div>
             <div ref="actualStatementTextDiv" class="text limitText flex-fill" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              {{statement ? statement['text'] : 'No Text'}} ({{parentRelationId}}) [{{relation['id']}}]
+              <fa v-if="parentRelationId" icon="tree"/> <fa v-else icon="tree"/> {{statement ? statement['text'] : 'No Text'}} ({{parentRelationId}}) [{{relation['id']}}]
             </div>
             <div>
-              
               <div v-if="selectedStatementId === relation['id']" class="d-flex">
                 <CircleLabel>
                   <CTPoints :points="ctPoints * 1" class="text-dark" />
@@ -120,7 +119,7 @@ export default {
       return this.relation && this.selectedStatementId === this.relation['id']
     },
     statement(){
-      return typeof this.relation['statement'] !== 'undefined' ? this.relation['statement'] : null
+      return this.relation && this.relation['statement'] ? this.relation['statement'] : null
     },
     statementId(){
       return this.statement && typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
@@ -130,6 +129,9 @@ export default {
     },
     ctPoints(){
       return typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'
+    },
+    titleIds(){
+        return '('+this.relation['parent_relation_id']+') [' + this.relation['id'] + ']'
     }
   }
 }

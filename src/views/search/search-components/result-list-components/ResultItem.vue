@@ -3,7 +3,7 @@
     <div class="d-flex" >
       <div class="flex-grow-1 text-truncate" style="min-width: 0;">
         <div class="text-sm text-truncate">
-          {{parentStatement ? parentStatement['text'] : 'Root Statement'}}
+          {{parentStatement ? parentStatement['text'] : ''}}
         </div>
         <div v-if="statement" style="line-height:0.9em" class="ml-auto">
           <small><em>{{statement['statement_type']['description']}}</em></small>
@@ -13,7 +13,8 @@
     </div>
     <div v-if="statement" class="d-flex justify-content-between">
       <div  class="text-break">
-        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{statement['text']}}</router-link>
+        <span v-if="parentStatement"><fa icon=leaf /></span><span v-else><fa icon=tree /></span>
+        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{'    ' + statement['statement_type']['description'] + ': ' + statement['text']}}</router-link>
         <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
         <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p>
       </div>

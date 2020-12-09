@@ -19,7 +19,7 @@
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
               <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify mb-1 text-break">{{statementText}} [#{{statementId}}, #{{relation['id']}}]</div>
+              <div class="text-dark text-justify mb-1 text-break">{{statementText}}</div>
               <!--  -->
           </div>
         </div>
@@ -188,6 +188,9 @@ export default {
       }else{
         return '??'
       }
+    },
+    titleIds(){
+        return '('+this.relation['parent_relation_id']+') [' + this.relation['id'] + ']'
     }
   }
 }
