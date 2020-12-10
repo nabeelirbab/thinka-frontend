@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-3 pt-3 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
+    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
       <div class="d-flex justify-content-between">
       </div>
       <div class=" font-weight-bold text-white pr-2">

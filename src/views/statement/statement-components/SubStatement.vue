@@ -6,7 +6,7 @@
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
-      <div class="d-flex align-items-center p-2">
+      <div class="d-flex align-items-center p-1">
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
             <fa icon="spinner" spin />
