@@ -1,13 +1,13 @@
 <template>
   <div class="border rounded">
     <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="list" /> My Trees</h5>
-    <div class="p-4">
+    <div class="p-4" style="overflow-y:auto; height: 50vh">
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
       <div >
         <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
           <div class="flex-fill text-break">
             <small>{{formatDate(trend['updated_at'])}}</small> <br />
-            <router-link :to="'/branch/' + trend['id']">{{trend['text']}}</router-link>
+            <router-link :to="'/branch/' + trend['id']">{{trend['text']}} <small>#{{trend['id']}}</small></router-link>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@
       </div>
       <div class="form-group">
         <label for="exampleInputPassword1">Password</label>
-        <input ref="passwordField" v-model="password" @keydown.enter="logIn" type="password" class="form-control" placeholder="Password" current-password>
+        <input ref="passwordField" v-model="password" @keydown.enter="logIn" type="password" autocomplete="on" class="form-control" placeholder="Password" current-password>
       </div>
       <div class="text-center">
         <template v-if="!isLoading">

@@ -17,7 +17,7 @@
         </button>
       </div>
       <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
-      <Suggestion v-show="mode === 'create'" ref="suggestion" @select="sugestionSelected" />
+      <Suggestion ref="suggestion" @select="sugestionSelected" />
     </div>
     
   </div>
@@ -59,6 +59,7 @@ export default {
   data(){
     return {
       isLoading: false,
+      isSuggestionSelected: false,
       isSuccess: false,
       statement: {
         relation: {
@@ -90,7 +91,7 @@ export default {
       }
     },
     isTextTyping(e){
-      if(e.keyCode !== 13 && this.mode === 'create'){
+      if(e.keyCode !== 13){
         setTimeout(() => {
           this.$refs.suggestion._isTextTyping(this.$refs.statementText.value)
         }, 200)
@@ -98,10 +99,18 @@ export default {
     },
     sugestionSelected(selectedSuggestion){
       if(selectedSuggestion){
+        this.isSuggestionSelected = true
         this.statement['id'] = selectedSuggestion['id']
         this.statement['text'] = selectedSuggestion['text']
       }else{
-        this.statement['id'] = null
+        if(this.relation){
+          this.statement['id'] = this.relation['statement']['id']
+          this.statement['text'] = this.relation['statement']['text']
+        }else{
+          this.statement['id'] = null
+        }
+        if(this.relation['statement_id'])
+        this.isSuggestionSelected = false
         // this.statement['text'] = ''
       }
     },
@@ -138,9 +147,13 @@ export default {
       })
     },
     updateStatement(param){
-      StatementAPI.update(param).then(result => {
+      if(this.isSuggestionSelected){
+        param['old_statement_id'] = this.relation['statement']['id']
+      }
+      StatementAPI.post('/update-relation', param).then(result => {
         if(result['data']){
           let newSubStatement = param
+          newSubStatement['id'] = result['data']['id']
           this.isSuccess = true
           setTimeout(() => {
             this.$emit('save', newSubStatement)
@@ -191,7 +204,17 @@ export default {
   },
   computed: {
     relationTypes(){
-      return RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : []
+      let relationTypes = []
+      if(RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
+        RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
+          const relevanceWindow = relationType['relevance_window'] !== null ? relationType['relevance_window'] * 1 : null
+          console.log('relevanceWindow', relevanceWindow)
+          if(relevanceWindow === -1 || (relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
+            relationTypes.push(relationType)
+          }
+        })
+      }
+      return  relationTypes
     }
   }
 }

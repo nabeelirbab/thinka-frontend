@@ -4,7 +4,7 @@ export default {
   prepare: () => {
     return new Promise(resolve => {
       const relationTypeParam = {
-        select: ['description', 'symbol', 'relevance'],
+        select: ['description', 'symbol', 'relevance', 'relevance_window'],
         sort: [{
           column: 'relevance',
           order: 'desc'

@@ -11,19 +11,19 @@
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
             <fa icon="spinner" spin />
           </CircleLabel>
-          <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px; width:35px; overflow-wrap:anywhere">
-            <small v-if="showImpact">100%</small>
+          <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
+            <small v-if="showImpact" class="text-nowrap">{{relationData['impact_amount'] !== null ? relationData['impact_amount'] : ''}}%</small>
             <small v-if="showScope" style="line-height: 1">
               {{localStatementData['statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
           </div>
-          <CircleIconButton v-else-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1 mr-1" />
+          <CircleIconButton v-else-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary mr-1" />
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
-              <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-              <div class="text-dark text-justify mb-1 text-break">{{statementText}} #{{relationData ? relationData['id'] : ''}}</div>
-              <!--  -->
+            <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
+            <div class="text-dark text-justify mb-1 text-break">{{statementText}} <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small></div>
+            <!--  -->
           </div>
         </div>
         <div class="pl-1 d-flex">
@@ -42,13 +42,13 @@
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <draggable
       v-if="relationData"
+      v-show="!(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
       :relationid="relationData['id']"
       :list="statement['relations']"
       class="dragArea"
       relationid1="ey"
       :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
       item-key="id"
-      handle=".move-icon"
       detail='yow'
       :group="{ name: groupName }"
       @start="startDragging"
@@ -132,7 +132,6 @@ export default {
       this.isEditing = true
     },
     statementEdited(event){
-      console.log('statementEdited', event)
       this.$emit('update', {event: event, mappingIndex: []});
       this.isEditing = false
     },
@@ -145,14 +144,14 @@ export default {
       this.$emit('save', event)
     },
     statementClicked(){
-      this.selectedStatementData = this.localStatementData
+      this.selectedStatementData = this.relationData
       this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? 0 : this.relation['id']
     },
     startDragging(){
       this.isDraggingStatement = this.isPositiveStatement === true ? 1 : 2
-      console.log('startDragging')
     },
     endDragging(){
+      console.log('end dragging')
       this.isDraggingStatement = 0
     },
     listChanged(event){
@@ -166,8 +165,6 @@ export default {
           this.mapRelations()
           this.isUpdating = false
         })
-      }else{
-        console.log(this.relationData['relations'])
       }
     }
   },

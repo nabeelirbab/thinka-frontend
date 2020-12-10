@@ -21,7 +21,6 @@
               class="dragArea"
               :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
               item-key="id"
-              handle=".move-icon"
               :group="{ name: 'g1' }"
               @start="startDragging(true)"
               @end="endDragging"
@@ -267,17 +266,10 @@ export default {
         this.positiveStatementHeight = ((this.totaRelevanceWindowHeight) / 2) + this.$refs.separator._getYOffset()
       }
     },
-    relationsRearrange(e){
-      console.log(e)
-      this.mapRelations(this.mainRelationData)
-    },
     startDragging(isPositiveStatement){
       this.isDraggingStatement = isPositiveStatement === true ? 1 : 2
-      console.log('startDragging')
     },
-    endDragging(event){
-      console.log('endDragging', event)
-      console.log('endDragging', event.to.getAttribute('relation-id'))
+    endDragging(){
       this.isDraggingStatement = 0
     },
     listChanged(event){
@@ -291,8 +283,6 @@ export default {
           this.mapRelations()
           this.isUpdating = false
         })
-      }else{
-        console.log(this.mainRelationData['relations'])
       }
     }
   },
@@ -302,7 +292,6 @@ export default {
         if(statementId){
           const lastViewRelationId = localStorage.getItem('last_viewed_relation_id')
           if(lastViewRelationId !== statementId + '' || this.mainRelationData === null){
-            console.log('initialized', this.mainRelationData)
             this.initialize(statementId)
           }else{
             this.setMainRelation(this.mainRelationData)

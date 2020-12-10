@@ -26,8 +26,8 @@ export default {
   },
   data(){
     return {
-      isLoading: false,
       scope: null,
+      isLoading: false,
       isPublic: false,
       ...GlobalData,
       user: Auth.user()

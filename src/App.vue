@@ -93,7 +93,7 @@ export default {
 
 <style scoped>
 .top-padding {
-  padding-top:85px
+  padding-top:46px
 }
 .has-menu-top-padding {
   padding-top: 84px;

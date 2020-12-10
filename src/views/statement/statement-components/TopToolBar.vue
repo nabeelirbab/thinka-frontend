@@ -25,12 +25,22 @@
         <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
-        <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button>
+        <div class="dropdown show shadown-none">
+          <button class="btn icon-size py-1 text-white btn-square px-2 shadow-none" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More tree options.">
+            <fa icon="ellipsis-v" />
+          </button>
+
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+            <button @click="openContextLock" class="dropdown-item" href="#">Context Lock</button>
+          </div>
+        </div>
+        <!-- <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button> -->
       </div>
     </div>
   </div>
   <LogInModal ref="logInModal" />
   <Prompt ref="prompt" />
+  <ContextLockModal ref="contextLockModal" />
 </template>
 <script>
 import Auth from '@/core/auth'
@@ -39,10 +49,12 @@ import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 import RelationAPI from '@/api/relation'
 import LogInModal from '@/components/login/LogInModal'
 import Prompt from '@/components/Prompt'
+import ContextLockModal from './top-toolbar-components/ContextLockModal'
 export default {
   components: {
     LogInModal,
-    Prompt
+    Prompt,
+    ContextLockModal
   },
   props: {
     mainRelation: {
@@ -208,6 +220,9 @@ export default {
           this.isBookmarkLoading = false
         })
       }
+    },
+    openContextLock(){
+      this.$refs.contextLockModal._open()
     }
   },
   watch: {

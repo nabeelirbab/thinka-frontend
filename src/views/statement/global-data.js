@@ -28,7 +28,6 @@ const mapRelations = (relation = null, parentIds = []) => {
       ids = ids.concat(mapRelations(relation, subRelationMap.value[relation['id']]))
     }
   })
-  console.log('test', subRelationMap.value)
   return ids
 }
 watch(selectedStatementId, (id) => {

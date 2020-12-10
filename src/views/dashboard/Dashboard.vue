@@ -13,6 +13,7 @@
         <Trending />
       </div>
       <div class="col-12 col-md-4 pb-3">
+        <MyList v-if="user" class="mb-2" />
         <div class="card mb-2">
           <h5 class="card-header"><fa icon="cloud" /> Thinka Tank</h5>
           <div class="card-body">
@@ -31,7 +32,7 @@
             </table>
           </div>
         </div>
-        <MyList v-if="user" />
+        
       </div>
     </div>
   </div>

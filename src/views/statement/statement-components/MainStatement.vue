@@ -61,7 +61,6 @@ export default {
     window.removeEventListener('scroll', this.isScrolling);
   },
   data(){
-    console.log('RelationTypeAPI.cachedData', RelationTypeAPI.cachedData)
     return {
       selectedStatementId: GlobalData.selectedStatementId,
       selectedStatementData: GlobalData.selectedStatementData,
