@@ -6,7 +6,7 @@
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       @click="statementClicked"
     >
-      <div class="d-flex align-items-center p-2">
+      <div class="d-flex align-items-center p-1">
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
             <fa icon="spinner" spin />
@@ -22,8 +22,7 @@
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
             <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-            <div class="text-dark text-justify mb-1 text-break">{{statementText}} <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small></div>
-            <!--  -->
+            <div :title="titleIds" class="text-dark text-justify mb-1 text-break">{{statementText}} <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small></div>
           </div>
         </div>
         <div class="pl-1 d-flex">
@@ -113,7 +112,7 @@ export default {
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     return {
-      
+
       isEditing: false,
       relationData: null,
       scopes: ScopeAPI.cachedData.value['data'],
