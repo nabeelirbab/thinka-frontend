@@ -81,7 +81,6 @@ export default {
       return typeof this.$route['meta']['auth'] !== 'undefined' && typeof this.$route['meta']['auth']['require_user'] !== 'undefined' && this.$route['meta']['auth']['require_user']
     },
     hideBranding(){
-      console.log('meta', this.$route['meta'])
       return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
     },
     hasMenu(){
