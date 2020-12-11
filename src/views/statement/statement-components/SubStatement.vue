@@ -45,10 +45,9 @@
       :relationid="relationData['id']"
       :list="statement['relations']"
       class="dragArea"
-      relationid1="ey"
       :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
       item-key="id"
-      detail='yow'
+      handle=".isRelationSelected"
       :group="{ name: groupName }"
       @start="startDragging"
       @end="endDragging"
@@ -63,7 +62,7 @@
 <script>
 // import CTPoints from '@/components/CTPoints'
 import SubStatement from './SubStatement'
-import draggable from 'vuedraggable'
+import draggable from 'vuedraggable' // https://github.com/SortableJS/Vue.Draggable
 import GlobalData from '../global-data'
 import CreateSubStatement from './CreateSubStatement'
 import RelationTypeAPI from '@/api/relation-type'
@@ -120,7 +119,8 @@ export default {
       statementClass: {
         'negative-statement': !this.isPositiveStatement,
         'positive-statement': this.isPositiveStatement,
-        'border ': false
+        'border': false,
+        'isRelationSelected': false,
       },
       relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : [],
       isUpdating: false
@@ -170,6 +170,7 @@ export default {
   watch: {
     isActive(){
       this.statementClass['border'] = this.isActive
+      this.statementClass['isRelationSelected'] = this.isActive
     },
     statement: {
       handler(){

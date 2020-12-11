@@ -4,9 +4,9 @@
     <div class="text-center" >
       <vue-slider v-model="impact" :min="-100" :max="100" style="width:150px; margin-left:20px; margin-right:20px"/>
       <div class="text-center text-sm">
-        <span class="float-left">Proving</span>
-        <span >None</span>
-        <span class="float-right">Disproving</span>
+        <span class="float-left">Disproving</span>
+        <!-- <span class="mx-auto" style="position:absolute">None</span> -->
+        <span class="float-right">Proving</span>
       </div>
     </div>
     <div class="mx-1 text-right" style="width: 75px!important">
@@ -20,7 +20,6 @@
         <fa v-else icon="check" />
       </button>
     </div>
-
   </div>
 </template>
 <script>

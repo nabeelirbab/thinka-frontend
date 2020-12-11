@@ -3,6 +3,8 @@
     <div class="flex-fill ">
       <div class="mb-1">
         <select v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded   font-weight-bold mb-1">
+          <option default>Please Select</option>
+          
           <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
             <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
           </template>
@@ -26,6 +28,7 @@
 import StatementAPI from '@/api/statement'
 import RelationTypeAPI from '@/api/relation-type'
 import Suggestion from './create-sub-statement-components/Suggestion'
+import GlobalData from '../global-data'
 export default {
   components: {
     Suggestion
@@ -55,6 +58,13 @@ export default {
   },
   mounted(){
     this.$refs.statementText.focus()
+    console.log('opened')
+    this.hideToolbarDialog()
+  },
+  setup(){
+    return {
+      ...GlobalData
+    }
   },
   data(){
     return {
@@ -205,7 +215,7 @@ export default {
   computed: {
     relationTypes(){
       let relationTypes = []
-      if(RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
+      if((this.level === 1 || this.level === 2 || typeof this.level === 'undefined') && RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
         RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
           const relevanceWindow = relationType['relevance_window'] !== null ? relationType['relevance_window'] * 1 : null
           console.log('relevanceWindow', relevanceWindow)
@@ -213,6 +223,8 @@ export default {
             relationTypes.push(relationType)
           }
         })
+      }else{
+        relationTypes = RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
       }
       return  relationTypes
     }

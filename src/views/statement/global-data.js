@@ -30,6 +30,11 @@ const mapRelations = (relation = null, parentIds = []) => {
   })
   return ids
 }
+const hideToolbarDialog = () => {
+  showImpact.value = false
+  showOpinion.value = false
+  showScope.value = false
+}
 watch(selectedStatementId, (id) => {
   if(id === 0 || id === null){
     showImpact.value = false
@@ -73,4 +78,5 @@ export default {
   isDraggingStatement: isDraggingStatement,
   subRelationMap: subRelationMap,
   mapRelations: mapRelations,
+  hideToolbarDialog: hideToolbarDialog
 }

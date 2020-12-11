@@ -21,6 +21,7 @@
               class="dragArea"
               :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
               item-key="id"
+              handle=".isRelationSelected"
               :group="{ name: 'g1' }"
               @start="startDragging(true)"
               @end="endDragging"
@@ -32,7 +33,7 @@
                 </div>
               </template>
             </draggable>
-            <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'"  :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1">
               <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
             </div>
@@ -47,6 +48,7 @@
               class="dragArea"
               :class="(!isDraggingStatement === 2) ? 'isDragging' : ''"
               item-key="id"
+              handle=".isRelationSelected"
               :group="{ name: 'g2' }"
               @start="startDragging(false)"
               @end="endDragging"
@@ -58,7 +60,7 @@
                 </div>
               </template>
             </draggable>
-            <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'"  :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1">
               <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
             </div>
