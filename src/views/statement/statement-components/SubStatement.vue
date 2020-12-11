@@ -17,7 +17,6 @@
               {{localStatementData['statement']['scope_id'] ? scopes[findArrayIndex(localStatementData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
           </div>
-          <CircleIconButton v-else-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary mr-1" />
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
@@ -33,6 +32,7 @@
           <template v-else-if="isActive">
             <router-link :to="'/branch/' + relation['id']" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
             <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
+            <CircleIconButton v-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary mr-1" />
           </template>
         </div>
       </div>
