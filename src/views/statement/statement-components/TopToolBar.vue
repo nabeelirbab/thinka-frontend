@@ -22,7 +22,10 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" style="font-size:1.5em" /><fa v-else icon="spinner" spin /> </button>
+        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" v-bind:title="titlePublish">
+          <fa v-if="!mainRelation['is_public']" icon="briefcase" />
+            <fa v-else-if="!isPublishing" icon="sun" />
+            <fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <div class="dropdown show shadown-none">
@@ -72,7 +75,7 @@ export default {
     //   this.backHistory = [this.relationId]
     //   localStorage.setItem('back_history', JSON.stringify(this.backHistory))
     // }
-    
+
   },
   data(){
     return {
@@ -145,7 +148,7 @@ export default {
               this.nonAuthorPublish()
             }
           }, 1000)
-          
+
         })
       }
     },
@@ -262,7 +265,7 @@ export default {
       },
       immediate: true
     },
-    
+
   },
   computed: {
     relationId(){
@@ -270,6 +273,9 @@ export default {
     },
     relationUserId(){
       return typeof this.mainRelation['user_id'] !== 'undefined' ? this.mainRelation['user_id'] : null
+    },
+    titlePublish(){
+      return this.mainRelation['is_public'] ? 'Public Tree': 'Private tree (click to publish)'
     }
   }
 }
