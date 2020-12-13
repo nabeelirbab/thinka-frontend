@@ -17,6 +17,7 @@
 <script>
 import Modal from '@/components/bootstrap/Modal'
 import GlobackData from '@/views/statement/global-data'
+// import UserRelationSettingAPI from '@/api/user-relation-setting'
 export default {
   components: {
     Modal
@@ -32,7 +33,7 @@ export default {
       this.$refs.modal._open()
     },
     lockContext(){
-      
+      // UserRelationSettingAPI.
     }
   }
 }

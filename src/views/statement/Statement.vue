@@ -9,8 +9,9 @@
       <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
     <div v-show="!isLoading && mainRelationData" >
-      <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :selected-statement-id="selectedStatementId * 1" :sub-relation-ids="subRelationIds" />
+      <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :sub-relation-ids="subRelationIds" />
       <div class="container py-2 bg-white">
+        <MainStatementProfile />
         <MainStatement v-if="mainRelationData" ref="mainStatement" @updated="mainStatementUpdated" @height-changed="mainStatementHeight = $event" :relation="mainRelationData" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
         <div v-if="mainRelationData" @click1="selectMainStatement" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
@@ -21,7 +22,7 @@
               class="dragArea"
               :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
               item-key="id"
-              handle=".isRelationSelected"
+              handle=".isRelationSelected.enableDragging"
               :group="{ name: 'g1' }"
               @start="startDragging(true)"
               @end="endDragging"
@@ -48,7 +49,7 @@
               class="dragArea"
               :class="(!isDraggingStatement === 2) ? 'isDragging' : ''"
               item-key="id"
-              handle=".isRelationSelected"
+              handle=".isRelationSelected.enableDragging"
               :group="{ name: 'g2' }"
               @start="startDragging(false)"
               @end="endDragging"
@@ -78,6 +79,7 @@ import WindowSeparator from './statement-components/WindowSeperator.vue'
 // import StatementAPI from '@/api/statement.js'
 import RelationAPI from '@/api/relation.js'
 import MainStatement from './statement-components/MainStatement'
+import MainStatementProfile from './statement-components/MainStatementProfile'
 import SubStatement from './statement-components/SubStatement'
 import CreateSubStatement from './statement-components/CreateSubStatement'
 // import AddStatementOption from './statement-components/AddStatementOption'
@@ -100,6 +102,7 @@ export default {
     TopToolbar,
     Toolbar,
     LogInModal,
+    MainStatementProfile,
     draggable
   },
   mounted(){
@@ -151,7 +154,15 @@ export default {
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
           },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount'])
+          user: {
+            select: {
+              ...(['id']),
+              user_basic_information: {
+                select: ['user_id', 'first_name', 'last_name']
+              }
+            }
+          },
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
         },
         condition: [{
           column: 'id',
@@ -202,7 +213,15 @@ export default {
         statement: {
           select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
         },
-        ...(['relation_type_id', 'statement_id', 'parent_relation_id', 'is_public', 'relevance_window', 'relevance_row', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount'])
+        user: {
+          select: {
+            ...(['id']),
+            user_basic_information: {
+              select: ['user_id', 'first_name', 'last_name']
+            }
+          }
+        },
+        ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {
@@ -310,8 +329,10 @@ export default {
         this.resizePositiveStatement()
       }, 5)
     },
-    selectedStatementId(){
-      this.activeCreateWindow = false
+    selectedStatementId(selectedStatementId){
+      if(selectedStatementId){
+        this.activeCreateWindow = false
+      }
     },
     deletedRelationId(deletedRelationId){
       if(deletedRelationId){
@@ -321,10 +342,13 @@ export default {
           const index = map[x]
           currentRelation = currentRelation['relations'][index]
         }
-        console.log(currentRelation['relations'])
         currentRelation['relations'].splice(map[map.length - 1], 1)
-        console.log(currentRelation['relations'])
         this.subRelationIds = this.mapRelations(this.mainRelationData)
+      }
+    },
+    activeCreateWindow(activeCreateWindow){
+      if(activeCreateWindow !== false){
+        this.selectedStatementId = 0
       }
     }
   },
@@ -335,7 +359,7 @@ export default {
       const bodyTopPadding = 8 // px
       const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
-      const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight
+      const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - 43
       return totaRelevanceWindowHeight - this.mainStatementHeight
     },
     parentRelationId(){
@@ -385,7 +409,6 @@ export default {
 }
 .statement-window {
   overflow-y: auto;
-  resize: vertical;
 }
 .dragArea.isDragging {
   min-height: 20px;

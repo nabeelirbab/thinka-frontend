@@ -22,16 +22,18 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-warning' : ''" :disabled="isPublishing" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" /><fa v-else icon="spinner" spin /> </button>
+        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" style="font-size:1.5em" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <div class="dropdown show shadown-none">
           <button class="btn icon-size py-1 text-white btn-square px-2 shadow-none" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More tree options.">
             <fa icon="ellipsis-v" />
           </button>
-
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-            <button @click="openContextLock" class="dropdown-item" href="#">Context Lock</button>
+            <button @click="editSelectedStatement = true" :disabled="!selectedStatementId" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
+            <button @click="enableDragging = true" :disabled="!selectedStatementId || (mainRelationData && selectedStatementId * 1 === mainRelationData['id'] * 1)" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag</button>
+            <button @click="openContextLock" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
+            <button @click="openContextLock" class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
           </div>
         </div>
         <!-- <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button> -->
@@ -63,10 +65,6 @@ export default {
     },
     statementId: Number,
     parentRelationId: Number,
-    selectedStatementId: {
-      type: Number,
-      default: 0
-    },
     subRelationIds: Array
   },
   mounted(){
@@ -78,13 +76,11 @@ export default {
   },
   data(){
     return {
+      ...GlobalData,
       showSearchText: false,
       isLoading: false,
       searchText: '',
       typingTimeout: 0,
-      statementTextFilter: GlobalData.statementTextFilter,
-      backHistory: GlobalData.backHistory,
-      forwardHistory: GlobalData.forwardHistory,
       isBookmarkLoading: true,
       rootBookmarkId: null,
       authenicationStatus: Auth.status(),
@@ -296,5 +292,8 @@ export default {
   }
   .icon-size {
     font-size:1.3em
+  }
+  .text-published {
+    color: #3c5d80!important
   }
 </style>

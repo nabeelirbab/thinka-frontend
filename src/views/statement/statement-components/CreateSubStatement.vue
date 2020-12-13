@@ -58,7 +58,6 @@ export default {
   },
   mounted(){
     this.$refs.statementText.focus()
-    console.log('opened')
     this.hideToolbarDialog()
   },
   setup(){
@@ -91,9 +90,6 @@ export default {
   methods: {
     cancel(){
       this.$emit('cancel')
-    },
-    test(e){
-      console.log(e)
     },
     enterPressed(e){
       if(!e.shiftKey && e.keyCode === 13){ // 13 is enter
@@ -207,7 +203,6 @@ export default {
           this.statement['relation']['logic_tree_id'] = relation['logic_tree_id']
           this.statement['relation']['is_public'] = relation['is_public']
         }
-        console.log('relation', relation)
       },
       immediate: true
     }
@@ -218,7 +213,6 @@ export default {
       if((this.level === 1 || this.level === 2 || typeof this.level === 'undefined') && RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
         RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
           const relevanceWindow = relationType['relevance_window'] !== null ? relationType['relevance_window'] * 1 : null
-          console.log('relevanceWindow', relevanceWindow)
           if(relevanceWindow === -1 || (relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
             relationTypes.push(relationType)
           }

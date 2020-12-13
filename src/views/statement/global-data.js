@@ -7,6 +7,8 @@ const showImpact = ref(false)
 const showOpinion = ref(false)
 const showScope = ref(false)
 const showCTOpinion = ref(false)
+const editSelectedStatement = ref(false)
+const enableDragging = ref(false)
 const isDraggingStatement = ref(0) // 1 - dragging on positive, 2 dragging on negative
 const createSubStatementParentId = ref(0) // parent id of an active create sub statement
 const statementTextFilter = ref('')
@@ -36,6 +38,8 @@ const hideToolbarDialog = () => {
   showScope.value = false
 }
 watch(selectedStatementId, (id) => {
+  editSelectedStatement.value = false
+  enableDragging.value = false
   if(id === 0 || id === null){
     showImpact.value = false
     showOpinion.value = false
@@ -77,6 +81,8 @@ export default {
   deletedRelationId: deletedRelationId,
   isDraggingStatement: isDraggingStatement,
   subRelationMap: subRelationMap,
+  editSelectedStatement: editSelectedStatement,
+  enableDragging: enableDragging,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog
 }

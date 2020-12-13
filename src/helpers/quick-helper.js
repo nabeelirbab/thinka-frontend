@@ -1,3 +1,4 @@
+const months = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 export default {
   methods: {
     findArrayIndex(value, array, key = null){
@@ -10,16 +11,32 @@ export default {
       }
       return -1
     },
+    toHourMedian(datetime){
+      var hours = datetime.getHours();
+      var minutes = datetime.getMinutes();
+      var ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // the hour '0' should be '12'
+      minutes = minutes < 10 ? '0'+minutes : minutes;
+      var strTime = hours + ':' + minutes + ' ' + ampm;
+      return strTime;
+    },
     formatDate(date, format = null){
       const dateToFormat = new Date(date)
       if(date && dateToFormat.getFullYear() !== 1970){
         switch(format){
+          case 'M d at H:m':
+            return months[dateToFormat.getMonth()] + ' ' + dateToFormat.getDate() + ', ' + dateToFormat.getFullYear() + ' at ' + this.toHourMedian(dateToFormat)
           default:
             return dateToFormat.getMonth() + '/' + dateToFormat.getDate() + '/' + dateToFormat.getFullYear()
         }
       }else{
         return null
       }
-    }
+    },
+    toPascal(s){
+      if (typeof s !== 'string') return ''
+      return s.charAt(0).toUpperCase() + s.slice(1)
+    },
   }
 }

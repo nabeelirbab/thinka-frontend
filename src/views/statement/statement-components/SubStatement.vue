@@ -31,13 +31,13 @@
           </div>
           <template v-else-if="isActive">
             <router-link :to="'/branch/' + relation['id']" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
-            <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
-            <CircleIconButton v-if="isActive && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary mr-1" />
+            <!-- <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
+            <CircleIconButton v-if="isActive && enableDragging && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
           </template>
         </div>
       </div>
     </div>
-    <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="isEditing = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
+    <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <draggable
       v-if="relationData"
@@ -47,7 +47,7 @@
       class="dragArea"
       :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
       item-key="id"
-      handle=".isRelationSelected"
+      handle=".isRelationSelected.enableDragging"
       :group="{ name: groupName }"
       @start="startDragging"
       @end="endDragging"
@@ -111,8 +111,6 @@ export default {
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     return {
-
-      isEditing: false,
       relationData: null,
       scopes: ScopeAPI.cachedData.value['data'],
       localStatementData: {scope: null},
@@ -121,18 +119,16 @@ export default {
         'positive-statement': this.isPositiveStatement,
         'border': false,
         'isRelationSelected': false,
+        'enableDragging': false
       },
       relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : [],
       isUpdating: false
     }
   },
   methods: {
-    editStatement(){
-      this.isEditing = true
-    },
     statementEdited(event){
       this.$emit('update', {event: event, mappingIndex: []});
-      this.isEditing = false
+      this.editSelectedStatement = false
     },
     statementUpdated(event, index){
       event['mappingIndex'].push(index)
@@ -168,6 +164,9 @@ export default {
     }
   },
   watch: {
+    enableDragging(enableDragging){
+      this.statementClass['enableDragging'] = enableDragging
+    },
     isActive(){
       this.statementClass['border'] = this.isActive
       this.statementClass['isRelationSelected'] = this.isActive
@@ -195,6 +194,9 @@ export default {
     },
   },
   computed: {
+    isEditing(){
+      return this.isActive && this.editSelectedStatement
+    },
     parentStatement(){
       return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation'] : null
     },
