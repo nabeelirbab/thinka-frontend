@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class="statement-container">
     <div v-if="isLoading" class="text-center">
       Please wait... <fa icon="spinner" spin />
     </div>
@@ -8,7 +8,7 @@
       <LogInModal v-if="authenticationStatus === 'unauthenticated'" :has-button="true" />
       <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
-    <div v-show="!isLoading && mainRelationData" >
+    <div v-show="!isLoading && mainRelationData" class="statement-container-body">
       <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :sub-relation-ids="subRelationIds" />
       <div class="container py-2 bg-white">
         <MainStatementProfile />
@@ -35,7 +35,7 @@
               </template>
             </draggable>
             <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
-            <div v-else class="text-center pt-1">
+            <div v-else class="text-center pt-1 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
@@ -62,7 +62,7 @@
               </template>
             </draggable>
             <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
-            <div v-else class="text-center pt-1">
+            <div v-else class="text-center pt-1 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
@@ -106,6 +106,10 @@ export default {
     draggable
   },
   mounted(){
+    window.addEventListener('click', this.clickedOutside)
+  },
+  unmounted(){
+    window.removeEventListener('click', this.clickedOutside)
   },
   setup(){
     return {
@@ -124,6 +128,16 @@ export default {
     }
   },
   methods: {
+    clickedOutside(event){ //deselect bubble when clicking outside
+      const whiteListClass = ['statement-window', 'statement-container-body', 'add-statement-container']
+      const classList = event.target.classList
+      for(let x = 0; x < whiteListClass.length; x++){
+        if(classList.contains(whiteListClass[x])){
+          this.selectedStatementId = 0
+          break
+        }
+      }
+    },
     selectMainStatement($e){
       if($e.target === this.$refs.positiveWindow || $e.target === this.$refs.negativeWindow){
         this.$refs.mainStatement._statementClicked()
@@ -359,7 +373,9 @@ export default {
       const bodyTopPadding = 8 // px
       const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
-      const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - 43
+      const mainStatementProfile = 43
+      const mainStatementBorder = 4
+      const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - mainStatementProfile - mainStatementBorder
       return totaRelevanceWindowHeight - this.mainStatementHeight
     },
     parentRelationId(){

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="mainRelationData" class="d-flex mb-1">
+  <div v-if="mainRelationData" class="d-flex mb-1" @click="selectedStatementId = null">
     <div>
       <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
     </div>
