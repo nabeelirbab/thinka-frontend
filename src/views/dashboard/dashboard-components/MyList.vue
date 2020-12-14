@@ -6,7 +6,8 @@
       <div >
         <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
           <div class="flex-fill text-break">
-            <small>{{formatDate(trend['updated_at'])}}</small> <br />
+            <small>{{formatDate(trend['updated_at'])}}</small>{{"   "}}
+            <fa v-if="trend['is_public']" icon="sun" /><fa v-else icon="briefcase" /><br />
             <router-link :to="'/branch/' + trend['id']">{{trend['text']}} <small>#{{trend['id']}}</small></router-link>
           </div>
         </div>
