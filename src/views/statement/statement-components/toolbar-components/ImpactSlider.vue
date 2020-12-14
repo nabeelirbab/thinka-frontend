@@ -62,7 +62,7 @@ export default {
       handler(){
         if(this.selectedStatementData){
           this.impact = this.selectedStatementData['impact_amount']
-          this.isPublic = this.selectedStatementData['is_public']
+          this.isPublic = this.selectedStatementData['published_at']
         }else{
           this.impact = null
           this.isPublic = false

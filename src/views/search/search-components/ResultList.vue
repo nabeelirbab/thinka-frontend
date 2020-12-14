@@ -79,7 +79,7 @@ export default {
             }
           },
           logic_tree: {
-            select: ['description', 'is_public', 'statement_id']
+            select: ['description', 'published_at', 'statement_id']
           },
           ...(['logic_tree_id', 'statement_id', 'updated_at'])
         },

@@ -156,7 +156,7 @@ export default {
       const param = {
         select: {
           logic_tree: {
-            select: ['description', 'is_public']
+            select: ['description', 'published_at']
           },
           relations: {
             select: this.generateRecursiveRelationsSelect(1),
@@ -176,7 +176,7 @@ export default {
               }
             }
           },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
         },
         condition: [{
           column: 'id',
@@ -242,7 +242,7 @@ export default {
             value: this.user ? this.user['id'] : null
           }]
         },
-        ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
+        ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {

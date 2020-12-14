@@ -16,10 +16,10 @@
       <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea>
       <div class="text-right">
-        <div class="form-check form-check-inline c-pointer">
+        <!-- <div class="form-check form-check-inline c-pointer">
           <input v-model="statement.is_public" class="form-check-input " type="checkbox">
           <label class="form-check-label" for="inlineCheckbox1">Make Public</label>
-        </div>
+        </div> -->
         <button @click="save" :disabled="statement.text === '' || statement.statement_type_id === '0'" class="btn btn-success"><fa icon="save" /> Save</button>
       </div>
     </div>
@@ -43,12 +43,10 @@ export default {
         statement_type_id: '0',
         logic_tree: {
           name: '',
-          is_public: false,
         },
         text: '',
         synopsis: '',
         comment: '',
-        is_public: false
       },
       isLoading: false
     }
@@ -56,8 +54,6 @@ export default {
   methods: {
     save(){
       this.isLoading = true
-      this.statement['relation']['is_public'] = this.statement.is_public
-      this.statement['logic_tree']['is_public'] = this.statement.is_public
       this.statement['logic_tree']['name'] = this.statement.text
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){

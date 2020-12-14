@@ -15,7 +15,7 @@
                 <CircleLabel>
                   <CTPoints :points="ctPoints * 1" class="text-dark" />
                 </CircleLabel>
-                <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
+                <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
               </div>
               <div v-else-if="parentRelationId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
                 <router-link :to="'/branch/'+ parentRelationId" class="text-primary"><fa icon="undo-alt" /></router-link>

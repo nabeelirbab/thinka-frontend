@@ -78,7 +78,6 @@ export default {
           relevance_window: this.isPositiveStatement ? 0 : 1,
           relevance_row: 0,
           logic_tree_id: this.logicTreeId,
-          is_public: false
         },
         id: null,
         statement_type_id: 1,
@@ -126,7 +125,6 @@ export default {
       this.isLoading = true
       const param = {
         ...this.statement,
-        is_public: false
       }
       if(this.mode === 'create'){
         this.createStatement(JSON.parse(JSON.stringify(param)))
@@ -201,7 +199,7 @@ export default {
           this.statement['relation']['relevance_window'] = relation['relevance_window']
           this.statement['relation']['relevance_row'] = relation['relevance_row']
           this.statement['relation']['logic_tree_id'] = relation['logic_tree_id']
-          this.statement['relation']['is_public'] = relation['is_public']
+          this.statement['relation']['published_at'] = relation['published_at']
         }
       },
       immediate: true

@@ -22,7 +22,7 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['is_public'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" style="font-size:1.5em" /><fa v-else icon="spinner" spin /> </button>
+        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['published_at'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" title="Make this public"><fa v-if="!isPublishing" icon="sun" style="font-size:1.5em" /><fa v-else icon="spinner" spin /> </button>
       </div>
       <div>
         <div class="dropdown show shadown-none">
@@ -157,14 +157,14 @@ export default {
       `
       const unpublishMessage = '<p>Unpublishing the tree will make it private and there can no longer be seen by other users</p>Are you sure you want to unplish this tree?'
       this.$refs.prompt._open(
-        this.mainRelation['is_public'] ? unpublishMessage: publishMessage,
+        this.mainRelation['published_at'] ? unpublishMessage: publishMessage,
         [{
-          label: this.mainRelation['is_public'] ? 'Unpublish': 'Publish',
-          class: this.mainRelation['is_public'] ? 'btn-danger' : 'btn-success',
+          label: this.mainRelation['published_at'] ? 'Unpublish': 'Publish',
+          class: this.mainRelation['published_at'] ? 'btn-danger' : 'btn-success',
           callback: () => {
             const param = {
               id: this.mainRelation['id'],
-              is_public: !this.mainRelation['is_public'],
+              published_at: !this.mainRelation['published_at'],
               sub_relations: this.subRelationIds
             }
             RelationAPI.post('/publish', param).then(result => {
@@ -183,7 +183,7 @@ export default {
             this.isPublishing = false
           }
         }],
-        this.mainRelation['is_public'] ? 'Unpblishing Tree...' : 'Publishing Tree...'
+        this.mainRelation['published_at'] ? 'Unpblishing Tree...' : 'Publishing Tree...'
       )
     },
     bookmark(){

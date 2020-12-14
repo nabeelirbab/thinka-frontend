@@ -55,7 +55,7 @@ export default {
         if(this.selectedStatementData){
           console.log('this.selectedStatementData', this.selectedStatementData)
           this.scope = this.selectedStatementData['statement']['scope_id']
-          this.isPublic = this.selectedStatementData['statement']['is_public']
+          this.isPublic = this.selectedStatementData['statement']['published_at']
         }else{
           this.scope = null
           this.isPublic = false

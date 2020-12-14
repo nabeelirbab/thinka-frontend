@@ -32,8 +32,8 @@
           </div>
           <template v-else-if="isActive">
             <router-link :to="'/branch/' + relation['id']" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
-            <!-- <CircleIconButton v-if="relation && !relation['is_public']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
-            <CircleIconButton v-if="isActive && enableDragging && relation && !relation['is_public'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
+            <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
+            <CircleIconButton v-if="isActive && enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
           </template>
         </div>
       </div>
