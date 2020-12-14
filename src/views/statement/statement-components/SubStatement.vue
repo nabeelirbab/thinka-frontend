@@ -1,6 +1,7 @@
 <template>
   <div>
     <div
+      v-if="!isLocked"
       v-show="!isEditing && (statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0)"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
@@ -40,7 +41,7 @@
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <draggable
-      v-if="relationData"
+      v-if="relationData && !isLocked"
       v-show="!(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
       :relationid="relationData['id']"
       :list="statement['relations']"
@@ -196,6 +197,18 @@ export default {
   computed: {
     isEditing(){
       return this.isActive && this.editSelectedStatement
+    },
+    isLocked(){ // if true, do not show
+      if(this.statement && typeof this.statement['user_relation_context_locks'] !== 'undefined' &&this.statement['user_relation_context_locks'].length){
+        for(let x = 0; x < this.statement['user_relation_context_locks'].length; x++){
+          if(this.statement['user_relation_context_locks'][x]['root_relation_id'] * 1 === this.mainRelationData['id'] * 1){
+            return false
+          }
+        }
+        return true
+      }else{
+        return false
+      }
     },
     parentStatement(){
       return typeof this.statement['relation'] !== 'undefined' && this.statement['relation'] ? this.statement['relation'] : null

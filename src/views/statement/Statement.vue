@@ -235,6 +235,13 @@ export default {
             }
           }
         },
+        user_relation_context_locks: {
+          select: ['id', 'user_id', 'relation_id', 'root_relation_id'],
+          condition: [{
+            column: 'user_id',
+            value: this.user ? this.user['id'] : null
+          }]
+        },
         ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'is_public', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
       }
       if(currentDeep <= deep){
@@ -252,6 +259,9 @@ export default {
         recursiveDownRelations['statement'] = newSubStatement
         recursiveDownRelations['relations'] = []
         recursiveDownRelations['user_id'] = this.user['id']
+        if(typeof recursiveDownRelations['user_relation_context_locks'] === 'undefined'){
+          recursiveDownRelations['user_relation_context_locks'] = []
+        }
         this.mainRelationData['relations'].push(recursiveDownRelations)
       }else{
         let newRecursiveDownRelations = newSubStatement['event']['relation']
@@ -264,6 +274,9 @@ export default {
         const mappingIndex = newSubStatement['mappingIndex']
         for(let index = mappingIndex.length - 1; index >= 0; index--){
           currentStatement = currentStatement['relations'][mappingIndex[index]]
+        }
+        if(typeof newRecursiveDownRelations['user_relation_context_locks'] === 'undefined'){
+          newRecursiveDownRelations['user_relation_context_locks'] = []
         }
         currentStatement['relations'].push(newRecursiveDownRelations)
       }
@@ -290,7 +303,6 @@ export default {
       console.log('currentStatement', updatedStatement['relation'])
     },
     mainStatementUpdated(updatedMainStatement){
-      console.log(updatedMainStatement, this.mainRelationData)
       this.mainRelationData['statement']['text'] = updatedMainStatement['text']
       this.mainRelationData['statement']['statement_type_id'] = updatedMainStatement['statement_type_id']
       this.mainRelationData['statement']['id'] = updatedMainStatement['id']
@@ -380,6 +392,9 @@ export default {
     },
     parentRelationId(){
       return this.mainRelationData ? this.mainRelationData['parent_relation_id'] : null
+    },
+    relationId(){
+      return this.$route.params.relationId * 1
     },
     statementId(){
       return this.$route.params.relationId * 1
