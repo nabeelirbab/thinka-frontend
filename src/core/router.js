@@ -55,6 +55,22 @@ const routes = [
     }
   },
   {
+    path: "/branch/:relationId",
+    name: "Statement",
+    component: Statement,
+    meta: {
+      hideBranding: true
+    }
+  },
+  {
+    path: "/branch/:relationId/t/:statementTitle",
+    name: "StatementWithTitle",
+    component: Statement,
+    meta: {
+      hideBranding: true
+    }
+  },
+  {
     path: "/new-statement",
     name: "NewStatement",
     component: NewStatement,

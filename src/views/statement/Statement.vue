@@ -158,6 +158,14 @@ export default {
           logic_tree: {
             select: ['description', 'published_at']
           },
+          parent_relation: {
+            select: {
+              ...(['statement_id']),
+              statement: {
+                select: ['text']
+              }
+            }
+          },
           relations: {
             select: this.generateRecursiveRelationsSelect(1),
             sort: [{column: 'relevance_row', order: 'asc'}]

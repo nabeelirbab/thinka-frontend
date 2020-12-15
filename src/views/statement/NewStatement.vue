@@ -17,7 +17,7 @@
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea>
       <div class="text-right">
         <!-- <div class="form-check form-check-inline c-pointer">
-          <input v-model="statement.is_public" class="form-check-input " type="checkbox">
+          <input v-model="statement.published_at" class="form-check-input " type="checkbox">
           <label class="form-check-label" for="inlineCheckbox1">Make Public</label>
         </div> -->
         <button @click="save" :disabled="statement.text === '' || statement.statement_type_id === '0'" class="btn btn-success"><fa icon="save" /> Save</button>

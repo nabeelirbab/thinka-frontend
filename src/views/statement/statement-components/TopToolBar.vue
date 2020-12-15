@@ -276,7 +276,7 @@ export default {
       return typeof this.mainRelation['user_id'] !== 'undefined' ? this.mainRelation['user_id'] : null
     },
     titlePublish(){
-      return this.mainRelation['is_public'] ? 'Public Tree': 'Private tree (click to publish)'
+      return this.mainRelation['published_at'] ? 'Public Tree': 'Private tree (click to publish)'
     }
   }
 }

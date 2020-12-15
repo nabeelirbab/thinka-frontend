@@ -11,7 +11,7 @@
     <div v-if="statement" class="d-flex justify-content-between">
       <div  class="text-break">
         <span v-if="parentStatement"><fa icon=leaf /></span><span v-else><fa icon=tree /></span>
-        <router-link v-if="relation" :to="'/branch/' + relation['id']" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{'    ' + statement['statement_type']['description'] + ': ' + statement['text']}}</router-link>
+        <router-link v-if="relation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statement['text']).slice(0, 30)" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{'    ' + statement['statement_type']['description'] + ': ' + statement['text']}}</router-link>
         <!-- <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
         <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p> -->
       </div>
