@@ -10,6 +10,7 @@ import LogIn from "@/views/authentication/LogIn.vue";
 import Bookmarks from "@/views/bookmarks/Bookmarks.vue";
 import Notification from "@/views/notification/Notification.vue";
 import MoreMenu from "@/views/more-menu/MoreMenu";
+import Learning from "@/views/learning/Learning.vue";
 
 const routes = [
   {
@@ -122,7 +123,12 @@ const routes = [
     component: LogIn,
 
   },
-  
+  {
+    path: "/learning",
+    name: "Learning",
+    component: Learning,
+
+  },
 ];
 
 // const router = createRouter({
