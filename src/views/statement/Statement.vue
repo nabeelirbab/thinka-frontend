@@ -209,7 +209,13 @@ export default {
       this.subRelationIds = this.mapRelations(statement)
       setTimeout(() => {
         this.resizePositiveStatement()
-        this.setDefaultSeparator()
+        if(this.$refs.negativeWindow){
+          this.setDefaultSeparator()
+        }else{
+          setTimeout(() => {
+            this.setDefaultSeparator()
+          }, 1000)
+        }
       }, 1200)
       this.isLoading = false
     },

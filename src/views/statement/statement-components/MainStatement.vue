@@ -1,28 +1,29 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox" @click="_statementClicked" :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-3 pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
+    <div ref="mainStatementBox"  :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-2 pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
       <div class="d-flex justify-content-between">
       </div>
-      <div class=" font-weight-bold text-white pr-2">
+      <div class=" font-weight-bold text-white">
         <div >
-          <div v-if="!isEditing" class="d-flex align-items-center text-break">
-            <div ref="actualStatementTextDiv" class="text limitText flex-fill" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/> {{statement ? statement['text'] : 'No Text'}}
+          <div v-if="!isEditing" @click="_statementClicked" class="d-flex align-items-center text-break">
+            <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
+              <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/> 
+              <TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" />
             </div>
-            <div>
-              <div v-if="selectedStatementId === relation['id']" class="d-flex">
+            <div class="">
+              <div v-if="selectedStatementId === relation['id']" class="d-flex ml-1">
                 <CircleLabel>
                   <CTPoints :points="ctPoints * 1" class="text-dark" />
                 </CircleLabel>
-                <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" />
+                <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               </div>
-              <div v-else-if="parentRelationId" @click.stop class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+              <div v-else-if="parentRelationId" @click.stop class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
                 <router-link :to="'/branch/'+ parentRelationId + '/t/' + toKebabCase(parentRelation['statement']['text']).slice(0, 30)" class="text-primary"><fa icon="undo-alt" /></router-link>
               </div>
             </div>
           </div>
-          <CreateSubStatement v-if="isEditing" :is-main-statement="true" :relation="relation" :mode="'update'" @save="statementEdited" @cancel="isEditing = false" :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"  />
+          <CreateSubStatement v-if="isEditing" :is-main-statement="true" :relation="relation" :mode="'update'" @save="statementEdited" @cancel="editSelectedStatement = false" :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"  />
         </div>
         <div v-if="isSticky && stickySeeMore !== null" class="w-100 text-center c-pointer hover-underline ">
           <span v-if="stickySeeMore === true"  @click="stickySeeMore = false">Show more <fa icon="chevron-down" /></span>
@@ -39,13 +40,15 @@ import CreateSubStatement from './CreateSubStatement'
 import CircleIconButton from '@/components/CircleIconButton'
 import CircleLabel from '@/components/CircleLabel'
 import RelationTypeAPI from '@/api/relation-type'
+import TextDisplayer from '@/components/TextDisplayer'
 // import NoProfile from '@/components/NoProfile'
 export default {
   components: {
     CTPoints,
     CreateSubStatement,
     CircleIconButton,
-    CircleLabel
+    CircleLabel,
+    TextDisplayer
     // NoProfile
   },
   props: {
@@ -61,25 +64,27 @@ export default {
   },
   data(){
     return {
-      selectedStatementId: GlobalData.selectedStatementId,
-      selectedStatementData: GlobalData.selectedStatementData,
-      showCTOpinion: GlobalData.showCTOpinion,
+      ...GlobalData,
       isSticky: false,
       stickySeeMore: null,
       stickStatementHeightLimit: 0,
       statementTextHeight: 0,
       isScrollingTimeout: null,
-      isEditing: false,
       relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
     }
   },
   methods: {
     _statementClicked(){
-      this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? null : this.relation['id']
-      this.selectedStatementData = this.relation
+      if(this.selectedStatementId === this.relation['id']){
+        this.selectedStatementId =  null
+        this.selectedStatementData = null
+      }else{
+        this.selectedStatementId = this.relation['id']
+        this.selectedStatementData = this.relation
+      }
     },
     statementEdited(event){
-      this.isEditing = false
+      this.editSelectedStatement = false
       this.$emit('updated', event)
     },
     isScrolling(){
@@ -116,6 +121,12 @@ export default {
     }
   },
   computed: {
+    isEditing(){
+      return this.isActive && this.editSelectedStatement
+    },
+    isActive(){
+      return this.relation && this.relation['id'] * 1 === this.selectedStatementId * 1
+    },
     isSelected(){
       return this.relation && this.selectedStatementId === this.relation['id']
     },
@@ -149,7 +160,7 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .mainStatement.fixed-top{
   margin-top: 63px;
   margin-left: 4px;

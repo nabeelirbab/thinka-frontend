@@ -100,7 +100,6 @@ export default {
           console.log('error catched')
           this.isLoading = false
           const { code: errorCode, message: errorMessage } = error.response.data.error
-          console.log('error', errorCode, errorMessage)
           if(parseInt(errorCode) === 1){ // validation error
             if(typeof errorMessage['basic_information.first_name'] !== 'undefined'){
               this.validationErrors['firstName'] = errorMessage['basic_information.first_name'][0]

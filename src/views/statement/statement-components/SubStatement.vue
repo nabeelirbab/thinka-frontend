@@ -22,7 +22,10 @@
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
             <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-            <div :title="titleIds" class="text-dark text-justify mb-1 text-break">{{statementText}} <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small></div>
+            <div :title="titleIds" class="text-dark text-left mb-1 text-break">
+              <TextDisplayer :text="statementText" text-class="''" />
+              <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+            </div>
           </div>
         </div>
         <div class="pl-1 d-flex">
@@ -71,6 +74,7 @@ import ScopeAPI from '@/api/scope'
 import CircleIconButton from '@/components/CircleIconButton'
 import RelationAPI from '@/api/relation'
 import CircleLabel from '@/components/CircleLabel'
+import TextDisplayer from '@/components/TextDisplayer'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -81,7 +85,8 @@ export default {
     SubStatement,
     draggable,
     CircleIconButton,
-    CircleLabel
+    CircleLabel,
+    TextDisplayer
   },
   props: {
     level: Number,

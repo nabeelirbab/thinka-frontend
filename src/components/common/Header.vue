@@ -14,7 +14,12 @@
         <router-link to="/search" :class="routePath === '/search' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="search" /></router-link>
         <router-link to="/branch" :class="routePath.indexOf('/branch') !== -1 ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><CustomIcon icon="tree" /></router-link>
         <router-link to="/bookmarks" :class="routePath === '/bookmarks' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bookmark" /></router-link>
-        <router-link to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bell" /></router-link>
+        <router-link to="/notification" :class="routePath === '/notification' ? 'border-bottom border-primary border-width' : 'text-secondary'" class="shadow-none py-2 -2 header-icon flex-fill text-center"  tag="button">
+          <fa-layers full-width >
+            <fa icon="bell" />
+            <fa-layers-text v-if="rerenderNotificationCount && unopenedNotificationCount" counter :value="unopenedNotificationCount" position="top-right" class="fa-right-4 float-right" style="margin-left:auto; maright-right:0;font-size:1.5em" />
+          </fa-layers>
+        </router-link>
         <router-link to="/more-menu" class="text-secondary shadow-none py-1 -2 header-icon flex-fill text-center"  tag="button"><fa icon="bars" /></router-link>
       </div>
       <UserInfo v-if="!hideBranding" @open-login="openLogIn" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/>
@@ -51,6 +56,7 @@ import Auth from '@/core/auth'
 import UserInfo from './header-components/UserInfo'
 import CustomIcon from '@/components/CustomIcon'
 import LogInModal from '@/components/login/LogInModal'
+import NotificationUserAPI from '@/api/notification-user'
 export default {
   components: {
     // LogInForm,
@@ -59,11 +65,15 @@ export default {
     LogInModal
   },
   mounted(){
+    setTimeout(() => {
+      NotificationUserAPI.checkNotication()
+    }, 100)
   },
   data(){
     return {
       user: Auth.user(),
-      authenticationStatus: Auth.status()
+      authenticationStatus: Auth.status(),
+      rerenderNotificationCount: false
     }
   },
   
@@ -73,10 +83,27 @@ export default {
     }
   },
   watch: {
-    routePath(){
+    unopenedNotificationCount:{
+      handler(){
+        this.rerenderNotificationCount = false
+        setTimeout(() => {
+          this.rerenderNotificationCount = true
+        }, 400)
+      },
+      immediate: true
     }
   },
   computed:{
+    unopenedNotificationCount(){
+      const notificationUsers = NotificationUserAPI.notificationUsers.value
+      let unopenedCount = 0;
+      notificationUsers.forEach(notificationUsers => {
+        if(notificationUsers['status'] * 1 === 0){
+          ++unopenedCount
+        }
+      })
+      return unopenedCount
+    },
     routePath(){
       return this.$route['path']
     },

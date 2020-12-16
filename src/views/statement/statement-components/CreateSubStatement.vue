@@ -178,7 +178,9 @@ export default {
         if(this.$refs.suggestion){
           this.$refs.suggestion._reset()
         }
-        this.$refs.statementText.focus()
+        if(this.$refs.statementText){
+          this.$refs.statementText.focus()
+        }
       }, 200)
     }
   },
