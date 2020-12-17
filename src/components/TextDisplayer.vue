@@ -25,17 +25,22 @@ export default {
       let currentText = ''
       textSegments.forEach(textSegment => {
         if(this.isUrl(textSegment)){
-          this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'text'
-          this.formattedTextArray.push(currentText)
-          currentText = ''
-          this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'url'
+          // this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'text'
+          if(currentText !== ''){
+            this.formattedTextArray.push(currentText)
+            currentText = ''
+          }
+          // this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'url'
           this.formattedTextArray.push(this.textToLink(textSegment))
         }else{
           currentText += ' ' + textSegment
         }
       })
       // this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'text'
-      this.formattedTextArray.push(currentText)
+      if(currentText !== ''){
+        this.formattedTextArray.push(currentText)
+        currentText = ''
+      }
       console.log('text display generateFormattedText', this.formattedTextArray)
     },
     isUrl(text){
@@ -46,7 +51,7 @@ export default {
       }
     },
     textToLink(text){
-      return text // `<a href="${text}" class="${this.textClass}">${text}</a>`
+      return `<a href="${text}" class="${this.textClass}" target="_blank">${text}</a>`
     }
   },
   watch: {
