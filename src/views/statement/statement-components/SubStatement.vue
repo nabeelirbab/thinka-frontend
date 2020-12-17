@@ -21,10 +21,11 @@
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
           <div class="d-flex text-justify align-items-center" >
-            <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">{{relationTypeSymbol}}</div>
-            <div :title="titleIds" class="text-dark text-left mb-1 text-break">
-              <TextDisplayer :text="statementText" text-class="''" />
-              <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+            <div class="text-dark text-left mb-1 text-break">
+              <ul style="padding: 0; margin: 0"><li style="list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em; padding-bottom: 0" :title="relationTypeName"><span class="text-danger font-weight-bold mr-0">{{relationTypeSymbol}}</span>
+              <TextDisplayer :text="statementText" text-class="''" class="text-muted" />
+              <!-- <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
+              </li></ul>
             </div>
           </div>
         </div>
@@ -245,6 +246,15 @@ export default {
       const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
       if(relationTypeIndex >= 0){
         return this.relationTypes[relationTypeIndex]['symbol']
+      }else{
+        return '??'
+      }
+    },
+    relationTypeName(){
+      const relationTypeId = this.statement['relation_type_id']
+      const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
+      if(relationTypeIndex >= 0){
+        return this.relationTypes[relationTypeIndex]['description']
       }else{
         return '??'
       }
