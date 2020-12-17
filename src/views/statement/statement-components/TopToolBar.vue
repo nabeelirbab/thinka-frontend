@@ -19,7 +19,14 @@
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
-        <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark"><fa v-if="!isBookmarkLoading" icon="bookmark" /><fa v-else icon="spinner" spin /></button>
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark">
+          <fa-layers full-width v-if="!isBookmarkLoading">
+              <fa icon="bookmark" />
+              <fa icon="minus" class="text-info small" v-show="rootBookmarkId" />
+              <fa icon="plus" class="text-info small" v-show="!rootBookmarkId" />
+          </fa-layers>
+          <fa v-else icon="spinner" spin />
+        </button>
       </div>
       <div>
         <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['published_at'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" v-bind:title="titlePublish">
