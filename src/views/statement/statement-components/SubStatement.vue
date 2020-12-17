@@ -1,13 +1,17 @@
 <template>
-  <div>
+  <div :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
     <div
       v-if="!isLocked"
       v-show="!isEditing && (statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0)"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
-      @click="statementClicked"
+
     >
       <div class="d-flex align-items-center p-1">
+        <div class="ml-0 pl-0" style="min-width:30px">
+          <button v-if="!showStatement && statement['relations'].length" @click="showStatement = true" class="btn btn-sm btn-outline-secondary"><fa icon="level-up-alt" rotation="90" /></button>
+          <button v-if="showStatement" @click="showStatement = false;" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
+        </div>
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
             <fa icon="spinner" spin />
@@ -19,7 +23,7 @@
             </small>
           </div>
         </div>
-        <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
+        <div class="flex-fill"  @click="statementClicked" >
           <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
               <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName">
               <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span></div>
@@ -39,14 +43,11 @@
           </template>
         </div>
       </div>
-      <div v-if="statement['relations'].length" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
-        <button v-if="!showStatement" @click="showStatement = true" class="btn btn-sm btn-outline-secondary mb-1 ml-4"><fa icon="level-up-alt" rotation="90" /> Show Sub Statements</button>
-        <button v-else @click="showStatement = false" class="btn btn-sm btn-outline-secondary mb-1 ml-4"><fa icon="chevron-up"  /> Hide Sub Statements</button>
-      </div>
+
     </div>
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
-    
+
     <draggable
       v-if="relationData && !isLocked"
       v-show="showStatement && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
