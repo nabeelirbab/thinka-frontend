@@ -8,10 +8,12 @@
         <div >
           <div v-if="!isEditing" @click="_statementClicked" class="d-flex align-items-center text-break">
             <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              <ul style="padding: 0; margin: 0"><li style="list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em; padding-bottom: 0" title="Tree">
-              <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/>
-              <TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" />
-              </li></ul>
+              <div class="d-flex text-left mb-1" style="font-size:0.9em"  >
+                  <div class="column mr-2 ml-0" style="padding-left: 1em; text-indent: -0.9em;">
+                    <span>
+                  <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/></span></div>
+                  <div class="column text-break"><TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" /></div>
+              </div>
             </div>
             <div class="">
               <div v-if="selectedStatementId === relation['id']" class="d-flex ml-1">

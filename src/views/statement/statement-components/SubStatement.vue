@@ -20,13 +20,11 @@
           </div>
         </div>
         <div class="flex-fill" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
-          <div class="d-flex text-justify align-items-center" >
-            <div class="text-dark text-left mb-1 text-break">
-              <ul style="padding: 0; margin: 0"><li style="list-style: none; margin-left: 0; padding-left: 1em; text-indent: -1em; padding-bottom: 0" :title="relationTypeName"><span class="text-danger font-weight-bold mr-0">{{relationTypeSymbol}}</span>
-              <TextDisplayer :text="statementText" text-class="''" class="text-muted" />
+          <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
+              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName">
+              <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span></div>
+              <div class="column text-break"><TextDisplayer :text="statementText" text-class="''" class="text-muted" /></div>
               <!-- <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
-              </li></ul>
-            </div>
           </div>
         </div>
         <div class="pl-1 d-flex">
