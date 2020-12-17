@@ -22,8 +22,8 @@
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark">
           <fa-layers full-width v-if="!isBookmarkLoading">
               <fa icon="bookmark" />
-              <fa icon="minus" class="text-info small" v-show="rootBookmarkId" />
-              <fa icon="plus" class="text-info small" v-show="!rootBookmarkId" />
+              <fa icon="minus" class="text-info pb-1" style="width:.4em" v-show="rootBookmarkId" />
+              <fa icon="plus" class="text-info pb-1" style="width:.4em" v-show="!rootBookmarkId" />
           </fa-layers>
           <fa v-else icon="spinner" spin />
         </button>
