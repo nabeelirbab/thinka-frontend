@@ -40,12 +40,17 @@
           </template>
         </div>
       </div>
+      <div v-if="statement['relations'].length" :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
+        <button v-if="!showStatement" @click="showStatement = true" class="btn btn-sm btn-outline-secondary mb-1 ml-4"><fa icon="level-up-alt" rotation="90" /> Show Sub Statements</button>
+        <button v-else @click="showStatement = false" class="btn btn-sm btn-outline-secondary mb-1 ml-4"><fa icon="chevron-up"  /> Hide Sub Statements</button>
+      </div>
     </div>
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
+    
     <draggable
       v-if="relationData && !isLocked"
-      v-show="!(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
+      v-show="showStatement && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
       :relationid="relationData['id']"
       :list="statement['relations']"
       class="dragArea"
@@ -116,8 +121,10 @@ export default {
   },
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
+    console.log('level', this.level)
     return {
       relationData: null,
+      showStatement: this.level < 1,
       scopes: ScopeAPI.cachedData.value['data'],
       localStatementData: {scope: null},
       statementClass: {
