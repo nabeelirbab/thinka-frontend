@@ -1,6 +1,21 @@
 <template>
   <modal ref="modal" v-if="selectedStatementData && user" :closeable="isLoading">
-    <template v-if="user['id'] === selectedStatementData['user_id']">
+    
+    <template v-if="user['id'] !== selectedStatementData['user_id']">
+      <h5>You are not allowed</h5>
+      <p>You need to be the author of this statement to delete it</p>
+      <div class="text-center">
+        <button v-if="!isLoading" @click="close" class="btn btn-outline-dark">Okay</button>
+      </div>
+    </template>
+    <template v-else-if="selectedStatementData && selectedStatementData['published_at']">
+      <h5>You are not allowed</h5>
+      <p>You cannot delete statements that has already been published</p>
+      <div class="text-center">
+        <button v-if="!isLoading" @click="close" class="btn btn-outline-dark">Okay</button>
+      </div>
+    </template>
+    <template v-else >
       <h5><fa icon="exclamation-triangle" /> You are about to delete this statement</h5>
       <p>You can never access this statement relation once deleted.</p>
       <div class="text-center border border-warning rounded p-2 mb-2">
@@ -12,13 +27,6 @@
         <div><button @click="deleteStatement('all')" :disabled="isLoading" class="btn btn-danger"><fa icon="trash" /> Delete All</button> <br/><small>This statement and below will be deleted</small></div>
       </div>
       <div v-if="!isLoading" @click="close" class="text-center"><button class="btn btn-outline-dark">I changed my mind</button> </div>
-    </template>
-    <template v-else >
-      <h5>You are not allowed</h5>
-      <p>You need to be the author of this statement to delete it</p>
-      <div class="text-center">
-        <button v-if="!isLoading" @click="close" class="btn btn-outline-dark">Okay</button>
-      </div>
     </template>
     <div v-if="isDeleted" class="text-center text-success">
       <fa icon="check"/> Statement Successfully Deleted
