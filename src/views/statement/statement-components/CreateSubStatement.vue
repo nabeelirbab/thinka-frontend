@@ -1,28 +1,29 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="d-flex align-items-center statement-radius mb-1 border-width border-dark p-2" :style="{'padding-left': (((level - 1) * 20) + 8)+ 'px!important'}">
-    <div class="flex-fill ">
-      <div class="mb-1">
+  <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="container align-items-center statement-radius mb-1 border-width border-dark p-2" >
+    <div class="flex-fill">
         <select v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded   font-weight-bold mb-1">
           <option default>Please Select</option>
-          
+
           <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
             <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
           </template>
         </select>
-        <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 float-right ml-1">
+
+        <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 ml-1">
           Cancel
         </button>
-        <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success py-1 float-right">
+        <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success py-1">
           <fa v-if="isSuccess" icon="check" />
           <fa v-else-if="isLoading" icon="spinner" spin />
-          <fa v-else icon="save" /> Save
+          <fa v-else icon="save" />
         </button>
-      </div>
-      <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="w-100 bg-transparent border-0" :placeholder="'Type your statement here...'" rows="2"></textarea>
+    </div>
+    <div class="flex-basis pt-2">
+      <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="5"></textarea>
       <Suggestion ref="suggestion" @select="sugestionSelected" />
     </div>
-    
   </div>
+
 </template>
 <script>
 import StatementAPI from '@/api/statement'
@@ -83,10 +84,14 @@ export default {
         statement_type_id: 1,
         text: ''
       },
-      
+
     }
   },
   methods: {
+    autogrow(element){
+      element.style.height = "5px";
+      element.style.height = (element.scrollHeight)+"px";
+    },
     cancel(){
       this.$emit('cancel')
     },
