@@ -31,7 +31,7 @@
               <!-- <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
           </div>
         </div>
-        <div class="pl-1 d-flex">
+        <div class="pl-1 d-flex ">
           <div v-if="showOpinion || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
@@ -41,6 +41,11 @@
             <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
             <CircleIconButton v-if="isActive && enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
           </template>
+          <div class="p-1 pl-2 flex-column" style="color: gray">
+            <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" title="Private" />
+            <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
+            <fa v-if="user && (user['id'] !== relation['user_id'])" icon="user" :title="relationData['user']['user_basic_information']['first_name'] + ' ' + relationData['user']['user_basic_information']['last_name']" />
+          </div>
         </div>
       </div>
 
@@ -70,6 +75,7 @@
 </template>
 <script>
 // import CTPoints from '@/components/CTPoints'
+import Auth from '@/core/auth'
 import SubStatement from './SubStatement'
 import draggable from 'vuedraggable' // https://github.com/SortableJS/Vue.Draggable
 import GlobalData from '../global-data'
@@ -123,6 +129,7 @@ export default {
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
     console.log('level', this.level)
     return {
+      user: Auth.user(),
       relationData: null,
       showStatement: this.level < 1,
       scopes: ScopeAPI.cachedData.value['data'],
