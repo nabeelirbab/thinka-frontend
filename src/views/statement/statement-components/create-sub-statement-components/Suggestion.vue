@@ -26,7 +26,8 @@
       </div> 
       <div v-else>
         <template v-for="(suggestion, index) in moreSuggestions" :key="'suggesMORE' + suggestion['id']"> 
-          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1">
+          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1 text-break">
+            <div v-if="suggestion['logic_tree']" class="text-sm"><fa icon="tree" /> {{suggestion['logic_tree']['name']}}</div>
             <span :class="selectedSuggestionId === suggestion['id'] ? 'font-weight-bold' : ''" class="mr-1">{{suggestion['text']}}</span>
             <span v-if="selectedSuggestionId !== suggestion['id']" @click="selectSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline">Select</span>
             <span v-else @click="selectSuggestion(null)" class="c-pointer text-danger text-hover-underline">Unselect</span>
@@ -89,7 +90,12 @@ export default {
     },
     getSuggestions(more = false){
       let param = {
-        select: ['text'],
+        select: {
+          logic_tree: {
+            select: ['name', 'statement_id']
+          },
+          ...(['text'])
+        },
         sort: [{
           column: 'text',
           order: 'desc'

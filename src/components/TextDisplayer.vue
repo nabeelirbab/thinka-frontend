@@ -41,7 +41,6 @@ export default {
         this.formattedTextArray.push(currentText)
         currentText = ''
       }
-      console.log('text display generateFormattedText', this.formattedTextArray)
     },
     isUrl(text){
       if(text.indexOf('http://') >= 0 || text.indexOf('https://') >= 0){

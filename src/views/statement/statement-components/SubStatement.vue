@@ -10,7 +10,7 @@
       <div class="d-flex align-items-center p-1">
         <div class="ml-0 pl-0" style="min-width:30px">
           <button v-if="!showStatement && statement['relations'].length" @click="showStatement = true" class="btn btn-sm btn-outline-secondary"><fa icon="level-up-alt" rotation="90" /></button>
-          <button v-if="showStatement" @click="showStatement = false;" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
+          <button v-if="showStatement" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
         </div>
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
@@ -24,11 +24,16 @@
           </div>
         </div>
         <div class="flex-fill"  @click="statementClicked" >
+          <div v-if="isDifferentAuthor && relation && relation['user']" class="text-sm">
+            <span class="font-weight-bold mr-1">{{userBasicInformationFullName(relation['user']['user_basic_information'])}}</span>
+            <span v-if="relation['published_at']" class="font-italic text-muted">{{formatDate(relation['published_at'])}}</span>
+          </div>
           <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
               <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName">
-              <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span></div>
-              <div class="column text-break"><TextDisplayer :text="statementText" text-class="''" class="text-muted" /></div>
-              <!-- <small v-if="relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
+                <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
+              </div>
+              <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
+              <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
           </div>
         </div>
         <div class="pl-1 d-flex ">
@@ -127,7 +132,6 @@ export default {
   },
   data(){
     // const isPositiveStatement = typeof this.statement['relation'] === 'undefined' ||  this.statement['relation'] !== '-'
-    console.log('level', this.level)
     return {
       user: Auth.user(),
       relationData: null,
@@ -137,12 +141,14 @@ export default {
       statementClass: {
         'negative-statement': !this.isPositiveStatement,
         'positive-statement': this.isPositiveStatement,
+        'is-different-author': false,
         'border': false,
         'isRelationSelected': false,
         'enableDragging': false
       },
       relationTypes: RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : [],
-      isUpdating: false
+      isUpdating: false,
+      isDevelopment: process.env.NODE_ENV === 'development'
     }
   },
   methods: {
@@ -190,6 +196,16 @@ export default {
     isActive(){
       this.statementClass['border'] = this.isActive
       this.statementClass['isRelationSelected'] = this.isActive
+    },
+    isDifferentAuthor: {
+      handler(isDifferentAuthor){
+        if(isDifferentAuthor){
+          this.statementClass['negative-statement'] = !isDifferentAuthor
+          this.statementClass['positive-statement'] = !isDifferentAuthor
+        }
+        this.statementClass['is-different-author'] = isDifferentAuthor
+      },
+      immediate: true
     },
     statement: {
       handler(){
@@ -246,6 +262,9 @@ export default {
     },
     relation(){
       return this.statement
+    },
+    isDifferentAuthor(){
+      return this.mainRelationData && this.mainRelationData['user_id'] * 1 !== this.relation['user_id'] * 1
     },
     relationTypeSymbol(){
       const relationTypeId = this.statement['relation_type_id']
