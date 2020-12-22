@@ -10,25 +10,25 @@
       <CircleIconButton
         @click="showImpact = !showImpact" 
         :active="showImpact" 
-        icon="certificate" text="Impact" title="Show Impact" class="mx-2" />
+        icon="certificate" text="Impact" title="Show Impact" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top" />
       <CircleIconButton 
         @click="showOpinion = !showOpinion" 
         :active="showOpinion" 
-        icon="comment-dots" text="Opinion" title="Show Opinion" class="mx-2" />
+        icon="comment-dots" text="Opinion" title="Show Opinion" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top" />
       <CircleIconButton 
         @click="showScope = !showScope" 
         :active="showScope" 
-        icon="microscope" text="Scope" title="Show Scope" class="mx-2" />
+        icon="microscope" text="Scope" title="Show Scope" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top" />
       <CircleIconButton 
         @click="authenticationStatus === 'authenticated' ? (createSubStatementParentId = selectedStatementId) : null" 
         :active="createSubStatementParentId > 0" 
         :disabled="(authenticationStatus !== 'authenticated' || (selectedStatementId && mainRelationData && selectedStatementId === mainRelationData['id'])) ? true : false" 
-        icon="folder-plus" text="Add" title="Add Statement" class="mx-2" 
+        icon="folder-plus" text="Add" title="Add Statement" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top"
       />
       <CircleIconButton 
         @click="deleteStatement"  
         :disabled="authenticationStatus !== 'authenticated' ? true : false" 
-        icon="folder-minus" text="Remove" title="Remove Statement" class="mx-2" 
+        icon="folder-minus" text="Remove" title="Remove Statement" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top"
       />
     </div>
     <DeletePrompt ref="deletePrompt" />

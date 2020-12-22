@@ -9,11 +9,11 @@
       <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
-      <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" :sub-relation-ids="subRelationIds" />
+      <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
       <div class="container py-2 bg-white">
         <MainStatementProfile />
         <MainStatement v-if="mainRelationData" ref="mainStatement" @updated="mainStatementUpdated" @height-changed="mainStatementHeight = $event" :relation="mainRelationData" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
-        <div v-if="mainRelationData" @click1="selectMainStatement" class="toolbar-bottom-space">
+        <div v-if="mainRelationData" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
               :relation-id="mainRelationData['id']"
@@ -124,7 +124,6 @@ export default {
       authenticationStatus: Auth.status(),
       user: Auth.user(),
       activeCreateWindow: false,
-      subRelationIds: [], // used to update all the sub statements
     }
   },
   methods: {
@@ -151,8 +150,8 @@ export default {
     },
     retrieveRelation(relationId){
       this.isLoading = true
-      this.subRelationIds = []
       this.statement = null
+      this.mainRelationData = null
       const param = {
         select: {
           logic_tree: {
@@ -178,7 +177,7 @@ export default {
           },
           user: {
             select: {
-              ...(['id']),
+              ...(['id', 'username']),
               user_basic_information: {
                 select: ['user_id', 'first_name', 'last_name']
               }
@@ -206,20 +205,22 @@ export default {
     setMainRelation(statement){
       this.statement = statement
       this.isLoading = true
-      this.subRelationIds = this.mapRelations(statement)
       setTimeout(() => {
         this.resizePositiveStatement()
-        if(this.$refs.negativeWindow){
-          this.setDefaultSeparator()
-        }else{
-          setTimeout(() => {
+        if(this.mainRelationId){
+          if(this.$refs.negativeWindow){
             this.setDefaultSeparator()
-          }, 1000)
+          }else{
+            setTimeout(() => {
+              this.setDefaultSeparator()
+            }, 1000)
+          }
         }
       }, 1200)
       this.isLoading = false
     },
     setDefaultSeparator(){
+      console.log('this.$refs.negativeWindow.children', this.$refs.negativeWindow.children)
       const negativeChildren = this.$refs.negativeWindow.children
       let negativeInnerHeight = 0
       for(let x = 0; x < negativeChildren.length; x++){
@@ -243,7 +244,7 @@ export default {
         },
         user: {
           select: {
-            ...(['id']),
+            ...(['id', 'username']),
             user_basic_information: {
               select: ['user_id', 'first_name', 'last_name']
             }
@@ -272,7 +273,15 @@ export default {
         delete newSubStatement['relation']
         recursiveDownRelations['statement'] = newSubStatement
         recursiveDownRelations['relations'] = []
-        recursiveDownRelations['user_id'] = this.user['id']
+          recursiveDownRelations['user_id'] = this.user['id']
+          recursiveDownRelations['user'] = {
+            id: this.user['id'],
+            user_basic_information: {
+              user_id: this.user['id'],
+              first_name: this.user['first_name'],
+              last_name: this.user['last_name']
+            }
+          }
         if(typeof recursiveDownRelations['user_relation_context_locks'] === 'undefined'){
           recursiveDownRelations['user_relation_context_locks'] = []
         }
@@ -282,6 +291,14 @@ export default {
         delete newSubStatement['event']['relation']
         newRecursiveDownRelations['statement'] = newSubStatement['event']
         newRecursiveDownRelations['user_id'] = this.user['id']
+        newRecursiveDownRelations['user'] = {
+          id: this.user['id'],
+          user_basic_information: {
+            user_id: this.user['id'],
+            first_name: this.user['first_name'],
+            last_name: this.user['last_name']
+          }
+        }
         newRecursiveDownRelations['relations'] = []
         const parentStatementId = parentStatement['statement']['id']
         let currentStatement = this.mainRelationData['relations'][this.statementIdIndexLookUp[parentStatementId]]
@@ -294,7 +311,7 @@ export default {
         }
         currentStatement['relations'].push(newRecursiveDownRelations)
       }
-      this.subRelationIds = this.mapRelations(this.mainRelationData)
+      this.mapRelations()
     },
     updateNewSubStatement(newSubStatement, firstLevelIndex){
       let currentStatement = this.mainRelationData['relations'][firstLevelIndex]
@@ -350,15 +367,17 @@ export default {
   watch: {
     statementId: {
       handler(statementId){
+        console.log('statementId', statementId)
         if(statementId){
           const lastViewRelationId = localStorage.getItem('last_viewed_relation_id')
           if(lastViewRelationId !== statementId + '' || this.mainRelationData === null){
+            localStorage.removeItem('last_viewed_relation_id')
+            console.log('init')
             this.initialize(statementId)
           }else{
             this.setMainRelation(this.mainRelationData)
             console.log('not initialized')
           }
-
           localStorage.setItem('last_viewed_relation_id', this.statementId)
         }
       },
@@ -383,7 +402,7 @@ export default {
           currentRelation = currentRelation['relations'][index]
         }
         currentRelation['relations'].splice(map[map.length - 1], 1)
-        this.subRelationIds = this.mapRelations(this.mainRelationData)
+        this.mapRelations()
       }
     },
     activeCreateWindow(activeCreateWindow){

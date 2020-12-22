@@ -8,7 +8,16 @@
             <form>
               <h5 class="mb-3">Registration Form</h5>
               <div class="form-group row">
-                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">First Name</label>
+                <label class="col-sm-12 col-form-label font-weight-bold">Username</label>
+                <div class="col-sm-12">
+                  <input v-model="username" :class="typeof validationErrors['username'] !== 'undefined' ? 'is-invalid' : ''" class="form-control " type="text"  placeholder="Username">
+                  <div class="invalid-feedback">
+                    {{validationErrors['username']}}
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label class="col-sm-12 col-form-label font-weight-bold">First Name</label>
                 <div class="col-sm-12">
                   <input v-model="firstName" :class="typeof validationErrors['firstName'] !== 'undefined' ? 'is-invalid' : ''" class="form-control " type="text"  placeholder="First Name">
                   <div class="invalid-feedback">
@@ -17,7 +26,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Last Name</label>
+                <label class="col-sm-12 col-form-label font-weight-bold">Last Name</label>
                 <div class="col-sm-12">
                   <input v-model="lastName" :class="typeof validationErrors['lastName'] !== 'undefined' ? 'is-invalid' : ''" type="text" class="form-control" placeholder="Last Name">
                   <div class="invalid-feedback">
@@ -26,7 +35,7 @@
                 </div>
               </div>
               <div class="form-group row">
-                <label for="staticEmail" class="col-sm-12 col-form-label font-weight-bold">Email</label>
+                <label class="col-sm-12 col-form-label font-weight-bold">Email</label>
                 <div class="col-sm-12">
                   <input v-model="email" :class="typeof validationErrors['email'] !== 'undefined' ? 'is-invalid' : ''" type="email" class="form-control" placeholder="Your Email">
                   <div class="invalid-feedback">
@@ -67,6 +76,7 @@ import Auth from '@/core/auth'
 export default {
   data(){
     return {
+      username: '',
       firstName: '',
       lastName: '',
       email: '',
@@ -87,7 +97,7 @@ export default {
             first_name: this.firstName,
             last_name: this.lastName,
           },
-          username: (this.firstName + this.lastName).toLowerCase(),
+          username: (this.username).toLowerCase(),
           email: this.email,
           password: this.password,
           status: 1,
@@ -101,6 +111,9 @@ export default {
           this.isLoading = false
           const { code: errorCode, message: errorMessage } = error.response.data.error
           if(parseInt(errorCode) === 1){ // validation error
+            if(typeof errorMessage['username'] !== 'undefined'){
+              this.validationErrors['username'] = errorMessage['username'][0]
+            }
             if(typeof errorMessage['basic_information.first_name'] !== 'undefined'){
               this.validationErrors['firstName'] = errorMessage['basic_information.first_name'][0]
             }
@@ -121,6 +134,9 @@ export default {
     },
     isFormValid(){
       this.validationErrors = {}
+      if(this.username === ''){
+        this.validationErrors['username'] = 'Required'
+      }
       if(this.firstName === ''){
         this.validationErrors['firstName'] = 'Required'
       }

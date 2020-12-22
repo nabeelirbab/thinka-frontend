@@ -2,10 +2,9 @@
   <div :style="{'padding-left': ((level - 1) * 20)+ 'px'}">
     <div
       v-if="!isLocked"
-      v-show="!isEditing && (statementTextFilter === '' || (statementText.toLowerCase()).indexOf(statementTextFilter.toLowerCase()) >= 0)"
+      v-show="!isEditing && !isFilteredOut"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
-
     >
       <div class="d-flex align-items-center p-1">
         <div class="ml-0 pl-0" style="min-width:30px">
@@ -13,7 +12,7 @@
           <button v-if="showStatement" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
         </div>
         <div>
-          <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait...">
+          <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
             <fa icon="spinner" spin />
           </CircleLabel>
           <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
@@ -25,11 +24,11 @@
         </div>
         <div class="flex-fill"  @click="statementClicked" >
           <div v-if="isDifferentAuthor && relation && relation['user']" class="text-sm">
-            <span class="font-weight-bold mr-1">{{userBasicInformationFullName(relation['user']['user_basic_information'])}}</span>
-            <span v-if="relation['published_at']" class="font-italic text-muted">{{formatDate(relation['published_at'])}}</span>
+            <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
+            <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
           <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
-              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName">
+              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip" data-placement="top">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
@@ -274,6 +273,12 @@ export default {
       }else{
         return '??'
       }
+    },
+    isFilteredOut(){
+      console.log('isFilteredOut', this.authorFilter, this.relation['user_id'])
+      let failedTextFilter = this.statementTextFilter !== '' && (this.statementText.toLowerCase()).indexOf(this.statementTextFilter.toLowerCase())  === -1
+      let failedAuthorFilter = Object.keys(this.authorFilter).length > 0 && typeof this.authorFilter[this.relation['user_id']] === 'undefined'
+      return failedTextFilter || failedAuthorFilter
     },
     relationTypeName(){
       const relationTypeId = this.statement['relation_type_id']

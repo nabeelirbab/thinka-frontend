@@ -76,7 +76,6 @@ export default {
     },
     statementId: Number,
     parentRelationId: Number,
-    subRelationIds: Array
   },
   mounted(){
     // if(this.backHistory.length && this.backHistory[0] !== this.relationId){
