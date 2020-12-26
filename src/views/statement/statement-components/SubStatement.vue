@@ -41,7 +41,7 @@
             <small v-else-if="showCTOpinion">-100%</small>
           </div>
           <template v-else-if="isActive">
-            <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText).slice(0, 30)" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+            <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText).slice(0, 30)" ><CircleIconButton v-if="!enableDragging" icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
             <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
             <CircleIconButton v-if="isActive && enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
           </template>
