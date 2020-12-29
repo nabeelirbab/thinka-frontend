@@ -1,14 +1,14 @@
 <template>
-  <div class="border rounded">
-    <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="list" /> My Trees</h5>
-    <div class="p-4" style="overflow-y:auto; height: 50vh">
+  <div class="p-0">
+    <!-- <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="list" /> My Trees</h5> -->
+    <div class="p-0" style="overflow-y:auto; height: 50vh">
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
       <div >
         <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
           <div class="flex-fill text-break">
-            <small>{{formatDate(trend['updated_at'])}}</small>{{"   "}}
-            <fa v-if="trend['published_at']" icon="sun" /><fa v-else icon="briefcase" /><br />
-            <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase((trend['text']).slice(0,30))">{{trend['text']}} <small>#{{trend['id']}}</small></router-link>
+            <small>{{timeSince(trend['updated_at'])}}</small>{{"   "}}
+            <span  style="color: gray"><fa v-if="trend['published_at']" icon="sun" /><fa v-else icon="briefcase" /></span><br />
+            <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase(trend['text']).slice(0,30)">{{trend['text']}}</router-link>
           </div>
         </div>
       </div>

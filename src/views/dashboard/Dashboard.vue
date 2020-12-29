@@ -12,32 +12,69 @@
       <router-link to="/new-statement" class="btn btn-lg btn-primary text-uppercase mx-1 mb-2"><fa icon="project-diagram" /> Create New Tree</router-link>
       <router-link to="/search" class="btn btn-lg btn-outline-primary text-uppercase mx-1 mb-2"><fa icon="search" /> Search A Tree</router-link>
     </div>
-    <div class="row no-gutters">
-      <div class="col-12 col-md-8 pr-md-2 pb-3">
+
+    <div class="accordion" id="accordianList">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h2 class="mb-0">
+        <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          <fa icon="list" /> My Trees <fa class="float-right" icon="angle-down" />
+        </button>
+      </h2>
+    </div>
+
+    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordianList">
+      <div class="card-body">
         <MyList v-if="user" class="mb-2" />
-        <div class="card mb-2">
-          <h5 class="card-header"><fa icon="cloud" /> My Thinka Tanks</h5>
-          <div class="card-body">
-            <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
-            <table class="table ">
-              <tbody>
-                <tr>
-                  <td>Plant Lovers Tank</td>
-                  <td>This tank relates to plants. Join us!</td>
-                </tr>
-                <tr>
-                  <td>Politics</td>
-                  <td>We work on critical thinking trees for politics such as policy debate or evaluation of political candidates.</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingTwo">
+      <h2 class="mb-0">
+        <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+          <fa icon="cloud" /> My Thinka Tanks <fa  class="float-right" icon="angle-down" />
+        </button>
+      </h2>
+    </div>
+    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordianList">
+      <div class="card-body">
+        <!-- <h5 class="card-header"><fa icon="cloud" /> My Thinka Tanks</h5> -->
+        <div class="card-body p-0">
+          <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
+          <table class="table ">
+            <tbody>
+              <tr>
+                <td>Plant Lovers Tank</td>
+                <td>This tank relates to plants. Join us!</td>
+              </tr>
+              <tr>
+                <td>Politics</td>
+                <td>We work on critical thinking trees for politics such as policy debate or evaluation of political candidates.</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="col-12 col-md-4 pb-3">
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingThree">
+      <h2 class="mb-0">
+        <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+          <fa icon="chart-line" /> Trending <fa  class="float-right" icon="angle-down" />
+        </button>
+      </h2>
+    </div>
+    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordianList">
+      <div class="card-body">
         <Trending />
       </div>
     </div>
+  </div>
+</div>
+
+
   </div>
 </template>
 <script>

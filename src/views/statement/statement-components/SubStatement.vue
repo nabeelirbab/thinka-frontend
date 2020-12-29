@@ -23,7 +23,7 @@
           </div>
         </div>
         <div class="flex-fill"  @click="statementClicked" >
-          <div v-if="isDifferentAuthor && relation && relation['user']" class="text-sm">
+          <div v-if="isActive && relation && relation['user']" class="text-sm">
             <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
@@ -32,7 +32,7 @@
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
-              <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+              <!-- <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
           </div>
         </div>
         <div class="pl-1 d-flex ">
