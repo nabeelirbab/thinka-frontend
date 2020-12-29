@@ -8,7 +8,7 @@
           <div class="flex-fill text-break">
             <small>{{formatDate(trend['updated_at'])}}</small>{{"   "}}
             <fa v-if="trend['published_at']" icon="sun" /><fa v-else icon="briefcase" /><br />
-            <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase(trend['text']).slice(0,30)">{{trend['text']}} <small>#{{trend['id']}}</small></router-link>
+            <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase((trend['text']).slice(0,30))">{{trend['text']}} <small>#{{trend['id']}}</small></router-link>
           </div>
         </div>
       </div>

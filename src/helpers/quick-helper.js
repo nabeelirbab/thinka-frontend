@@ -3,7 +3,7 @@ export default {
   methods: {
     findArrayIndex(value, array, key = null){
       for(let x in array){
-        if(key && array[x][key] === value){
+        if(key && array[x][key] + '' === value + ''){
           return x
         }else if(array[x] === value){
           return x
@@ -39,30 +39,31 @@ export default {
       let seconds = Math.floor((new Date() - date) / 1000)
       let interval = seconds / 31536000
       if (interval > 1) {
-        return Math.floor(interval) + " years"
+        return Math.floor(interval) + " year" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 2592000
       if (interval > 1) {
-        return Math.floor(interval) + " months"
+        return Math.floor(interval) + " month" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 86400
       if (interval > 1) {
-        return Math.floor(interval) + " days"
+        return Math.floor(interval) + " day" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 3600
       if (interval > 1) {
-        return Math.floor(interval) + " hours"
+        return Math.floor(interval) + " hour" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 60
       if (interval > 1) {
-        return Math.floor(interval) + " minutes"
+        return Math.floor(interval) + " minute" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
-      return Math.floor(seconds) + " seconds"
+      return Math.floor(seconds) + " second" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
     },
     toPascal(s){
       if (typeof s !== 'string') return ''
       return s.charAt(0).toUpperCase() + s.slice(1)
     },
+	
     toKebabCase(s){
       return s.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
       .map(x => x.toLowerCase())

@@ -25,12 +25,15 @@ export default {
       let currentText = ''
       textSegments.forEach(textSegment => {
         if(this.isUrl(textSegment)){
-          // this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'text'
+          const indexOfHttp = textSegment.indexOf('http')
+          if(indexOfHttp !== 0){
+            currentText += ' ' + textSegment.slice(0, indexOfHttp)
+            textSegment = textSegment.slice(indexOfHttp)
+          }
           if(currentText !== ''){
             this.formattedTextArray.push(currentText)
             currentText = ''
           }
-          // this.formattedTextIndexTypeLookUp[this.formattedTextArray.length] = 'url'
           this.formattedTextArray.push(this.textToLink(textSegment))
         }else{
           currentText += ' ' + textSegment

@@ -48,6 +48,7 @@ class Auth {
         const userData = response['data']['data']
         user.value = {
           id: userData['id'],
+          username: userData['username'],
           email: userData['email'],
           status: userData['status'],
           first_name: userData['user_basic_information'] ? userData['user_basic_information']['first_name'] : null,

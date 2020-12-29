@@ -10,10 +10,8 @@
       </div>
       <div v-if="notificationRelationUpdate['relation']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm mr-1" />
-        <div class="font-italic text-truncate" style="min-width:0">
-          <router-link :to="'/branch/' + notificationRelationUpdate['relation_id']" class="c-pointer text-dark">
-            {{notificationRelationUpdate['relation']['statement']['text']}}
-          </router-link>
+        <div @click="readNotification" class="font-italic text-truncate c-pointer" style="min-width:0">
+          {{notificationRelationUpdate['relation']['statement']['text']}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
       </div>
@@ -24,13 +22,22 @@
   </div>
 </template>
 <script>
+import NotificationHelper from '../notification-helper'
 export default {
   props: {
+    notificationUserId: Number,
     notificationRelationUpdate: {
       type: Object,
       required: true
     },
     datetime: String
+  },
+  methods: {
+    readNotification(){
+      NotificationHelper.readNotification(this.notificationUserId).then(() => {
+        this.$router.push('/branch/' + this.notificationRelationUpdate['relation_id'] + '/t/' + this.toKebabCase((this.notificationRelationUpdate['relation']['statement']['text']).slice(0, 30)))
+      })
+    }
   }
 }
 </script>

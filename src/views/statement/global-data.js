@@ -1,4 +1,5 @@
 import { ref, watch } from 'vue'
+import QuickHelper from '@/helpers/quick-helper'
 const authors = ref({})
 const selectedStatementId = ref(0)
 const mainRelationData = ref(null)
@@ -20,7 +21,6 @@ const forwardHistory = ref([])
 const subRelationMap = ref({}) // trace the location of the substatement given the statement id
 const subRelationIds = ref([]) // list of subrelation ids. Used to update all the sub statements
 const mapRelations = (relation = null, parentIds = []) => {
-  let ids = []
   if(relation === null){
     relation = mainRelationData.value
   }
@@ -29,18 +29,25 @@ const mapRelations = (relation = null, parentIds = []) => {
     subRelationIds.value = []
     subRelationMap.value = {}
   }
-  relation['relations'].forEach((relation, index) => {
-    authors.value[relation['user_id']] = relation['user']
-    ids.push({id: relation['id']})
-    subRelationMap.value[relation['id']] = parentIds.concat([index])
-    if(relation['relations'] && relation['relations'].length){
-      ids = ids.concat(mapRelations(relation, subRelationMap.value[relation['id']]))
+  subRelationIds.value.push({id: relation['id']})
+  let toDeleteCircularRelationIndices = []
+  relation['relations'].forEach((subRelation, index) => {
+    const isAlreadyExisted = QuickHelper.methods.findArrayIndex(subRelation['id'], subRelationIds.value, 'id') // check if subrelation already existed somewhere
+    if(isAlreadyExisted === -1){
+      authors.value[subRelation['user_id']] = subRelation['user']
+      subRelationMap.value[subRelation['id']] = parentIds.concat([index])
+      if(typeof subRelation['relations'] !== 'undefined' && subRelation['relations'].length){
+        mapRelations(subRelation, subRelationMap.value[subRelation['id']])
+      }
+      // console.log('isAlreadyExisted no', isAlreadyExisted, subRelation['id'], subRelationIds.value)
+    }else{
+      toDeleteCircularRelationIndices.push(index)
     }
   })
-  if(parentIds.length === 0){
-    subRelationIds.value = ids
-  }
-  return ids
+  toDeleteCircularRelationIndices.forEach(index => {
+    console.log('to slice', relation['id'], index)
+    relation['relations'].slice(index, 1)
+  })
 }
 const hideToolbarDialog = () => {
   showImpact.value = false

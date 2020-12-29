@@ -58,7 +58,7 @@ export default {
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){
           console.log('success', result['data'])
-          this.$router.push('/branch/' + result['data']['relation']['id'])
+          this.$router.push('/branch/' + result['data']['relation']['id'] + '/t/' + this.toKebabCase(this.statement['text'].slice(0, 30)))
         }
         this.isLoading = false
       })

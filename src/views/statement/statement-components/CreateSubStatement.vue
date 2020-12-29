@@ -19,14 +19,23 @@
         </button>
     </div>
     <div class="flex-basis pt-2">
-      <textarea ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="5"></textarea>
-      <Suggestion ref="suggestion" @select="sugestionSelected" />
+      <div v-if="toJoinRelation">
+        {{toJoinRelation['statement']['text']}}
+      </div>
+      <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
+      <Suggestion ref="suggestion" 
+        @select="sugestionSelected" 
+        @join="suggestionJoined"
+        :logic-tree-id="logicTreeId"
+        :no-join="this.mode !== 'create'"
+      />
     </div>
   </div>
 
 </template>
 <script>
 import StatementAPI from '@/api/statement'
+import RelationAPI from '@/api/relation'
 import RelationTypeAPI from '@/api/relation-type'
 import Suggestion from './create-sub-statement-components/Suggestion'
 import GlobalData from '../global-data'
@@ -70,6 +79,7 @@ export default {
     return {
       isLoading: false,
       isSuggestionSelected: false,
+      toJoinRelation: null,
       isSuccess: false,
       statement: {
         relation: {
@@ -108,10 +118,10 @@ export default {
       }
     },
     sugestionSelected(selectedSuggestion){
-      if(selectedSuggestion){
+      if(selectedSuggestion){ // suggestiong selected
         this.isSuggestionSelected = true
-        this.statement['id'] = selectedSuggestion['id']
-        this.statement['text'] = selectedSuggestion['text']
+        this.statement['id'] = selectedSuggestion['statement']['id']
+        this.statement['text'] = selectedSuggestion['statement']['text']
       }else{
         if(this.relation){
           this.statement['id'] = this.relation['statement']['id']
@@ -119,10 +129,13 @@ export default {
         }else{
           this.statement['id'] = null
         }
-        if(this.relation['statement_id'])
-        this.isSuggestionSelected = false
+        // if(this.relation['statement_id'])
+        // this.isSuggestionSelected = false
         // this.statement['text'] = ''
       }
+    },
+    suggestionJoined(relation){
+      this.toJoinRelation = relation
     },
     save(){
       this.$refs.suggestion._stopSuggesting()
@@ -132,10 +145,37 @@ export default {
         ...this.statement,
       }
       if(this.mode === 'create'){
-        this.createStatement(JSON.parse(JSON.stringify(param)))
+        if(this.toJoinRelation){
+          this.joinRelatioln()
+        }else{
+          this.createStatement(JSON.parse(JSON.stringify(param)))
+        }
       }else{
         this.updateStatement(JSON.parse(JSON.stringify(param)))
       }
+    },
+    joinRelatioln(){
+      RelationAPI.post('/join', {
+        parent_relation_id: this.parentRelationId,
+        relation_id: this.toJoinRelation['id'],
+        relevance_window: this.isPositiveStatement ? 0 : 1,
+      }).then(result => {
+        if(result){
+          this.$emit('save', {
+            ...this.toJoinRelation,
+            retrieve_relations: true,
+            relevance_window: this.isPositiveStatement ? 0 : 1,
+          })
+          this.isSuccess = true
+            setTimeout(() => {
+              this.reset()
+          }, 600)
+        }else{
+          this.isLoading = false
+        }
+      }).finally(() => {
+        this.isLoading = false
+      })
     },
     createStatement(param){
       StatementAPI.create(param).then(result => {
@@ -151,7 +191,8 @@ export default {
         }else{
           this.isLoading = false
         }
-      }).catch(() => {
+      }).catch(error => {
+        console.error(error)
         this.isLoading = false
       })
     },
@@ -176,6 +217,8 @@ export default {
     reset(){
       this.isSuccess = false
       this.isLoading = false
+      this.isSuggestionSelected = null
+      this.toJoinRelation = null
       this.statement['id'] = null
       this.statement['text'] = ''
       this.statement['relation']['relation_type_id'] = '2'

@@ -30,7 +30,7 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="true" :statement-relation-index-map="[index]"/>
+                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="true" />
                 </div>
               </template>
             </draggable>
@@ -57,7 +57,7 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 1">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="false" :statement-relation-index-map="[index]" :group-name="'g2'"/>
+                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="false" :group-name="'g2'"/>
                 </div>
               </template>
             </draggable>
@@ -166,7 +166,7 @@ export default {
             }
           },
           relations: {
-            select: this.generateRecursiveRelationsSelect(1),
+            select: this.generateRecursiveRelationsSelect(1, 20),
             sort: [{column: 'relevance_row', order: 'asc'}]
           },
           user_relation_bookmarks: {
@@ -220,24 +220,25 @@ export default {
       this.isLoading = false
     },
     setDefaultSeparator(){
-      console.log('this.$refs.negativeWindow.children', this.$refs.negativeWindow.children)
-      const negativeChildren = this.$refs.negativeWindow.children
+      const negativeChildren = this.$refs.negativeWindow ? this.$refs.negativeWindow.children : []
       let negativeInnerHeight = 0
       for(let x = 0; x < negativeChildren.length; x++){
         negativeInnerHeight += negativeChildren[x].offsetHeight
       }
-      const positiveChildren = this.$refs.positiveWindow.children
+      const positiveChildren = this.$refs.positiveWindow ? this.$refs.positiveWindow.children : []
       let positiveInnerHeight = 0
       for(let x = 0; x < positiveChildren.length; x++){
         positiveInnerHeight += positiveChildren[x].offsetHeight
       }
-      if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
-        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 100) * -1)
-      }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
-        this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
+      if(this.$refs.separator){
+        if(positiveInnerHeight < (this.totaRelevanceWindowHeight / 2)){
+          this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 100) * -1)
+        }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
+          this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
+        }
       }
     },
-    generateRecursiveRelationsSelect(currentDeep, deep = 10){
+    generateRecursiveRelationsSelect(currentDeep, deep = 20){
       let selectParam = {
         statement: {
           select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
@@ -261,57 +262,116 @@ export default {
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {
-          select: this.generateRecursiveRelationsSelect(++currentDeep),
+          select: this.generateRecursiveRelationsSelect(++currentDeep, deep),
           sort: [{column: 'relevance_row', order: 'asc'}]
         }
       }
       return selectParam
     },
     addNewSubStatement(newSubStatement, parentStatement = null){
+      let newSubRelations = null
+      let parentRelation = null
       if(parentStatement === null){
-        let recursiveDownRelations = newSubStatement['relation']
-        delete newSubStatement['relation']
-        recursiveDownRelations['statement'] = newSubStatement
-        recursiveDownRelations['relations'] = []
-          recursiveDownRelations['user_id'] = this.user['id']
-          recursiveDownRelations['user'] = {
-            id: this.user['id'],
-            user_basic_information: {
-              user_id: this.user['id'],
-              first_name: this.user['first_name'],
-              last_name: this.user['last_name']
-            }
-          }
-        if(typeof recursiveDownRelations['user_relation_context_locks'] === 'undefined'){
-          recursiveDownRelations['user_relation_context_locks'] = []
-        }
-        this.mainRelationData['relations'].push(recursiveDownRelations)
+        newSubRelations = this.prepareNewSubStatement(newSubStatement)
+        parentRelation = this.mainRelationData
+        console.log('pushed here', newSubRelations)
+        parentRelation['relations'].push(newSubRelations)
       }else{
-        let newRecursiveDownRelations = newSubStatement['event']['relation']
-        delete newSubStatement['event']['relation']
-        newRecursiveDownRelations['statement'] = newSubStatement['event']
-        newRecursiveDownRelations['user_id'] = this.user['id']
-        newRecursiveDownRelations['user'] = {
-          id: this.user['id'],
-          user_basic_information: {
-            user_id: this.user['id'],
-            first_name: this.user['first_name'],
-            last_name: this.user['last_name']
-          }
-        }
-        newRecursiveDownRelations['relations'] = []
+        newSubRelations = this.prepareNewSubStatement(newSubStatement['event'])
         const parentStatementId = parentStatement['statement']['id']
         let currentStatement = this.mainRelationData['relations'][this.statementIdIndexLookUp[parentStatementId]]
         const mappingIndex = newSubStatement['mappingIndex']
         for(let index = mappingIndex.length - 1; index >= 0; index--){
           currentStatement = currentStatement['relations'][mappingIndex[index]]
         }
-        if(typeof newRecursiveDownRelations['user_relation_context_locks'] === 'undefined'){
-          newRecursiveDownRelations['user_relation_context_locks'] = []
-        }
-        currentStatement['relations'].push(newRecursiveDownRelations)
+        parentRelation = currentStatement
+        parentRelation['relations'].push(newSubRelations)
       }
-      this.mapRelations()
+      if(typeof newSubRelations['retrieve_relations'] !== 'undefined'){
+        newSubRelations['is_Loading_relations'] = true
+        this.retrieveSubRelations(newSubRelations['id']).then(result => {
+          if(result['data'].length){
+            newSubRelations = result['data'][0]
+            console.log(result['data'][0])
+            this.mapRelations()
+          }else{
+            this.mapRelations()
+          }
+        }).catch(error => {
+          console.error(error)
+          newSubRelations['is_Loading_relations'] = false
+          this.mapRelations()
+        })
+        
+      }else{
+        this.mapRelations()
+      }
+    },
+    prepareNewSubStatement(rawNewSubStatement){
+      let newSubStatement = null
+      if(typeof rawNewSubStatement['relation'] !== 'undefined'){ // from statement to relation
+        newSubStatement = rawNewSubStatement['relation']
+        delete rawNewSubStatement['relation']
+        newSubStatement['statement'] = rawNewSubStatement
+      }else{ // its already a relation
+        newSubStatement = rawNewSubStatement
+      }
+      newSubStatement['relations'] = []
+      newSubStatement['user_id'] = this.user['id']
+      newSubStatement['user'] = {
+        id: this.user['id'],
+        username: this.user['username'],
+        user_basic_information: {
+          user_id: this.user['id'],
+          first_name: this.user['first_name'],
+          last_name: this.user['last_name']
+        }
+      }
+      if(typeof newSubStatement['user_relation_context_locks'] === 'undefined'){
+        newSubStatement['user_relation_context_locks'] = []
+      }
+      return newSubStatement
+    },
+    retrieveSubRelations(relationId){
+      const param = {
+        select: {
+          logic_tree: {
+            select: ['description', 'published_at']
+          },
+          parent_relation: {
+            select: {
+              ...(['statement_id']),
+              statement: {
+                select: ['text']
+              }
+            }
+          },
+          relations: {
+            select: this.generateRecursiveRelationsSelect(1),
+            sort: [{column: 'relevance_row', order: 'asc'}]
+          },
+          user_relation_bookmarks: {
+            select: ['user_id', 'relation_id', 'sub_relation_id']
+          },
+          statement: {
+            select: ['text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
+          },
+          user: {
+            select: {
+              ...(['id', 'username']),
+              user_basic_information: {
+                select: ['user_id', 'first_name', 'last_name']
+              }
+            }
+          },
+          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
+        },
+        condition: [{
+          column: 'id',
+          value: relationId * 1
+        }]
+      }
+      return RelationAPI.retrieve(param)
     },
     updateNewSubStatement(newSubStatement, firstLevelIndex){
       let currentStatement = this.mainRelationData['relations'][firstLevelIndex]
@@ -367,7 +427,6 @@ export default {
   watch: {
     statementId: {
       handler(statementId){
-        console.log('statementId', statementId)
         if(statementId){
           const lastViewRelationId = localStorage.getItem('last_viewed_relation_id')
           if(lastViewRelationId !== statementId + '' || this.mainRelationData === null){

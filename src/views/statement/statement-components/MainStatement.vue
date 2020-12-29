@@ -23,7 +23,7 @@
                 <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               </div>
               <div v-else-if="parentRelationId" @click.stop class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
-                <router-link :to="'/branch/'+ parentRelationId + '/t/' + toKebabCase(parentRelation['statement']['text']).slice(0, 30)" class="text-primary"><fa icon="undo-alt" /></router-link>
+                <router-link :to="'/branch/'+ parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30))" class="text-primary"><fa icon="undo-alt" /></router-link>
               </div>
             </div>
           </div>

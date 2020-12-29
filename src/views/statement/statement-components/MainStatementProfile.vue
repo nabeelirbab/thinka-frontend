@@ -1,5 +1,5 @@
 <template>
-  <div v-if="mainRelationData" class="d-md-flex mb-1" @click="selectedStatementId = null">
+  <div v-if="mainRelationData" class="d-flex mb-1" @click="selectedStatementId = null">
     <div class="d-flex flex-fill">
       <div>
         <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-    <div>
+    <div class="pl-2">
       <div class="dropdown">
         <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Authors

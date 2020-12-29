@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="typedText === '' ? 'invisible' : '' " class="d-flex text-sm">
+    <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm">
       <div>Suggestions: </div>
       <div class="flex-fill mx-1">
         <span v-if="typedText === null || typedText === ''" class="text-secondary text-italic">Nothing to suggest</span>
@@ -8,10 +8,21 @@
         <span v-else-if="!suggestions.length">No suggestions found</span>
         <template v-else >
           <template v-for="(suggestion, index) in suggestions" :key="'sugges' + suggestion['id']"> 
-            <div v-if="selectedSuggestionId === null || selectedSuggestionId === suggestion['id']" :class="index !== suggestions.length - 1 ? 'border-bottom ' : ''">
-              <span :class="selectedSuggestionId ? 'font-weight-bold' : ''" class="mr-1">{{suggestion['text']}}</span>
-              <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion)" class="c-pointer text-info text-hover-underline">Select</span>
-              <span v-else @click="selectSuggestion(null)" class="c-pointer text-danger text-hover-underline">Unselect</span>
+            <div v-if="(selectedSuggestionId === null && joinedSuggestionId === null) || selectedSuggestionId === suggestion['id'] || joinedSuggestionId === suggestion['id']" :class="index !== suggestions.length - 1 ? 'border-bottom ' : ''" class="d-flex align-items-center" style="min-width: 0">
+              <div>
+                <div v-if="suggestion['logic_tree']" class="text-sm text-break"><fa icon="tree" /> {{suggestion['logic_tree']['name']}}</div>
+                <div :class="selectedSuggestionId ? 'font-weight-bold' : ''" class="mr-1 text-break">{{suggestion['statement']['text']}}</div>
+              </div>
+              <div class="pl-2">
+                <template v-if="!joinedSuggestionId">
+                  <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion)" class="c-pointer text-info text-hover-underline"><fa icon="clipboard" /> Select</span>
+                  <span v-else @click="selectSuggestion(null)" class="c-pointer text-danger text-hover-underline">Unselect</span>
+                </template>
+                <template v-if="!noJoin &&!selectedSuggestionId && suggestion['parent_relation_id'] === null && suggestion['user_id'] * 1 === user['id'] * 1 && suggestion['logic_tree_id'] !== logicTreeId">
+                  <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion)" class="c-pointer text-info text-hover-underline ml-1"><fa icon="paste" /> Join</span>
+                  <span v-else @click="joinSuggestion(null)" class="c-pointer text-danger text-hover-underline ml-1">Cancel Joining</span>
+                </template>
+              </div>
             </div>
           </template>
           <div v-if="hasMoreSuggestions" class="border-top ">
@@ -26,11 +37,21 @@
       </div> 
       <div v-else>
         <template v-for="(suggestion, index) in moreSuggestions" :key="'suggesMORE' + suggestion['id']"> 
-          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1 text-break">
-            <div v-if="suggestion['logic_tree']" class="text-sm"><fa icon="tree" /> {{suggestion['logic_tree']['name']}}</div>
-            <span :class="selectedSuggestionId === suggestion['id'] ? 'font-weight-bold' : ''" class="mr-1">{{suggestion['text']}}</span>
-            <span v-if="selectedSuggestionId !== suggestion['id']" @click="selectSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline">Select</span>
-            <span v-else @click="selectSuggestion(null)" class="c-pointer text-danger text-hover-underline">Unselect</span>
+          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1 text-break d-flex align-items-center" style="min-width: 0">
+            <div>
+              <div v-if="suggestion['logic_tree']" class="text-sm"><fa icon="tree" /> {{suggestion['logic_tree']['name']}}</div>
+              <span :class="selectedSuggestionId === suggestion['id'] ? 'font-weight-bold' : ''" class="mr-1">{{suggestion['statement']['text']}}</span>
+            </div>
+            <div class="pl-2">
+                <template v-if="!joinedSuggestionId">
+                  <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline"><fa icon="clipboard" /> Select</span>
+                  <span v-else @click="selectSuggestion(null, true)" class="c-pointer text-danger text-hover-underline">Unselect</span>
+                </template>
+                <template v-if="!noJoin &&!selectedSuggestionId && suggestion['parent_relation_id'] === null && suggestion['user_id'] * 1 === user['id'] * 1 && suggestion['logic_tree_id'] !== logicTreeId">
+                  <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline ml-1"><fa icon="paste" /> Join</span>
+                  <span v-else @click="joinSuggestion(null, true)" class="c-pointer text-danger text-hover-underline ml-1">Cancel Joining</span>
+                </template>
+              </div>
           </div>
         </template>
       </div>
@@ -40,20 +61,33 @@
 </template>
 <script>
 import Modal from '@/components/bootstrap/Modal'
-import StatementAPI from '@/api/statement'
+import RelationAPI from '@/api/relation'
+import Auth from '@/core/auth'
 export default {
   components: {
     Modal
   },
-  emits: ['select'],
+  props: {
+    logicTreeId: {
+      type: Number,
+      required: true
+    },
+    noJoin: {
+      type: Boolean,
+      default: false
+    }
+  },
+  emits: ['select', 'join'],
   data(){
     return {
+      user: Auth.user(),
       suggestions: [],
       moreSuggestions: [],
       isLoadingSuggestion: false,
       suggestionTimeout: null,
       typedText: '',
       selectedSuggestionId: null,
+      joinedSuggestionId: null,
       hasMoreSuggestions: false,
     }
   },
@@ -79,6 +113,7 @@ export default {
       this.isLoadingSuggestion = false
       this.typedText = ''
       this.selectedSuggestionId = null
+      this.joinedSuggestionId = null
     },
     _stopSuggesting(){
       clearTimeout(this.suggestionTimeout)
@@ -94,14 +129,19 @@ export default {
           logic_tree: {
             select: ['name', 'statement_id']
           },
-          ...(['text'])
+          statement: {
+            select: {
+              ...(['text', 'statement_type_id'])
+            }
+          },
+          ...(['user_id', 'relation_type_id', 'parent_relation_id', 'logic_tree_id'])
         },
         sort: [{
-          column: 'text',
+          column: 'statement.text',
           order: 'desc'
         }],
         condition: [{
-          column: 'text',
+          column: 'statement.text',
           clause: 'like',
           value: '%' + this.typedText + '%'
         }]
@@ -116,7 +156,7 @@ export default {
         param['offset'] = 0
         param['limit'] = 20
       }
-      StatementAPI.retrieve(param).then(result => {
+      RelationAPI.retrieve(param).then(result => {
         if(result['data']){
           if(!more){
             this.suggestions = result['data']
@@ -135,10 +175,19 @@ export default {
     },
     selectSuggestion(selectedStatement, fromMoreSuggestion = false){
       this.selectedSuggestionId = selectedStatement ? selectedStatement['id'] : null
-      if(fromMoreSuggestion && this.findArrayIndex(selectedStatement['id'], this.suggestions, 'id') === -1){
+      if(selectedStatement && fromMoreSuggestion && this.findArrayIndex(selectedStatement['id'], this.suggestions, 'id') === -1){
         this.suggestions.unshift(selectedStatement)
       }
       this.$emit('select', selectedStatement)
+      this.$emit('join', null)
+    },
+    joinSuggestion(selectedRelation, fromMoreSuggestion = false){
+      this.joinedSuggestionId = selectedRelation ? selectedRelation['id'] : null
+      if(selectedRelation && fromMoreSuggestion && this.findArrayIndex(selectedRelation['id'], this.suggestions, 'id') === -1){
+        this.suggestions.unshift(selectedRelation)
+      }
+      this.$emit('join', selectedRelation)
+      this.$emit('select', null)
     }
   }
 }
