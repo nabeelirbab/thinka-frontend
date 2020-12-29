@@ -8,7 +8,7 @@ class NotificationUser extends API {
   lastDatetimeChecked = null
   checkNotication(){
     const refreshTime = 17000 //check notification every 17 seconds
-    if(Auth.user){
+    if(Auth.user().value){
       this.retrieveNotification().finally(() => {
         setTimeout(() => {
           this.checkNotication()

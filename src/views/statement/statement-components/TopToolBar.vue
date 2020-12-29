@@ -41,9 +41,9 @@
             <fa icon="ellipsis-v" />
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-            <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
+            <!-- <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
             <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || (selectedStatementData && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
-            <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
+            <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button> -->
             <button @click="bookmark" :disabled="true" class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
           </div>
         </div>

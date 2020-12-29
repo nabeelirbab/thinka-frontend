@@ -137,12 +137,12 @@ export default {
       if(this.username === ''){
         this.validationErrors['username'] = 'Required'
       }
-      if(this.firstName === ''){
-        this.validationErrors['firstName'] = 'Required'
-      }
-      if(this.lastName === ''){
-        this.validationErrors['lastName'] = 'Required'
-      }
+      // if(this.firstName === ''){
+      //   this.validationErrors['firstName'] = 'Required'
+      // }
+      // if(this.lastName === ''){
+      //   this.validationErrors['lastName'] = 'Required'
+      // }
       if(this.email === ''){
         this.validationErrors['email'] = 'Required'
       }else if(this.email.indexOf('@') < 0){
