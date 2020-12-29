@@ -41,7 +41,8 @@
             <small v-else-if="showCTOpinion">-100%</small>
           </div>
           <template v-else-if="isActive">
-            <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+            <MoreOption :relation="relationData"/>
+            
             <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
             <CircleIconButton v-if="isActive && enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
           </template>
@@ -56,7 +57,7 @@
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <draggable
-      v-if="relationData && typeof relationData['relations'] !== 'undefined' && !isLocked"
+      v-if="relationData && !isLocked"
       v-show="(showStatement || (relationData['relations'].length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
       :relationid="relationData['id']"
       :list="relationData['relations']"
@@ -99,6 +100,7 @@ import CircleIconButton from '@/components/CircleIconButton'
 import RelationAPI from '@/api/relation'
 import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
+import MoreOption from './sub-statement-components/MoreOption'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -110,7 +112,8 @@ export default {
     draggable,
     CircleIconButton,
     CircleLabel,
-    TextDisplayer
+    TextDisplayer,
+    MoreOption
   },
   props: {
     level: Number,
@@ -227,10 +230,9 @@ export default {
           }
           this.relationData = currentRelation
         }
-        if(typeof this.relationData['relations'] === 'undefined'){
+        if(typeof this.relationData !== 'undefined' && typeof this.relationData['relations'] === 'undefined'){
           this.relationData['relations'] = []
         }
-        console.log('statement', this.level, this.relationData['statement']['text'], this.relationData['relations'])
       },
       immediate: true
     },

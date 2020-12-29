@@ -41,9 +41,9 @@
             <fa icon="ellipsis-v" />
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-            <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
-            <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || (mainRelationData && selectedStatementId * 1 === mainRelationData['id'] * 1)" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag</button>
-            <button @click="openContextLock" :disabled="user === null" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
+            <!-- <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
+            <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || (selectedStatementData && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
+            <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button> -->
             <button @click="bookmark" :disabled="true" class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
           </div>
         </div>
@@ -53,7 +53,6 @@
   </div>
   <LogInModal ref="logInModal" />
   <Prompt ref="prompt" />
-  <ContextLockModal ref="contextLockModal" />
 </template>
 <script>
 import Auth from '@/core/auth'
@@ -62,12 +61,12 @@ import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 import RelationAPI from '@/api/relation'
 import LogInModal from '@/components/login/LogInModal'
 import Prompt from '@/components/Prompt'
-import ContextLockModal from './top-toolbar-components/ContextLockModal'
+
 export default {
   components: {
     LogInModal,
     Prompt,
-    ContextLockModal
+    
   },
   props: {
     mainRelation: {
@@ -227,9 +226,7 @@ export default {
         })
       }
     },
-    openContextLock(){
-      this.$refs.contextLockModal._open()
-    }
+    
   },
   watch: {
     mainRelation: {

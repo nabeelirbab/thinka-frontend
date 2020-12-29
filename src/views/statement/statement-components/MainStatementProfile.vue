@@ -5,8 +5,8 @@
         <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
       </div>
       <div class="pl-1">
-        <div class="font-weight-bold">
-          {{toPascal(mainRelationData['user']['user_basic_information']['first_name'])}} {{toPascal(mainRelationData['user']['user_basic_information']['last_name'])}}
+        <div class="font-weight-bold text-capitalize">
+          {{mainRelationData['user']['username']}}
         </div>
         <div class="text-sm">
           {{timeSince(mainRelationData['created_at'])}}
@@ -27,9 +27,9 @@
                 <label class="mb-2">Show All</label>
               </div>
               <template v-for="author in authors">
-                <div @click="addAuthorFilter(author['id'])" class="c-pointer">
-                  <input :checked="typeof authorFilter[author['id']] === 'undefined' ? false : authorFilter[author['id']]" type="checkbox"  class="mr-1">
-                  <label class="mb-2">{{userBasicInformationFullName(author['user_basic_information'])}}</label>
+                <div @click="addAuthorFilter(author['id'])" class="c-pointer text-break d-flex align-items-center" style="min-width:0">
+                  <input :checked="typeof authorFilter[author['id']] === 'undefined' ? false : authorFilter[author['id']]" type="checkbox"  class="mr-1 ">
+                  <label class="mb-2 flex-fill text-break c-pointer">{{author['username']}}</label>
                 </div>
               </template>
             </template>

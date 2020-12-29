@@ -56,7 +56,7 @@ const hideToolbarDialog = () => {
 }
 watch(mainRelationData, (newMainRelationData) => {
   if(newMainRelationData){
-    mainRelationId.value = newMainRelationData
+    mainRelationId.value = newMainRelationData['id'] * 1
     mapRelations()
   }else{
     mainRelationId.value = 0
