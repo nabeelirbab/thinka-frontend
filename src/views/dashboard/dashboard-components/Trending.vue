@@ -1,10 +1,10 @@
 <template>
-  <div class="border rounded">
-    <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="chart-line" /> Trending</h5>
-    <div class="p-4">
-      <p class="card-text">The list below shows the most active conclusions</p>
+  <!-- <div class="border rounded"> -->
+    <!-- <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="chart-line" /> Trending</h5> -->
+    <div class="p-0">
+      <!-- <p class="card-text">The list below shows the most active conclusions</p> -->
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
-      <div >
+      <div style="overflow-y:auto; height: 50vh">
         <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
           <div class="flex-fill text-break">
             <small>{{formatDate(trend['updated_at'])}}</small> <br />
@@ -13,7 +13,7 @@
         </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
 </template>
 <script>
 import RelationAPI from '@/api/relation'

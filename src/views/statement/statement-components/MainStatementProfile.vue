@@ -9,7 +9,7 @@
           {{toPascal(mainRelationData['user']['user_basic_information']['first_name'])}} {{toPascal(mainRelationData['user']['user_basic_information']['last_name'])}}
         </div>
         <div class="text-sm">
-          {{formatDate(mainRelationData['created_at'], 'M d at H:m')}}
+          {{timeSince(mainRelationData['created_at'])}}
         </div>
       </div>
     </div>
