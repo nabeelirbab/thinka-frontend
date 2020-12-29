@@ -1,6 +1,6 @@
 <template>
-  <div class="container pt-4 bg-white height-max">
-    <h5>These are your bookmarked statements</h5>
+  <div class="container pt-2 bg-white height-max">
+    <h6>These are your bookmarked statements</h6>
     <div>
       <div v-if="isLoading">Please wait... <fa icon="spinner" /></div>
       <div v-else-if="userRelationBookmarks.length">
