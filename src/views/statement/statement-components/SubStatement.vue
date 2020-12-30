@@ -5,8 +5,9 @@
       v-show="!isEditing && !isFilteredOut"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
+      style="min-height: 35px"
     >
-      <div class="d-flex align-items-center p-1">
+      <div class="d-flex align-items-center pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
         <div class="ml-0 pl-0" style="min-width:30px">
           <button v-if="!showStatement && relationData && relationData['relations'].length" @click="showStatement = true" class="btn btn-sm btn-outline-secondary"><fa icon="level-up-alt" rotation="90" /></button>
           <button v-if="showStatement" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
@@ -35,21 +36,28 @@
               <!-- <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
           </div>
         </div>
-        <div class="pl-1 d-flex ">
-          <div v-if="showOpinion || showCTOpinion" class="px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+        <div class="pl-1 d-flex my-auto align-self-center">
+          <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
             <small v-if="showOpinion">100%</small>
             <small v-else-if="showCTOpinion">-100%</small>
           </div>
-          <template v-else-if="isActive">
-            <MoreOption :relation="relationData"/>
-            
-            <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
-            <CircleIconButton v-if="isActive && enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary ml-1" />
-          </template>
-          <div class="p-1 pl-2 flex-column" style="color: gray">
-            <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" title="Private" />
-            <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
-            <fa v-if="user && (user['id'] !== relation['user_id'])" icon="user" :title="relationData['user']['user_basic_information']['first_name'] + ' ' + relationData['user']['user_basic_information']['last_name']" />
+          <div v-else class="d-inline-flex">
+            <div v-if="isActive" class="mr-1" >
+              <router-link v-if="!enableDragging" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+
+              <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
+              <CircleIconButton v-if="enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
+            </div>
+
+            <div v-else class="ml-2 mr-2 align-self-center" style="color: gray">
+              <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" title="Private" />
+              <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
+              <fa v-else-if="isDifferentAuthor" icon="user" :title="relation['user']['username']" />
+
+            </div>
+            <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
+              <MoreOption :relation="relationData"/>
+            </div>
           </div>
         </div>
       </div>
@@ -77,11 +85,11 @@
         <SubStatement
           @save="newSubStatementSaved($event, index)"
           @update="statementUpdated($event, index)"
-          :is-positive-statement="isPositiveStatement" 
+          :is-positive-statement="isPositiveStatement"
           :statement="element"
           :logic-tree-id="logicTreeId"
           :level="level + 1"
-          :group-name="groupName" 
+          :group-name="groupName"
         />
       </template>
     </draggable>
