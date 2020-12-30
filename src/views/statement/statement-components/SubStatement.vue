@@ -24,7 +24,7 @@
           </div>
         </div>
         <div class="flex-fill"  @click="statementClicked" >
-          <div v-if="isActive && relation && relation['user']" class="text-sm">
+          <div v-if="isActive && relation && relation['user']" class="text-sm ml-3">
             <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
