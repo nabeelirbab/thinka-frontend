@@ -1,12 +1,14 @@
 <template>
-  <div  class="d-flex">
-    <div class='pr-1'>
-      <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
-    </div>
+  <div  class="container">
+    <small class="float-right">{{timeSince(datetime)}}</small>
+
     <div style="min-width:0">
-      <div >
+      <div class="d-flex">
+        <div class='pr-1'>
+          <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
+        </div>
         <span class="font-weight-bold">{{toPascal(notificationRelationUpdate['user']['user_basic_information']['first_name'])}} {{toPascal(notificationRelationUpdate['user']['user_basic_information']['last_name'])}}</span>
-        <small class="float-right">{{formatDate(datetime)}}</small>
+
       </div>
       <div v-if="notificationRelationUpdate['relation']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm mr-1" />

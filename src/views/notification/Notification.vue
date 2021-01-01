@@ -1,9 +1,9 @@
 <template>
   <div class="container pt-4 bg-white height-max">
-    <h5>You have {{notifications.length ? notifications.length : 'no'}} notification</h5>
+    <h6>You have {{notifications.length ? notifications.length : 'no'}} notifications.</h6>
     <div>
       <template v-for="notification in notifications" :key="'notif' + notification['id']">
-        <div :class="notification['status'] * 1 === 2 ? 'bg-whitesmoke' : ''" class="border shadow-sm mb-2 rounded p-2">
+        <div :class="notification['status'] * 1 === 2 ? 'bg-whitesmoke' : ''" class="border shadow-sm mb-2 rounded p-2 d-flex">
           <NotificationRelationUpdate
             v-if="notification['notification']['type'] * 1=== 2"
             :notification-user-id="notification['id']"
