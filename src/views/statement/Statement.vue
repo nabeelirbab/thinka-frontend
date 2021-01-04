@@ -34,9 +34,9 @@
                 </div>
               </template>
             </draggable>
-            <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
+            <CreateSubStatement v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated' " @cancel="activeCreateWindow = false" :is-positive-statement="true" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1 add-statement-container">
-              <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
+              <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
@@ -63,7 +63,7 @@
             </draggable>
             <CreateSubStatement v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'" @cancel="activeCreateWindow = false" :is-positive-statement="false" :logic-tree-id="logicTreeId" :parent-relation-id="mainRelationData['id']" :statement-id="statementId" @save="addNewSubStatement" />
             <div v-else class="text-center pt-1 add-statement-container">
-              <button v-if="authenticationStatus === 'authenticated'" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
+              <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>
           </div>

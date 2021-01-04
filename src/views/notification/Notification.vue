@@ -15,6 +15,12 @@
             :datetime="notification['created_at']"
             :notification-statement-update="notification['notification']['notification_statement_update']"
           />
+          <NotificationSubRelationUpdate
+            v-if="notification['notification']['type'] * 1 === 4"
+            :notification-user-id="notification['id']"
+            :datetime="notification['created_at']"
+            :notification-relation-update="notification['notification']['notification_sub_relation_update']"
+          />
         </div>
       </template>
 
@@ -24,16 +30,22 @@
 <script>
 import NotificationUserAPI from '@/api/notification-user'
 import NotificationRelationUpdate from './notification-components/NotificationRelationUpdate'
+import NotificationSubRelationUpdate from './notification-components/NotificationSubRelationUpdate'
 import NotificationStatementUpdate from './notification-components/NotificationStatementUpdate'
 export default {
   components: {
     NotificationRelationUpdate,
     NotificationStatementUpdate,
+    NotificationSubRelationUpdate
   },
   mounted(){
-    setTimeout(() => {
-      this.setStatusToNotified()
-    }, 2000)
+    if(this.notifications.length === 0){
+      NotificationUserAPI.checkNotification()
+    }else{
+      setTimeout(() => {
+        this.setStatusToNotified()
+      }, 2000)
+    }
   },
   data(){
     return {

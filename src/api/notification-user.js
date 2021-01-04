@@ -6,21 +6,33 @@ class NotificationUser extends API {
   apiName = 'notification-user'
   notificationUsers = ref([])
   lastDatetimeChecked = null
-  checkNotication(){
+  refreshSetTimeoutId = null
+  checkNotification(){
+    clearTimeout(this.refreshSetTimeoutId)
     const refreshTime = 17000 //check notification every 17 seconds
     if(Auth.user().value){
       this.retrieveNotification().finally(() => {
-        setTimeout(() => {
-          this.checkNotication()
+        this.refreshSetTimeoutId = setTimeout(() => {
+          this.checkNotification()
         }, refreshTime)
       })
     }else{
-      setTimeout(() => {
-        this.checkNotication()
+      this.refreshSetTimeoutId = setTimeout(() => {
+        this.checkNotification()
       }, refreshTime)
     }
   }
   retrieveNotification(){
+    let userAuth = Auth.user().value
+    console.log('userauth', userAuth)
+    let userTemplate = {
+      select: {
+        ...(['id', 'username']),
+        user_basic_information: {
+          select: ['user_id', 'first_name', 'last_name']
+        }
+      }
+    }
     let param = {
       select: {
         ...(['notification_id', 'user_id', 'status', 'created_at']),
@@ -40,14 +52,41 @@ class NotificationUser extends API {
                   },
                   with_trash: true
                 },
-                user: {
+                user: userTemplate
+              }
+            },
+            notification_sub_relation_update: {
+              select: {
+                ...(['id', 'sub_relation_id', 'notification_id', 'user_id', 'message']),
+                sub_relation: {
                   select: {
-                    ...(['id']),
-                    user_basic_information: {
-                      select: ['user_id', 'first_name', 'last_name']
+                    ...(['statement_id']),
+                    statement: {
+                      select: ['text'],
+                      with_trash: true
                     }
-                  }
-                }
+                  },
+                  with_trash: true
+                },
+                notification_sub_relation_update_user_relations:{
+                  select: {
+                    ...(['notification_sub_relation_update_id', 'user_id', 'relation_id']),
+                    relation: {
+                      select: {
+                        ...(['statement_id']),
+                        statement: {
+                          select: ['text'],
+                          with_trash: true
+                        }
+                      }
+                    }
+                  },
+                  condition: [{
+                    column: 'user_id',
+                    value: userAuth['id']
+                  }]
+                },
+                user: userTemplate
               }
             },
             notification_statement_update: {
@@ -64,14 +103,7 @@ class NotificationUser extends API {
                   select: ['statement_id', 'text'],
                   with_trash: true
                 },
-                user: {
-                  select: {
-                    ...(['id']),
-                    user_basic_information: {
-                      select: ['user_id', 'first_name', 'last_name']
-                    }
-                  }
-                }
+                user: userTemplate
               }
             }
           }

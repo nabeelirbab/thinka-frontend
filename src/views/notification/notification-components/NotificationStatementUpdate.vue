@@ -5,7 +5,7 @@
     </div>
     <div style="min-width:0">
       <div >
-        <span class="font-weight-bold">{{toPascal(notificationStatementUpdate['user']['user_basic_information']['first_name'])}} {{toPascal(notificationStatementUpdate['user']['user_basic_information']['last_name'])}}</span>
+        <span class="font-weight-bold">{{toPascal(notificationStatementUpdate['user']['username'])}}</span>
         <small class="float-right">{{formatDate(datetime)}}</small>
       </div>
       <div v-if="notificationStatementUpdate['statement']" class="d-flex">

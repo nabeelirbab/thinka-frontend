@@ -32,7 +32,8 @@
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
-              <!-- <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small> -->
+              <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
+              <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
           </div>
         </div>
         <div class="pl-1 d-flex ">

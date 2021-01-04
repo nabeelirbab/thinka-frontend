@@ -1,5 +1,6 @@
 <template>
-  <div class="px-2 px-md-4 py-2">
+  <div class="container bg-white height-max pt-4">
+    <h5>Create New statement</h5>
     <div class="bg-primary text-white px-2 pb-3 pt-3 statement-radius">
       <!-- <input v-model="statement.logic_tree.name" placeholder="Logic Tree Name" class="form-control mb-2" /> -->
       <div class="mb-2">

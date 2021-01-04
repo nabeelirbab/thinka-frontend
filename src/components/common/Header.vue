@@ -66,7 +66,7 @@ export default {
   },
   mounted(){
     setTimeout(() => {
-      NotificationUserAPI.checkNotication()
+      NotificationUserAPI.checkNotification()
     }, 100)
   },
   data(){
