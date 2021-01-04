@@ -1,7 +1,6 @@
 <template>
-  <div  class="container">
+  <div class="container">
     <small class="float-right">{{timeSince(datetime)}}</small>
-
     <div style="min-width:0">
       <div class="d-flex">
         <div class='pr-1'>

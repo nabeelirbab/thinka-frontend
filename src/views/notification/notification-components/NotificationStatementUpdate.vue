@@ -1,9 +1,9 @@
 <template>
-  <div  class="d-flex">
+  <div  class="d-flex w-100">
     <div class='pr-1'>
       <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
     </div>
-    <div style="min-width:0">
+    <div class="flex-fill" style="min-width:0">
       <div >
         <span class="font-weight-bold">{{toPascal(notificationStatementUpdate['user']['username'])}}</span>
         <small class="float-right">{{formatDate(datetime)}}</small>
