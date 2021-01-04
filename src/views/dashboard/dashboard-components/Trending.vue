@@ -7,7 +7,7 @@
       <div style="overflow-y:auto; height: 50vh">
         <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
           <div class="flex-fill text-break">
-            <small>{{formatDate(trend['updated_at'])}}</small> <br />
+            <small>{{timeSince(trend['updated_at'])}}</small> <br />
             <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase((trend['text']).slice(0,30))">{{trend['text']}}</router-link>
           </div>
         </div>

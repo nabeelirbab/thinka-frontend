@@ -1,4 +1,4 @@
-<template>
+<template class="overflow-hidden">
   <div :class="!hideBranding ? 'has-menu-top-padding' : 'top-padding'" style="">
     <Header />
     <div class="d-flex align-items-stretch">

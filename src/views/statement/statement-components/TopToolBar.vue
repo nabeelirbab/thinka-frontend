@@ -35,20 +35,6 @@
           <fa v-else icon="sun" />
         </button>
       </div>
-      <div>
-        <div class="dropdown show shadown-none">
-          <button class="btn icon-size py-1 text-white btn-square px-2 shadow-none" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More tree options.">
-            <fa icon="ellipsis-v" />
-          </button>
-          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-            <!-- <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
-            <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || (selectedStatementData && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
-            <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button> -->
-            <button @click="bookmark" :disabled="true" class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
-          </div>
-        </div>
-        <!-- <button class="btn icon-size py-1 text-white btn-square px-2" title="More tree options."><fa icon="ellipsis-v" /></button> -->
-      </div>
     </div>
   </div>
   <LogInModal ref="logInModal" />
@@ -66,7 +52,7 @@ export default {
   components: {
     LogInModal,
     Prompt,
-    
+
   },
   props: {
     mainRelation: {
@@ -226,7 +212,7 @@ export default {
         })
       }
     },
-    
+
   },
   watch: {
     mainRelation: {
