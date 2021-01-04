@@ -2,7 +2,7 @@
   <div :style="{'padding-left': (level > 1 ? 20 : 0)+ 'px'}">
     <div
       v-if="!isLocked"
-      v-show="!isEditing && !isFilteredOut"
+      v-show="!isEditing && (!isFilteredOut || (typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       style="min-height: 35px"
@@ -32,6 +32,7 @@
               <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip" data-placement="top">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
+              {{relationData ? relationData['is_author_filter_passed'] : ''}}
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
               <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
@@ -247,6 +248,9 @@ export default {
     },
   },
   computed: {
+    relationId(){
+      return this.relationData ? this.relationData['id'] : null
+    },
     isEditing(){
       return this.isActive && this.editSelectedStatement
     },
@@ -292,10 +296,15 @@ export default {
         return '??'
       }
     },
+    isAuthorFilterPassed(){
+      return this.relationData === null || this.relationData['is_author_filter_passed']
+    },
+    hasFilterPassChildren(){
+      return typeof this.parentRelationIdsWithPassedFilterChildren[this.relationId] !== 'undefined'
+    },
     isFilteredOut(){
       let failedTextFilter = this.statementTextFilter !== '' && (this.statementText.toLowerCase()).indexOf(this.statementTextFilter.toLowerCase())  === -1
-      let failedAuthorFilter = Object.keys(this.authorFilter).length > 0 && typeof this.authorFilter[this.relation['user_id']] === 'undefined'
-      return failedTextFilter || failedAuthorFilter
+      return failedTextFilter || !this.isAuthorFilterPassed 
     },
     relationTypeName(){
       const relationTypeId = this.statement['relation_type_id']

@@ -24,7 +24,6 @@ class NotificationUser extends API {
   }
   retrieveNotification(){
     let userAuth = Auth.user().value
-    console.log('userauth', userAuth)
     let userTemplate = {
       select: {
         ...(['id', 'username']),

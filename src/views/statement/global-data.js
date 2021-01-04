@@ -16,36 +16,41 @@ const isDraggingStatement = ref(0) // 1 - dragging on positive, 2 dragging on ne
 const createSubStatementParentId = ref(0) // parent id of an active create sub statement
 const statementTextFilter = ref('')
 const authorFilter = ref({})
+const parentRelationIdsWithPassedFilterChildren = ref({}) // 
 const backHistory = ref([])
 const forwardHistory = ref([])
 const subRelationMap = ref({}) // trace the location of the substatement given the statement id
+const subRelationParents = ref({}) // list of parents of a given relation id sorted from the top
 const subRelationIds = ref([]) // list of subrelation ids. Used to update all the sub statements
-const mapRelations = (relation = null, parentIds = []) => {
+const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
   if(relation === null){
     relation = mainRelationData.value
   }
-  if(parentIds.length === 0){
+  if(parentIndexIds.length === 0){
     authors.value = {}
     subRelationIds.value = []
     subRelationMap.value = {}
   }
   subRelationIds.value.push({id: relation['id']})
   let toDeleteCircularRelationIndices = []
+  relation['is_author_filter_passed'] = true
+  subRelationParents.value[relation['id']] = parentIds
+  const subRelationParentIds = parentIds.concat([relation['id']])
   relation['relations'].forEach((subRelation, index) => {
     const isAlreadyExisted = QuickHelper.methods.findArrayIndex(subRelation['id'], subRelationIds.value, 'id') // check if subrelation already existed somewhere
     if(isAlreadyExisted === -1){
       authors.value[subRelation['user_id']] = subRelation['user']
-      subRelationMap.value[subRelation['id']] = parentIds.concat([index])
+      subRelationMap.value[subRelation['id']] = parentIndexIds.concat([index])
       if(typeof subRelation['relations'] !== 'undefined' && subRelation['relations'].length){
-        mapRelations(subRelation, subRelationMap.value[subRelation['id']])
+        mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds)
+      }else{
+        subRelationParents.value[subRelation['id']] = parentIds
       }
-      // console.log('isAlreadyExisted no', isAlreadyExisted, subRelation['id'], subRelationIds.value)
     }else{
       toDeleteCircularRelationIndices.push(index)
     }
   })
   toDeleteCircularRelationIndices.forEach(index => {
-    console.log('to slice', relation['id'], index)
     relation['relations'].slice(index, 1)
   })
 }
@@ -65,6 +70,21 @@ watch(mainRelationData, (newMainRelationData) => {
     subRelationMap.value = {}
   }
 })
+let filterByAuthor = (relationToFilter, authorFilters) => {
+  relationToFilter['is_author_filter_passed'] = Object.keys(authorFilters).length === 0 || typeof authorFilters[relationToFilter['user_id']] !== 'undefined'
+  if(relationToFilter['is_author_filter_passed'] && typeof subRelationParents.value[relationToFilter['id']] !== 'undefined'){
+    subRelationParents.value[relationToFilter['id']].forEach(parentId => {
+      parentRelationIdsWithPassedFilterChildren.value[parentId] = true
+    })
+  }
+  relationToFilter['relations'].forEach(relation => {
+    filterByAuthor(relation, authorFilters)
+  })
+}
+watch(authorFilter, () => {
+  parentRelationIdsWithPassedFilterChildren.value = {}
+  filterByAuthor(mainRelationData.value, authorFilter.value)
+}, {deep: true})
 
 watch(selectedStatementId, (id) => {
   editSelectedStatement.value = false
@@ -116,6 +136,7 @@ export default {
   mainRelationId: mainRelationId,
   subRelationIds: subRelationIds,
   authorFilter: authorFilter,
+  parentRelationIdsWithPassedFilterChildren: parentRelationIdsWithPassedFilterChildren,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog
 }
