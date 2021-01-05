@@ -32,7 +32,6 @@
               <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip" data-placement="top">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
-              {{relationData ? relationData['is_author_filter_passed'] : ''}}
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
               <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
@@ -297,7 +296,7 @@ export default {
       }
     },
     isAuthorFilterPassed(){
-      return this.relationData === null || this.relationData['is_author_filter_passed']
+      return this.relationData === null || typeof this.relationData['is_author_filter_passed'] === 'undefined' || this.relationData['is_author_filter_passed']
     },
     hasFilterPassChildren(){
       return typeof this.parentRelationIdsWithPassedFilterChildren[this.relationId] !== 'undefined'
