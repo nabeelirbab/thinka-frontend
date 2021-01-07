@@ -3,6 +3,7 @@ import ScopeAPI from './scope'
 export default {
   prepare: () => {
     return new Promise(resolve => {
+      let countdown = 2
       const relationTypeParam = {
         select: ['description', 'symbol', 'relevance', 'relevance_window'],
         sort: [{
@@ -11,7 +12,10 @@ export default {
         }]
       }
       RelationTypeAPI.retrieve(relationTypeParam, true).then(() => {
-        resolve(true)
+        --countdown
+        if(countdown === 0){
+          resolve(true)
+        }
       })
 
       const scopeParam = {
@@ -22,7 +26,10 @@ export default {
         }]
       }
       ScopeAPI.retrieve(scopeParam, true).then(() => {
-        resolve(true)
+        --countdown
+        if(countdown === 0){
+          resolve(true)
+        }
       })
     })
   }

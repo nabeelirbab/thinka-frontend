@@ -13,7 +13,16 @@
         <small v-if="statement.statement_type_id * 1"><fa icon="info-circle" /> {{statementTypes[findArrayIndex(statement.statement_type_id, statementTypes, 'id')]['explaination']}}</small>
         <small v-else>Please select a statement type</small>
       </div>
+      <div class="mb-2">
+        <select v-model="statement.scope_id" class="form-control">
+          <option value="0">Please select</option>
+          <template v-for="(scope, index) in scopes" :key="'statementId' + index">
+            <option :value="scope['id']">{{scope['description']}} </option>
+          </template>
+        </select>
+      </div>
       <textarea v-model="statement.text" placeholder="Write your statement here" class="form-control mb-2"></textarea>
+      <input v-model="statement.context" placeholder="Context" class="form-control mb-2" />
       <!-- <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea> -->
       <div class="text-right">
@@ -21,7 +30,7 @@
           <input v-model="statement.published_at" class="form-check-input " type="checkbox">
           <label class="form-check-label" for="inlineCheckbox1">Make Public</label>
         </div> -->
-        <button @click="save" :disabled="statement.text === '' || statement.statement_type_id === '0'" class="btn btn-success"><fa icon="save" /> Save</button>
+        <button @click="save" :disabled="statement.text === '' || statement.statement_type_id === '0' || statement.scope_id === '0' || statement.context === ''" class="btn btn-success"><fa icon="save" /> Save</button>
       </div>
     </div>
     <Prompt ref="prompt"></Prompt>
@@ -30,6 +39,7 @@
 <script>
 import StatementAPI from '@/api/statement'
 import StatementTypeAPI from '@/api/statement-type'
+import ScopeAPI from '@/api/scope'
 import Prompt from '@/components/Prompt'
 export default {
   components: {
@@ -41,6 +51,7 @@ export default {
   data(){
     return {
       statementTypes: [],
+      scopes: [],
       statement: {
         relation: {
           relation_type_id: 11, // Fact
@@ -51,8 +62,10 @@ export default {
           name: '',
         },
         text: '',
-        synopsis: '',
-        comment: '',
+        scope_id: '0',
+        context: '',
+        // synopsis: '',
+        // comment: '',
         id: null,
       },
       isLoading: false
@@ -108,6 +121,8 @@ export default {
       StatementTypeAPI.retrieve(param).then(result => {
         this.statementTypes = result['data']
       })
+      console.log('this.scope', this.scopes, ScopeAPI.cachedData.value)
+      this.scopes = ScopeAPI.cachedData.value ? ScopeAPI.cachedData.value['data'] : []
     }
   }
 }
