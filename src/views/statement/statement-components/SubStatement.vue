@@ -1,7 +1,7 @@
 <template>
   <div :style="{'padding-left': (level > 1 ? 20 : 0)+ 'px'}">
     <div
-      v-if="!isLocked"
+      v-if="isLocked > 0"
       v-show="!isEditing && (!isFilteredOut || (typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
@@ -54,6 +54,7 @@
               <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" title="Private" />
               <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
               <fa v-else-if="isDifferentAuthor" icon="user" :title="relation['user']['username']" />
+              <fa v-if="isLocked == 1" icon="lock" title="Locked" />
 
             </div>
             <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
@@ -66,7 +67,7 @@
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
     <draggable
-      v-if="relationData && !isLocked"
+      v-if="relationData && isLocked > 0"
       v-show="(showStatement || (relationData['relations'].length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
       :relationid="relationData['id']"
       :list="relationData['relations']"
@@ -253,16 +254,16 @@ export default {
     isEditing(){
       return this.isActive && this.editSelectedStatement
     },
-    isLocked(){ // if true, do not show
+    isLocked(){ // if < 0, do not show, if 1 context lock active here, if 2 no context lock set
       if(this.relationData && typeof this.relationData['user_relation_context_locks'] !== 'undefined' && this.relationData['user_relation_context_locks'].length){
         for(let x = 0; x < this.relationData['user_relation_context_locks'].length; x++){
           if(this.relationData['user_relation_context_locks'][x]['root_relation_id'] * 1 === this.mainRelationData['id'] * 1){
-            return false
+            return 1
           }
         }
-        return true
+        return -1
       }else{
-        return false
+        return 2
       }
     },
     parentStatement(){
@@ -303,7 +304,7 @@ export default {
     },
     isFilteredOut(){
       let failedTextFilter = this.statementTextFilter !== '' && (this.statementText.toLowerCase()).indexOf(this.statementTextFilter.toLowerCase())  === -1
-      return failedTextFilter || !this.isAuthorFilterPassed 
+      return failedTextFilter || !this.isAuthorFilterPassed
     },
     relationTypeName(){
       const relationTypeId = this.statement['relation_type_id']
