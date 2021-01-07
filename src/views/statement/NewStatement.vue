@@ -14,8 +14,8 @@
         <small v-else>Please select a statement type</small>
       </div>
       <textarea v-model="statement.text" placeholder="Write your statement here" class="form-control mb-2"></textarea>
-      <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
-      <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea>
+      <!-- <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
+      <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea> -->
       <div class="text-right">
         <!-- <div class="form-check form-check-inline c-pointer">
           <input v-model="statement.published_at" class="form-check-input " type="checkbox">
@@ -24,12 +24,17 @@
         <button @click="save" :disabled="statement.text === '' || statement.statement_type_id === '0'" class="btn btn-success"><fa icon="save" /> Save</button>
       </div>
     </div>
+    <Prompt ref="prompt"></Prompt>
   </div>
 </template>
 <script>
 import StatementAPI from '@/api/statement'
 import StatementTypeAPI from '@/api/statement-type'
+import Prompt from '@/components/Prompt'
 export default {
+  components: {
+    Prompt
+  },
   mounted(){
     this.initialize()
   },
@@ -48,6 +53,7 @@ export default {
         text: '',
         synopsis: '',
         comment: '',
+        id: null,
       },
       isLoading: false
     }
@@ -62,14 +68,44 @@ export default {
           this.$router.push('/branch/' + result['data']['relation']['id'] + '/t/' + this.toKebabCase(this.statement['text'].slice(0, 30)))
         }
         this.isLoading = false
+      }).catch(errorResult => {
+        if(typeof errorResult.response.status !== 'undefined'){
+          if(errorResult.response.status === 422){ // unprocessible entity
+            let responseError = errorResult.response.data.error
+            console.log(responseError, responseError['code'])
+            if(responseError['code'] * 1 === 4){ // statement already existed error
+              this.existingStatementPrompt(responseError['message']['statement'])
+            }
+          }
+        }else{
+          this.isLoading = false
+          console.error('Error on create new', errorResult)
+        }
       })
+    },
+    existingStatementPrompt(existingStatement){
+      this.$refs.prompt._open(
+        `<p>The statement you are trying to create already existed. You can revise your statement and be more specific or use the existing statement.</p>
+          <p class="font-italic"> ${existingStatement['text']} </p>`,
+        [{
+          label: 'Ok',
+          callback: () => {
+            this.statement['id'] = existingStatement['id']
+            this.save()
+          }
+        }, {
+          label: 'I\'ll revise my statement',
+          callback: () => {
+            this.isLoading = false
+          }
+        }]
+      )
     },
     initialize(){
       const param = {
         select: ['description', 'explaination']
       }
       StatementTypeAPI.retrieve(param).then(result => {
-        console.log(result)
         this.statementTypes = result['data']
       })
     }

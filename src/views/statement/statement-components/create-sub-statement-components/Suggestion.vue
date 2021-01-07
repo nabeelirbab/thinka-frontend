@@ -142,8 +142,8 @@ export default {
         }],
         condition: [{
           column: 'statement.text',
-          clause: 'like',
-          value: '%' + this.typedText + '%'
+          clause: 'like_alphanumeric_only',
+          value: '%' + (this.typedText) + '%'
         }]
       }
       if(!more){

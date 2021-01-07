@@ -120,7 +120,7 @@ export default {
     },
     nonAuthorPublish(){
       this.$refs.prompt._open(
-        'Only the original author can publish or unpublish a tree.' + this.user['id'] + '---' + this.relationUserId,
+        'Only the original author can publish or unpublish a tree.',
         [],
         'Publish Not Available'
       )

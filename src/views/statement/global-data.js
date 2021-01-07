@@ -44,7 +44,7 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
       if(typeof subRelation['relations'] !== 'undefined' && subRelation['relations'].length){
         mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds)
       }else{
-        subRelationParents.value[subRelation['id']] = parentIds
+        subRelationParents.value[subRelation['id']] = subRelationParentIds
       }
     }else{
       toDeleteCircularRelationIndices.push(index)

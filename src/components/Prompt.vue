@@ -32,6 +32,7 @@ export default {
   methods: {
     _open(message, actions, title = null){
       this.message = message
+      console.log('message', message)
       this.title = title
       this.actions = actions
       this.$refs.modal._open()

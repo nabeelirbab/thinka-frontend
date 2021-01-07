@@ -30,8 +30,8 @@
         :no-join="this.mode !== 'create'"
       />
     </div>
+    <Prompt ref="prompt"></Prompt>
   </div>
-
 </template>
 <script>
 import StatementAPI from '@/api/statement'
@@ -39,9 +39,11 @@ import RelationAPI from '@/api/relation'
 import RelationTypeAPI from '@/api/relation-type'
 import Suggestion from './create-sub-statement-components/Suggestion'
 import GlobalData from '../global-data'
+import Prompt from '@/components/Prompt'
 export default {
   components: {
-    Suggestion
+    Suggestion,
+    Prompt
   },
   props: {
     isPositiveStatement: Boolean,
@@ -191,9 +193,20 @@ export default {
         }else{
           this.isLoading = false
         }
-      }).catch(error => {
-        console.error(error)
-        this.isLoading = false
+      }).catch(errorResult => {
+        if(typeof errorResult.response.status !== 'undefined'){
+          if(errorResult.response.status === 422){ // unprocessible entity
+            let responseError = errorResult.response.data.error
+            console.log(responseError, responseError['code'])
+            if(responseError['code'] * 1 === 4){ // statement already existed error
+              this.existingStatementPrompt(responseError['message']['statement'])
+            }
+          }
+        }else{
+          console.error('Error on create new', errorResult)
+          this.isLoading = false
+        }
+        
       })
     },
     updateStatement(param){
@@ -211,8 +224,27 @@ export default {
         }
         this.isLoading = false
       }).catch(() => {
-        this.isLoading = false
+        this.
+        isLoading = false
       })
+    },
+    existingStatementPrompt(existingStatement){
+      this.$refs.prompt._open(
+        `<p>The statement you are trying to create already existed. You can revise your statement and be more specific or use the existing statement.</p>
+          <p class="font-italic"> ${existingStatement['text']} </p>`,
+        [{
+          label: 'Ok',
+          callback: () => {
+            this.statement['id'] = existingStatement['id']
+            this.save()
+          }
+        }, {
+          label: 'I\'ll revise my statement',
+          callback: () => {
+            this.isLoading = false
+          }
+        }]
+      )
     },
     reset(){
       this.isSuccess = false
