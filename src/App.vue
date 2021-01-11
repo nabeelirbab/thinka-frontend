@@ -19,6 +19,7 @@
 
 <script>
 import 'bootstrap'
+import 'vue-popperjs/dist/vue-popper.css'
 import '@/assets/style/custom-theme.scss'
 import '@/assets/style/util.scss'
 import '@/assets/style/thinka-custom.scss'

@@ -29,11 +29,12 @@
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
           <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
-              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip" data-placement="top">
+              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" :data-toggle="relationTypeName" data-placement="top">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
+              
               <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
           </div>
         </div>
@@ -45,17 +46,20 @@
           <div v-else class="d-inline-flex">
             <div v-if="isActive" class="mr-1" >
               <router-link v-if="!enableDragging" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
-
               <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               <CircleIconButton v-if="enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
             </div>
 
             <div v-else class="ml-2 mr-2 align-self-center" style="color: gray">
-              <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" title="Private" />
+              <!-- <div ref="tooltip2" v-if="!relation['published_at'] && mainRelationData['published_at']" class="tooltip2">
+                <fa  icon="briefcase" title="Private" />
+                <span class="tooltiptext">test</span>
+              </div> -->
+              <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" stitle="Private" v-tooltip="{content: 'Private', placement: 'left'}" />
+
               <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
               <fa v-else-if="isDifferentAuthor" icon="user" :title="relation['user']['username']" />
               <fa v-if="isLocked == 1" icon="lock" title="Locked" />
-
             </div>
             <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
               <MoreOption :relation="relationData"/>
@@ -123,7 +127,7 @@ export default {
     CircleIconButton,
     CircleLabel,
     TextDisplayer,
-    MoreOption
+    MoreOption,
   },
   props: {
     level: Number,
