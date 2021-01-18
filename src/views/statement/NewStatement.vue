@@ -13,6 +13,8 @@
         <small v-if="statement.statement_type_id * 1"><fa icon="info-circle" /> {{statementTypes[findArrayIndex(statement.statement_type_id, statementTypes, 'id')]['explaination']}}</small>
         <small v-else>Please select a statement type</small>
       </div>
+      
+      <textarea v-model="statement.text" placeholder="Write your statement here" class="form-control mb-2" style="height: calc(100vh - 420px); min-height: 250px"></textarea>
       <div class="mb-2">
         <select v-model="statement.scope_id" class="form-control">
           <option value="0">Please select</option>
@@ -21,8 +23,7 @@
           </template>
         </select>
       </div>
-      <textarea v-model="statement.text" placeholder="Write your statement here" class="form-control mb-2"></textarea>
-      <input v-model="statement.context" placeholder="Context" class="form-control mb-2" />
+      <input v-model="statement.context" placeholder="Context(General)" class="form-control mb-2" />
       <!-- <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea> -->
       <div class="text-right">
@@ -41,6 +42,7 @@ import StatementAPI from '@/api/statement'
 import StatementTypeAPI from '@/api/statement-type'
 import ScopeAPI from '@/api/scope'
 import Prompt from '@/components/Prompt'
+// import Suggestion from '@/'
 export default {
   components: {
     Prompt
@@ -63,7 +65,7 @@ export default {
         },
         text: '',
         scope_id: '0',
-        context: '',
+        context: 'general',
         // synopsis: '',
         // comment: '',
         id: null,
@@ -75,6 +77,9 @@ export default {
     save(){
       this.isLoading = true
       this.statement['logic_tree']['name'] = this.statement.text
+      if(this.statement['context'] === ''){
+        this.statement['context'] = 'general'
+      }
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){
           console.log('success', result['data'])

@@ -17,7 +17,7 @@
             <fa icon="spinner" spin />
           </CircleLabel>
           <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
-            <small v-if="showImpact" class="text-nowrap">{{relationData['impact_amount'] !== null ? relationData['impact_amount'] : ''}}%</small>
+            <small v-if="showImpact" class="text-nowrap">{{relationData['impact_amount'] !== null ? (relationData['impact_amount'] * 100).toFixed(0) : ''}}%</small>
             <small v-if="relationData && showScope" style="line-height: 1">
               {{relationData['statement']['scope_id'] ? scopes[findArrayIndex(relationData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
@@ -29,7 +29,7 @@
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
           <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
-              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" :data-toggle="relationTypeName" data-placement="top">
+              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
@@ -55,10 +55,14 @@
                 <fa  icon="briefcase" title="Private" />
                 <span class="tooltiptext">test</span>
               </div> -->
-              <fa v-if="!relation['published_at'] && mainRelationData['published_at']" icon="briefcase" stitle="Private" v-tooltip="{content: 'Private', placement: 'left'}" />
+              <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
+                <fa  icon="briefcase"  />
+              </span>
 
               <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
-              <fa v-else-if="isDifferentAuthor" icon="user" :title="relation['user']['username']" />
+              <span v-else-if="isDifferentAuthor" data-toggle="tooltip" :title="relation['user']['username']">
+                <fa  icon="user"  />
+              </span>
               <fa v-if="isLocked == 1" icon="lock" title="Locked" />
             </div>
             <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
@@ -148,6 +152,18 @@ export default {
   emits: {
     save: null,
     update: null
+  },
+  mounted(){
+    const $ = require('jquery')
+    $('[data-toggle="tooltip"]').tooltip({
+      trigger: 'click hover'
+    })
+    $('[data-toggle="tooltip"]').on('inserted.bs.tooltip', function () {
+      const autoCloseTime = $(this).attr('data-original-title').length * 200
+      setTimeout(() => {
+        $(this).tooltip('hide')
+      }, autoCloseTime + 1000)
+    })
   },
   setup(){
     return {

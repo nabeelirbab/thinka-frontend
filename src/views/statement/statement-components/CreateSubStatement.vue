@@ -3,7 +3,6 @@
     <div class="flex-fill">
         <select v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded   font-weight-bold mb-1">
           <option default>Please Select</option>
-
           <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
             <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
           </template>
@@ -180,6 +179,8 @@ export default {
       })
     },
     createStatement(param){
+      const selectedRelation = this.relationTypes[(this.findArrayIndex(param['relation']['relation_type_id'], this.relationTypes, 'id'))]
+      param['relation']['impact_amount'] = selectedRelation['default_impact']
       StatementAPI.create(param).then(result => {
         if(result['data']){
           let newSubStatement = param

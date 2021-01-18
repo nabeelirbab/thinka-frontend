@@ -46,7 +46,7 @@ export default {
       this.isLoading = true
       const param = {
         id: this.selectedStatementData['id'],
-        impact_amount: this.impact
+        impact_amount: this.impact / 100 // convert to decimal
       }
       RelationAPI.update(param).then(result => {
         if(result['data'] && this.selectedStatementId * 1 === result['data']['id']  * 1){

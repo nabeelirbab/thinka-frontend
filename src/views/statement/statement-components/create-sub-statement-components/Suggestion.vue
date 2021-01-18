@@ -60,6 +60,7 @@
   </div>
 </template>
 <script>
+/* This component is used by different modules */
 import Modal from '@/components/bootstrap/Modal'
 import RelationAPI from '@/api/relation'
 import Auth from '@/core/auth'

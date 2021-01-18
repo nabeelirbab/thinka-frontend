@@ -1,5 +1,5 @@
 <template>
-  <div v-if="mainRelationData" class="d-flex mb-1" @click="selectedStatementId = null">
+  <div v-if="mainRelationData" class="d-md-flex mb-1" @click="selectedStatementId = null">
     <div class="d-flex flex-fill">
       <div>
         <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
@@ -13,12 +13,12 @@
         </div>
       </div>
     </div>
-    <div class="pl-2">
+    <div class="pl-2 text-right">
       <div class="dropdown">
         <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Authors
         </button>
-        <div @click.stop class="dropdown-menu px-2" aria-labelledby="dropdownMenuButton">
+        <div @click.stop class="dropdown-menu dropdown-menu-right px-2" aria-labelledby="dropdownMenuButton">
           <div>
             <span v-if="!Object.keys(authors).length">No other authors</span>
             <template v-else>

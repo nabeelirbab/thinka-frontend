@@ -27,6 +27,8 @@ import Header from '@/components/common/Header'
 import Auth from '@/core/auth'
 import LogInModal from '@/components/login/LogInModal'
 import Maintanables from '@/api/maintainables' // maintainables do not require authentication
+
+
 export default {
   name: 'App',
   components: {

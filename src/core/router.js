@@ -11,6 +11,7 @@ import Bookmarks from "@/views/bookmarks/Bookmarks.vue";
 import Notification from "@/views/notification/Notification.vue";
 import MoreMenu from "@/views/more-menu/MoreMenu";
 import Learning from "@/views/learning/Learning.vue";
+import ProfileSetting from "@/views/profile/ProfileSetting";
 import Test from "@/views/Test.vue";
 
 const routes = [
@@ -116,6 +117,12 @@ const routes = [
     path: "/register",
     name: "Register",
     component: Registration,
+
+  },
+  {
+    path: "/profile-setting",
+    name: "ProfileSetting",
+    component: ProfileSetting,
 
   },
   {
