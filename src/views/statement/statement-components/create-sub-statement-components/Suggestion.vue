@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm">
+    <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm text-dark">
       <div>Suggestions: </div>
       <div class="flex-fill mx-1">
         <span v-if="typedText === null || typedText === ''" class="text-secondary text-italic">Nothing to suggest</span>
@@ -70,8 +70,7 @@ export default {
   },
   props: {
     logicTreeId: {
-      type: Number,
-      required: true
+      type: [Number, Object],
     },
     noJoin: {
       type: Boolean,

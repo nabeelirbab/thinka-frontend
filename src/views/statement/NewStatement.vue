@@ -14,7 +14,19 @@
         <small v-else>Please select a statement type</small>
       </div>
       
-      <textarea v-model="statement.text" placeholder="Write your statement here" class="form-control mb-2" style="height: calc(100vh - 420px); min-height: 250px"></textarea>
+      <textarea
+        ref="statementText"
+        @keydown="isTextTyping" 
+        v-model="statement.text" 
+        placeholder="Write your statement here" 
+        class="form-control mb-2" 
+        style="height: calc(100vh - 420px); min-height: 250px"
+      ></textarea>
+      <Suggestion ref="suggestion" 
+        @select="sugestionSelected" 
+        :logic-tree-id="null"
+        :no-join="true"
+      />
       <div class="mb-2">
         <select v-model="statement.scope_id" class="form-control">
           <option value="0">Please select</option>
@@ -23,6 +35,8 @@
           </template>
         </select>
       </div>
+      
+      
       <input v-model="statement.context" placeholder="Context(General)" class="form-control mb-2" />
       <!-- <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea> -->
@@ -42,10 +56,11 @@ import StatementAPI from '@/api/statement'
 import StatementTypeAPI from '@/api/statement-type'
 import ScopeAPI from '@/api/scope'
 import Prompt from '@/components/Prompt'
-// import Suggestion from '@/'
+import Suggestion from '@/views/statement/statement-components/create-sub-statement-components/Suggestion'
 export default {
   components: {
-    Prompt
+    Prompt,
+    Suggestion
   },
   mounted(){
     this.initialize()
@@ -54,6 +69,7 @@ export default {
     return {
       statementTypes: [],
       scopes: [],
+      isSuggestionSelected: false,
       statement: {
         relation: {
           relation_type_id: 11, // Fact
@@ -128,7 +144,26 @@ export default {
       })
       console.log('this.scope', this.scopes, ScopeAPI.cachedData.value)
       this.scopes = ScopeAPI.cachedData.value ? ScopeAPI.cachedData.value['data'] : []
-    }
+    },
+    isTextTyping(e){
+      if(e.keyCode !== 13){
+        setTimeout(() => {
+          this.$refs.suggestion._isTextTyping(this.$refs.statementText.value)
+        }, 200)
+      }
+    },
+    sugestionSelected(selectedSuggestion){
+      if(selectedSuggestion){ // suggestiong selected
+        this.isSuggestionSelected = true
+        this.statement['id'] = selectedSuggestion['statement']['id']
+        this.statement['text'] = selectedSuggestion['statement']['text']
+      }else{
+        this.statement['id'] = null
+        // if(this.relation['statement_id'])
+        // this.isSuggestionSelected = false
+        // this.statement['text'] = ''
+      }
+    },
   }
 }
 </script>
