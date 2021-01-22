@@ -1,56 +1,104 @@
 <template>
-  <div class="d-flex align-items-center justify-content-center bg-white border border-secondary p-2 mb-1">
-    <div class="pr-3 font-weight-bold">Opinion</div>
-    <div class="text-center">
-      <vue-slider v-model="opinion" :min="-100" :max="100" style="width:150px; margin-left:20px; margin-right:20px"/>
-      <div class="text-center text-sm">
-        <span class="float-left">Disagree</span>
-        <span class="float-right">Agree</span>
+  <div class="bg-white border border-secondary p-2 mb-1">
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="font-weight-bold mr-3" style="width: 100px">Opinion</div>
+      <div >
+        <Opinion 
+          v-if="selectedStatementData"
+          @change="type=$event"
+          :relation="selectedStatementData"
+          :type-descriptions="typeDescriptions"
+        />
+      </div>
+      <div class="mx-1 text-right" style="width: 75px!important"></div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center ">
+      <div class="pr-3 font-weight-bold">Confidence</div>
+      <div class="text-center">
+        <vue-slider v-model="confidence" :min="0" :max="100" style="width:150px; margin-left:20px; margin-right:20px"/>
+        <div class="text-center text-sm">
+          <span class="float-left">0%</span>
+          <span class="float-right">100%</span>
+        </div>
+      </div>
+      <div class="mx-1 text-right" style="width: 75px!important">
+        <!-- {{(confidence).toFixed(0)}}% -->
+        <button
+          v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1"
+          :disabled="isLoading || confidence === null"
+          @click="save" class="btn text-success p-1"
+        >
+          <!-- <fa v-if="isLoading" icon="spinner" spin />
+          <fa v-else icon="check" /> -->
+        </button>
       </div>
     </div>
-    <div class="mx-1 text-right" style="width: 75px!important">
-      {{(opinion).toFixed(0)}}%
-      <button
-        v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1"
-        :disabled="isLoading || opinion === null"
-        @click="save" class="btn text-success p-1"
-      >
-        <fa v-if="isLoading" icon="spinner" spin />
-        <fa v-else icon="check" />
-      </button>
+    <div v-if="type !== -1" class="text-center py-2">
+      "{{typeDescriptions[type]}}
+      <span v-if="type">
+        and I'm <em>{{(confidence).toFixed(0)}}%</em> confident about it
+      </span>"
     </div>
+    <div class="text-center">
+      <fa v-if="isLoading" icon="spinner" spin />
+      <button v-else class="btn btn-success"><fa icon="check" /> Save</button>
+    </div>
+    <Prompt ref="prompt" />
   </div>
 </template>
 <script>
 import 'vue-slider-component/theme/antd.css'
 import VueSlider from 'vue-slider-component'
 import GlobalData from '@/views/statement/global-data'
+import Opinion from './Opinion'
+import OpinionAPI from '@/api/opinion'
+import Prompt from '@/components/Prompt'
+import Auth from '@/core/auth'
 // import RelationAPI from '@/api/relation'
 export default {
   components: {
-    VueSlider
+    VueSlider,
+    Opinion,
+    Prompt
   },
   data(){
     return {
-      opinion: 0,
+      confidence: 0,
+      type: -1,
+      typeDescriptions: [
+        'I have No Opinion',
+        'I think Statement is False',
+        'I think Statement is True but has no impact',
+        'I think Statement is True and has Impact'
+      ],
+      user: Auth.user(),
       isLoading: false,
       ...GlobalData,
     }
   },
   methods: {
-    save(){
-      // this.isLoading = true
-      // const param = {
-      //   id: this.selectedStatementData['id'],
-      //   impact_amount: this.impact / 100 // convert to decimal
-      // }
-      // RelationAPI.update(param).then(result => {
-      //   if(result['data'] && this.selectedStatementId * 1 === result['data']['id']  * 1){
-      //     this.selectedStatementData['opinion'] = this.impact / 100
-      //   }
-      // }).finally(() => {
-      //   this.isLoading = false
-      // })
+    // tryChangeOpinion(type){
+    //   this.$refs.prompt._open(
+    //     `You are about to change your opinion to: <p class="font-italic text-center font-weight-bold">"${typeDescription[type]}"</p>`,
+    //     [{
+    //       label: 'Proceed',
+    //       class: 'btn btn-success',
+    //       close_on_click: false,
+    //       callback: () => {
+    //         this.changeOpinion(type)
+    //       }
+    //     }],
+    //     'Set Opinion'
+    //   )
+    // },
+    changeOpinion(type){
+      this.selectedOpinionType = type
+      OpinionAPI.create({
+        type: type,
+        relation_id: this.relation['id']
+      }).then(result => {
+        console.log('result', result)
+      })
     }
   },
   watch: {

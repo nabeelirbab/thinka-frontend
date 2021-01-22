@@ -5,7 +5,7 @@ const selectedStatementId = ref(0)
 const mainRelationData = ref(null)
 const mainRelationId = ref(0)
 const deletedRelationId = ref(null)
-const selectedStatementData = ref(null)
+const selectedStatementData = ref(null) // this is actually selectedRelationData
 
 const showImpact = ref(false)
 const showOpinion = ref(false)

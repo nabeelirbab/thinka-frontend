@@ -79,7 +79,6 @@
           </div>
         </div>
       </div>
-      <Opinion v-if="isActive" :relation="relationData" class="py-2" />
     </div>
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
@@ -128,7 +127,6 @@ import RelationAPI from '@/api/relation'
 import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
 import MoreOption from './sub-statement-components/MoreOption'
-import Opinion from './Opinion'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -142,7 +140,6 @@ export default {
     CircleLabel,
     TextDisplayer,
     MoreOption,
-    Opinion
   },
   props: {
     level: Number,
