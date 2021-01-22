@@ -9,8 +9,13 @@
     >
       <div class="d-flex align-items-center pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
         <div class="ml-0 pl-0" style="min-width:30px">
-          <button v-if="!showStatement && relationData && relationData['relations'].length" @click="showStatement = true" class="btn btn-sm btn-outline-secondary"><fa icon="level-up-alt" rotation="90" /></button>
-          <button v-if="showStatement" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
+          <button 
+            v-if="!showStatement && relationData && relationData['relations'].length && (!hasFilterApplied || (hasFilterApplied && typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))" 
+            @click="showStatement = true" class="btn btn-sm btn-outline-secondary"
+          >
+            <fa icon="level-up-alt" rotation="90" />
+          </button>
+          <button v-if="showStatement && (!hasFilterApplied || (hasFilterApplied && typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
         </div>
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
@@ -36,6 +41,9 @@
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
               
               <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+          </div>
+          <div>
+            
           </div>
         </div>
         <div class="pl-1 d-flex my-auto align-self-center">
@@ -71,6 +79,7 @@
           </div>
         </div>
       </div>
+      <Opinion v-if="isActive" :relation="relationData" class="py-2" />
     </div>
     <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
     <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
@@ -119,6 +128,7 @@ import RelationAPI from '@/api/relation'
 import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
 import MoreOption from './sub-statement-components/MoreOption'
+import Opinion from './Opinion'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -132,6 +142,7 @@ export default {
     CircleLabel,
     TextDisplayer,
     MoreOption,
+    Opinion
   },
   props: {
     level: Number,

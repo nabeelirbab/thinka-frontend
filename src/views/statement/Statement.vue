@@ -172,6 +172,11 @@ export default {
           user_relation_bookmarks: {
             select: ['user_id', 'relation_id', 'sub_relation_id']
           },
+          user_opinion: {
+            select: {
+              ...(['id', 'user_id', 'relation_id', 'confidence', 'type'])
+            }
+          },
           statement: {
             select: ['text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
           },
@@ -249,6 +254,11 @@ export default {
             user_basic_information: {
               select: ['user_id', 'first_name', 'last_name']
             }
+          }
+        },
+        user_opinion: {
+          select: {
+            ...(['id', 'user_id', 'relation_id', 'confidence', 'type'])
           }
         },
         user_relation_context_locks: {

@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="mx-1 text-right" style="width: 75px!important">
-      {{impact}}%
+      {{(impact).toFixed(0)}}%
       <button
         v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1"
         :disabled="isLoading || impact === null"
@@ -50,7 +50,7 @@ export default {
       }
       RelationAPI.update(param).then(result => {
         if(result['data'] && this.selectedStatementId * 1 === result['data']['id']  * 1){
-          this.selectedStatementData['impact_amount'] = this.impact
+          this.selectedStatementData['impact_amount'] = this.impact / 100
         }
       }).finally(() => {
         this.isLoading = false
@@ -61,7 +61,7 @@ export default {
     selectedStatementData: {
       handler(){
         if(this.selectedStatementData){
-          this.impact = this.selectedStatementData['impact_amount']
+          this.impact = this.selectedStatementData['impact_amount'] * 100
           this.isPublic = this.selectedStatementData['published_at']
         }else{
           this.impact = null

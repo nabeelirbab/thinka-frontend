@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm text-dark">
+    <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm">
       <div>Suggestions: </div>
       <div class="flex-fill mx-1">
         <span v-if="typedText === null || typedText === ''" class="text-secondary text-italic">Nothing to suggest</span>
@@ -12,11 +12,11 @@
               <div class="d-flex">
                 <div class="p-1">
                   <template v-if="!joinedSuggestionId">
-                    <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion)" class="c-pointer text-info text-hover-underline"><fa icon="file" /> </span>
+                    <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion)" class="c-pointer text-info text-hover-underline" title="Use this statement"><fa icon="file" /> </span>
                     <span v-else @click="selectSuggestion(null)" class="c-pointer text-danger text-hover-underline">Unselect</span>
                   </template>
                   <template v-if="!noJoin &&!selectedSuggestionId && suggestion['parent_relation_id'] === null && suggestion['user_id'] * 1 === user['id'] * 1 && suggestion['logic_tree_id'] !== logicTreeId">
-                    <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion)" class="c-pointer text-info text-hover-underline ml-1"><fa icon="project-diagram" /> </span>
+                    <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion)" class="c-pointer text-info text-hover-underline ml-1" title="Join this Relation"><fa icon="project-diagram" /> </span>
                     <span v-else @click="joinSuggestion(null)" class="c-pointer text-danger text-hover-underline ml-1">Cancel Joining</span>
                   </template>
                 </div>
@@ -31,26 +31,26 @@
         </template>
       </div>
     </div>
-    <modal ref="moreSuggestionModal" title="Statement Suggestions">
+    <modal ref="moreSuggestionModal" title="Statement Suggestions" class="text-dark">
       <div v-if="isLoadingSuggestion">
         Please wait... <fa icon="spinner" spin />
       </div>
       <div v-else>
         <template v-for="(suggestion, index) in moreSuggestions" :key="'suggesMORE' + suggestion['id']">
-          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1 text-break d-flex align-items-center" style="min-width: 0">
+          <div  :class="index !== moreSuggestions.length - 1 ? 'border-bottom' : ''" class="py-1 text-break d-flex align-items-center text-dark" style="min-width: 0">
             <div class="d-flex">
               <div class="p-1">
                   <template v-if="!joinedSuggestionId">
-                    <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline"><fa icon="file" /> </span>
+                    <span v-if="!selectedSuggestionId" @click="selectSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline" title="Use this statement"><fa icon="file" /> </span>
                     <span v-else @click="selectSuggestion(null, true)" class="c-pointer text-danger text-hover-underline">Unselect</span>
                   </template>
                   <template v-if="!noJoin &&!selectedSuggestionId && suggestion['parent_relation_id'] === null && suggestion['user_id'] * 1 === user['id'] * 1 && suggestion['logic_tree_id'] !== logicTreeId">
-                    <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline ml-1"><fa icon="project-design" /> </span>
+                    <span v-if="!joinedSuggestionId" @click="joinSuggestion(suggestion, true)" class="c-pointer text-info text-hover-underline ml-1" title="Join this Relation"><fa icon="project-design" /> </span>
                     <span v-else @click="joinSuggestion(null, true)" class="c-pointer text-danger text-hover-underline ml-1">Cancel Joining</span>
                   </template>
                 </div>
               <!-- <div v-if="suggestion['logic_tree']" class="text-sm"><fa icon="tree" /> {{suggestion['logic_tree']['name']}}</div> -->
-              <span :class="selectedSuggestionId === suggestion['id'] ? 'font-weight-bold' : ''" class="p-1 mr-1">{{suggestion['statement']['text']}}</span>
+              <span :class="selectedSuggestionId === suggestion['id'] ? 'font-weight-bold' : ''" class="p-1 mr-1 text-dark">{{suggestion['statement']['text']}}</span>
             </div>
           </div>
         </template>

@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import QuickHelper from '@/helpers/quick-helper'
 const authors = ref({})
 const selectedStatementId = ref(0)
@@ -6,6 +6,7 @@ const mainRelationData = ref(null)
 const mainRelationId = ref(0)
 const deletedRelationId = ref(null)
 const selectedStatementData = ref(null)
+
 const showImpact = ref(false)
 const showOpinion = ref(false)
 const showScope = ref(false)
@@ -16,12 +17,19 @@ const isDraggingStatement = ref(0) // 1 - dragging on positive, 2 dragging on ne
 const createSubStatementParentId = ref(0) // parent id of an active create sub statement
 const statementTextFilter = ref('')
 const authorFilter = ref({})
-const parentRelationIdsWithPassedFilterChildren = ref({}) // 
+const parentRelationIdsWithPassedFilterChildren = ref({}) // determine if the relation has children which passess the filter
 const backHistory = ref([])
 const forwardHistory = ref([])
 const subRelationMap = ref({}) // trace the location of the substatement given the statement id
 const subRelationParents = ref({}) // list of parents of a given relation id sorted from the top
 const subRelationIds = ref([]) // list of subrelation ids. Used to update all the sub statements
+const isMainRelationSelected = computed(() => {
+  return mainRelationId.value && selectedStatementId.value && mainRelationId.value * 1 === selectedStatementId.value * 1
+})
+const hasFilterApplied = computed(() => {
+  console.log('hasFilterApplied', authorFilter.value, statementTextFilter.value)
+  return Object.keys(authorFilter.value).length !== 0 || statementTextFilter.value !== ''
+})
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
   if(relation === null){
     relation = mainRelationData.value
@@ -87,18 +95,17 @@ watch(authorFilter, () => {
 }, {deep: true})
 
 watch(selectedStatementId, (id) => {
-  editSelectedStatement.value = false
-  enableDragging.value = false
+  
   if(id === 0 || id === null){
     showImpact.value = false
     showOpinion.value = false
     showScope.value = false
     isDraggingStatement.value = 0
-    createSubStatementParentId.value = 0
     selectedStatementData.value = null
-  }else{
-    createSubStatementParentId.value = 0
   }
+  editSelectedStatement.value = false
+  enableDragging.value = false
+  createSubStatementParentId.value = 0
 })
 watch(statementTextFilter, (searchText) => {
   if(searchText !== '' && selectedStatementData.value && selectedStatementData.value['statement']['text'].indexOf(searchText) === -1){
@@ -137,6 +144,8 @@ export default {
   subRelationIds: subRelationIds,
   authorFilter: authorFilter,
   parentRelationIdsWithPassedFilterChildren: parentRelationIdsWithPassedFilterChildren,
+  isMainRelationSelected: isMainRelationSelected,
+  hasFilterApplied: hasFilterApplied,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog
 }
