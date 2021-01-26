@@ -1,10 +1,16 @@
 <template>
   <div class="">
     
-    <div v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
-      <ImpactSlider v-if="showImpact" />
-      <OpinionSlider v-if="showOpinion" />
-      <ScopeSlider v-if="showScope" />
+    <div  class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
+      <!-- Only the authors -->
+      <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1">
+        <ImpactSlider v-if="showImpact" />
+        <ScopeSlider v-if="showScope" />
+      </template>
+      <!-- Must be logged in user -->
+      <template v-if="user">
+        <OpinionSlider v-if="showOpinion" />
+      </template>
     </div>
     <div :class="selectedStatementId === 0 || selectedStatementId === null ? 'active' : ''" class="toolbar d-flex justify-content-between justify-content-md-center fixed-bottom bg-white py-2 px- border-top">
       <CircleIconButton

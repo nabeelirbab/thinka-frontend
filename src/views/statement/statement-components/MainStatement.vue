@@ -15,14 +15,20 @@
                   <div class="column text-break"><TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" /></div>
               </div>
             </div>
-            <div class="">
-              <div v-if="selectedStatementId === relation['id']" class="d-flex ml-1">
+            <div class="d-flex align-items-center justify-content-center text-center">
+              <OpinionIcon v-if="selectedStatementId !== relation['id']" :type="relationOpinionType" class="mr-1" />
+              <div v-if="selectedStatementId === relation['id']" class=" ml-1">
                 <CircleLabel>
                   <CTPoints :points="ctPoints * 1" class="text-dark" />
                 </CircleLabel>
                 <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               </div>
-              <div v-else-if="parentRelationId" @click.stop class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center" style="height:35px!important; width:35px!important">
+              <div
+                v-else-if="parentRelationId" 
+                @click.stop 
+                class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center" 
+                style="height:35px!important; width:35px!important"
+              >
                 <router-link :to="'/branch/'+ parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30))" class="text-primary"><fa icon="undo-alt" /></router-link>
               </div>
             </div>
@@ -45,6 +51,7 @@ import CircleIconButton from '@/components/CircleIconButton'
 import CircleLabel from '@/components/CircleLabel'
 import RelationTypeAPI from '@/api/relation-type'
 import TextDisplayer from '@/components/TextDisplayer'
+import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
 // import NoProfile from '@/components/NoProfile'
 export default {
   components: {
@@ -52,7 +59,8 @@ export default {
     CreateSubStatement,
     CircleIconButton,
     CircleLabel,
-    TextDisplayer
+    TextDisplayer,
+    OpinionIcon
     // NoProfile
   },
   props: {
@@ -145,6 +153,9 @@ export default {
     },
     parentRelation(){
       return this.relation['parent_relation']
+    },
+    relationOpinionType(){
+      return this.relation === null || typeof this.relation['user_opinion'] === 'undefined' || this.relation['user_opinion'] === null ? -1 : this.relation['user_opinion']['type']
     },
     ctPoints(){
       return typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'

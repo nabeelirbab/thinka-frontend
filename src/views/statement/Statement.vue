@@ -172,22 +172,7 @@ export default {
           user_relation_bookmarks: {
             select: ['user_id', 'relation_id', 'sub_relation_id']
           },
-          user_opinion: {
-            select: {
-              ...(['id', 'user_id', 'relation_id', 'confidence', 'type'])
-            }
-          },
-          statement: {
-            select: ['text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
-          },
-          user: {
-            select: {
-              ...(['id', 'username']),
-              user_basic_information: {
-                select: ['user_id', 'first_name', 'last_name']
-              }
-            }
-          },
+          ...RelationAPI.getPreFormattedSelect('recursive_relation_tree'),
           ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
         },
         condition: [{
@@ -245,22 +230,6 @@ export default {
     },
     generateRecursiveRelationsSelect(currentDeep, deep = 20){
       let selectParam = {
-        statement: {
-          select: ['id', 'text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
-        },
-        user: {
-          select: {
-            ...(['id', 'username']),
-            user_basic_information: {
-              select: ['user_id', 'first_name', 'last_name']
-            }
-          }
-        },
-        user_opinion: {
-          select: {
-            ...(['id', 'user_id', 'relation_id', 'confidence', 'type'])
-          }
-        },
         user_relation_context_locks: {
           select: ['id', 'user_id', 'relation_id', 'root_relation_id'],
           condition: [{
@@ -268,7 +237,7 @@ export default {
             value: this.user ? this.user['id'] : null
           }]
         },
-        ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
+        ...RelationAPI.getPreFormattedSelect('recursive_relation_tree')
       }
       if(currentDeep <= deep){
         selectParam['relations'] = {

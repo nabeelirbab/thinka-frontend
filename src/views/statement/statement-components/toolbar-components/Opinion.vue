@@ -3,75 +3,68 @@
     <div class="">
       <button
         @click="tryChangeOpinion(0)"
-        :class="selectedOpinionType === 0 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :class="modelValue === 0 ? 'bg-primary text-white' : 'bg-white text-primary'"
         :title="typeDescriptions[0]"
+        :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <fa icon="flag" />
+        <OpinionIcon type="0" />
       </button>
       <button
         @click="tryChangeOpinion(1)"
-        :class="selectedOpinionType === 1 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :class="modelValue === 1 ? 'bg-primary text-white' : 'bg-white text-primary'"
         :title="typeDescriptions[1]"
+        :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <fa icon="thumbs-down" />
+        <OpinionIcon type="1" />
       </button>
       <button
         @click="tryChangeOpinion(2)"
-        :class="selectedOpinionType === 2 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :class="modelValue === 2 ? 'bg-primary text-white' : 'bg-white text-primary'"
         :title="typeDescriptions[2]"
+        :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <fa icon="hand-point-down" rotation="180" />
+        <OpinionIcon type="2" />
       </button>
       <button
         @click="tryChangeOpinion(3)"
-        :class="selectedOpinionType === 3 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :class="modelValue === 3 ? 'bg-primary text-white' : 'bg-white text-primary'"
         :title="typeDescriptions[3]"
+        :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <fa icon="thumbs-up" />
+        <OpinionIcon type="3" />
       </button>
     </div>
     
   </div>
 </template>
 <script>
-
-
+import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
 export default {
   components: {
+    OpinionIcon
   },
   props: {
+    modelValue: [Number],
     relation: Object,
     typeDescriptions: { // array of string containing the description for each opinion types
       type: Array,
       required: true
-    } 
+    },
+    disabled: Boolean
   },
-  emits: ['change'],
+  emits: ['change', 'update:modelValue'],
   data(){
     return {
       userOpinion: {},
-      selectedOpinionType: -1
     }
   },
   methods: {
     tryChangeOpinion(type){
-      this.selectedOpinionType = type
-      this.$emit('change', type)
-    }
-  },
-  watch: {
-    relation: {
-      handler(relation){
-        if(typeof relation ==='undefined' || typeof relation['user_opinion'] === 'undefined'){
-          this.selectedOpinionType = -1
-        }
-      },
-      immediate: true,
-      deep: true
+      this.$emit('update:modelValue', type)
     }
   }
 }

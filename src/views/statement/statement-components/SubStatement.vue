@@ -48,7 +48,7 @@
         </div>
         <div class="pl-1 d-flex my-auto align-self-center">
           <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
-            <small v-if="showOpinion">100%</small>
+            <small v-if="showOpinion">{{(relationOpinionScoreRelation * 100).toFixed(0)}}%</small>
             <small v-else-if="showCTOpinion">-100%</small>
           </div>
           <div v-else class="d-inline-flex">
@@ -63,10 +63,10 @@
                 <fa  icon="briefcase" title="Private" />
                 <span class="tooltiptext">test</span>
               </div> -->
+              <OpinionIcon :type="relationOpinionType" class="mr-1" />
               <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                 <fa  icon="briefcase"  />
               </span>
-
               <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
               <span v-else-if="isDifferentAuthor" data-toggle="tooltip" :title="relation['user']['username']">
                 <fa  icon="user"  />
@@ -127,6 +127,7 @@ import RelationAPI from '@/api/relation'
 import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
 import MoreOption from './sub-statement-components/MoreOption'
+import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -140,6 +141,7 @@ export default {
     CircleLabel,
     TextDisplayer,
     MoreOption,
+    OpinionIcon
   },
   props: {
     level: Number,
@@ -333,6 +335,12 @@ export default {
     isFilteredOut(){
       let failedTextFilter = this.statementTextFilter !== '' && (this.statementText.toLowerCase()).indexOf(this.statementTextFilter.toLowerCase())  === -1
       return failedTextFilter || !this.isAuthorFilterPassed
+    },
+    relationOpinionScoreRelation(){
+      return this.relationData === null || typeof this.relationData['user_opinion'] === 'undefined' || this.relationData['user_opinion'] === null ? 0 : this.relationData['user_opinion']['opinion_calculated_column']['score_relation']
+    },
+    relationOpinionType(){
+      return this.relationData === null || typeof this.relationData['user_opinion'] === 'undefined' || this.relationData['user_opinion'] === null ? -1 : this.relationData['user_opinion']['type']
     },
     relationTypeName(){
       const relationTypeId = this.statement['relation_type_id']

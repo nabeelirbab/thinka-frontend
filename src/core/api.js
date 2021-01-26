@@ -8,6 +8,7 @@ export default class API {
   mockAPI = {
     'statement': require('../api/mock-db/statement.js').default
   }
+  preFormattedSelect = {}
   // retrieve(param = null){
   //   return new Promise((resolve) => {
   //     if(param === null){
@@ -34,6 +35,9 @@ export default class API {
         reject(errorResult)
       })
     })
+  }
+  getPreFormattedSelect(select){
+    return typeof this.preFormattedSelect[select] !== 'undefined' ? this.preFormattedSelect[select] : {}
   }
   create(parameter){
     return new Promise((resolve, reject) => {

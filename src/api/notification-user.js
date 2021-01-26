@@ -40,7 +40,7 @@ class NotificationUser extends API {
             ...(['id', 'type']),
             notification_relation_update: {
               select: {
-                ...(['id', 'notification_id', 'relation_id', 'user_id', 'message']),
+                ...(['id', 'notification_id', 'relation_id', 'user_id', 'message', 'type']),
                 relation: {
                   select: {
                     ...(['statement_id']),
