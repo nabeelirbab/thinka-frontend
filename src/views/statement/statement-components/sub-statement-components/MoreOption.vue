@@ -7,7 +7,7 @@
     <button class="border-0 rounded bg-transparent" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More options."><fa icon="ellipsis-v" style="color:#02bcd4"/></button>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-      <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(relation['statement']['text'].slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
+      <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
       <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
       <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || (selectedStatementData && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
       <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
@@ -41,6 +41,20 @@ export default {
   methods: {
     openContextLock(){
       this.$refs.contextLockModal._open()
+    }
+  },
+  computed: {
+    statementText(){
+      if(typeof this.relation === 'undefined'){
+        return ''
+      }else if(this.relation['statement']){
+        return this.relation['statement']['text']
+      }else if(this.relation['virtual_relation'] && typeof this.relation['virtual_relation']['statement'] !== 'undefined'){
+        return this.relation['virtual_relation']['statement']['text']
+      }else{
+        console.log('relation', this.relation['virtual_relation'])
+        return ''
+      }
     }
   }
 }

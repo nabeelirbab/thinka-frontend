@@ -33,14 +33,17 @@
             <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
-          <div class="d-flex text-dark text-left mb-1" style="font-size:0.9em"  >
-              <div class="column" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip">
+          <div class="d-flex text-dark text-left mb-1 align-items-center" style="font-size:0.9em"  >
+              <div class="" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
-              <div class="column text-break"><TextDisplayer :text="statementText"  /></div>
+              <div class="text-break">
+                <div v-if="isVirtualRelation" class="text-info text-sm"><fa icon="link" class="mr-1" />This is a linked Statement</div>
+                <TextDisplayer :text="statementText"  />
+              </div>
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
               
-              <small v-if="isDevelopment && relationData" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+              <small v-if="isDevelopment && relationData && !isVirtualRelation" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
           </div>
           <div>
             
@@ -53,7 +56,7 @@
           </div>
           <div v-else class="d-inline-flex">
             <div v-if="isActive" class="mr-1" >
-              <router-link v-if="!enableDragging" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+              <router-link v-if="!enableDragging && !isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
               <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               <CircleIconButton v-if="enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
             </div>
@@ -63,7 +66,7 @@
                 <fa  icon="briefcase" title="Private" />
                 <span class="tooltiptext">test</span>
               </div> -->
-              <OpinionIcon :type="relationOpinionType" class="mr-1" />
+              
               <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                 <fa  icon="briefcase"  />
               </span>
@@ -72,6 +75,7 @@
                 <fa  icon="user"  />
               </span>
               <fa v-if="isLocked == 1" icon="lock" title="Locked" />
+              <OpinionIcon :type="relationOpinionType" class="ml-1" />
             </div>
             <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
               <MoreOption :relation="relationData"/>
@@ -80,8 +84,28 @@
         </div>
       </div>
     </div>
-    <CreateSubStatement v-if="isEditing" :relation="relation" :mode="'update'" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="statementEdited" @cancel="editSelectedStatement = false" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']"  />
-    <CreateSubStatement v-if="createSubStatementParentId === relation['id']" @cancel="createSubStatementParentId = null" :is-positive-statement="isPositiveStatement" :parent-relation-id="relation['id']" :level="level + 1" :logic-tree-id="logicTreeId" :statement-id="statementId"  @save="$emit('save', {event: $event, mappingIndex: []})"/>
+    <CreateSubStatement
+      v-if="isEditing"
+      @save="statementEdited"
+      @cancel="editSelectedStatement = false"
+      :relation="relation"
+      :mode="'update'"
+      :level="level + 1"
+      :logic-tree-id="logicTreeId"
+      :statement-id="statementId"
+      :is-positive-statement="isPositiveStatement"
+      :parent-relation-id="relation['id']"  
+    />
+    <CreateSubStatement
+      v-if="createSubStatementParentId === relation['id']" 
+      @cancel="createSubStatementParentId = null"
+      @save="$emit('save', {event: $event, mappingIndex: []})"
+      :is-positive-statement="isPositiveStatement" 
+      :parent-relation-id="relation['id']"
+      :level="level + 1"
+      :logic-tree-id="logicTreeId"
+      :statement-id="statementId"
+    />
     <draggable
       v-if="relationData && isLocked > 0"
       v-show="(showStatement || (relationData['relations'].length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
@@ -306,7 +330,20 @@ export default {
       return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['id'] : 'ERROR: Statement text not found'
     },
     statementText(){
-      return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['text'] : 'ERROR: Statement text not found'
+      // if(typeof this.relation === 'undefined'){
+      //   return ''
+      // }else if(this.relation['statement']){
+      //   return this.relation['statement']['text']
+      // }else if(this.relation['virtual_relation'] && typeof this.relation['virtual_relation']['statement'] !== 'undefined'){
+      //   return this.relation['virtual_relation']['statement']['text']
+      // }else{
+      //   console.log('relation', this.relation['virtual_relation'])
+      //   return ''
+      // }
+      return this.relationData && this.relationData['statement'] && typeof this.relationData['statement'] !== 'undefined' ? this.relationData['statement']['text'] : 'ERROR: Statement text not found. #' + this.relationData['id']
+    },
+    isVirtualRelation(){
+      return this.relationData && this.relationData['is_virtual_relation']
     },
     statementChildren(){
       return typeof this.statement['relations'] !== 'undefined' ? this.statement['relations'] : []

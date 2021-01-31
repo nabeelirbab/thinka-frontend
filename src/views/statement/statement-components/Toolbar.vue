@@ -78,7 +78,7 @@ export default {
   },
   computed: {
     isUserAuthor(){ // true if the user author the selected statement
-      return this.selectedStatementId && this.selectedStatementData['user_id'] * 1 === this.user.id
+      return this.selectedStatementId && this.user && this.selectedStatementData['user_id'] * 1 === this.user.id
     }
   }
 }

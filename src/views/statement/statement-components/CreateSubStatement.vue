@@ -21,12 +21,17 @@
       <div v-if="toJoinRelation">
         {{toJoinRelation['statement']['text']}}
       </div>
+      <div v-else-if="toLinkRelation">
+        {{toLinkRelation['statement']['text']}}
+      </div>
       <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
       <Suggestion ref="suggestion" 
         @select="sugestionSelected" 
         @join="suggestionJoined"
+        @link="suggestionLinked"
         :logic-tree-id="logicTreeId"
         :no-join="this.mode !== 'create'"
+        :no-link="this.mode !== 'create'"
       />
     </div>
     <Prompt ref="prompt"></Prompt>
@@ -81,6 +86,7 @@ export default {
       isLoading: false,
       isSuggestionSelected: false,
       toJoinRelation: null,
+      toLinkRelation: null,
       isSuccess: false,
       statement: {
         relation: {
@@ -138,6 +144,9 @@ export default {
     suggestionJoined(relation){
       this.toJoinRelation = relation
     },
+    suggestionLinked(relation){
+      this.toLinkRelation = relation
+    },
     save(){
       this.$refs.suggestion._stopSuggesting()
       this.isSuccess = false
@@ -147,7 +156,9 @@ export default {
       }
       if(this.mode === 'create'){
         if(this.toJoinRelation){
-          this.joinRelatioln()
+          this.joinRelation()
+        }else if(this.toLinkRelation){
+          this.linkRelation()
         }else{
           this.createStatement(JSON.parse(JSON.stringify(param)))
         }
@@ -155,15 +166,40 @@ export default {
         this.updateStatement(JSON.parse(JSON.stringify(param)))
       }
     },
-    joinRelatioln(){
+    joinRelation(){
       RelationAPI.post('/join', {
         parent_relation_id: this.parentRelationId,
-        relation_id: this.toJoinRelation['id'],
+        virtual_relation_id: this.toJoinRelation['id'],
         relevance_window: this.isPositiveStatement ? 0 : 1,
       }).then(result => {
         if(result){
           this.$emit('save', {
             ...this.toJoinRelation,
+            retrieve_relations: true,
+            relevance_window: this.isPositiveStatement ? 0 : 1,
+          })
+          this.isSuccess = true
+            setTimeout(() => {
+              this.reset()
+          }, 600)
+        }else{
+          this.isLoading = false
+        }
+      }).finally(() => {
+        this.isLoading = false
+      })
+    },
+    linkRelation(){
+      const param = {
+        ...this.statement['relation'],
+        parent_relation_id: this.parentRelationId,
+        virtual_relation_id: this.toLinkRelation['id'],
+      }
+      RelationAPI.post('/link', param).then(result => {
+        if(result){
+          this.$emit('save', {
+            ...param,
+            id: result['id'],
             retrieve_relations: true,
             relevance_window: this.isPositiveStatement ? 0 : 1,
           })
@@ -195,7 +231,7 @@ export default {
           this.isLoading = false
         }
       }).catch(errorResult => {
-        if(typeof errorResult.response.status !== 'undefined'){
+        if(typeof errorResult.response !== 'undefined' && typeof errorResult.response.status !== 'undefined'){
           if(errorResult.response.status === 422){ // unprocessible entity
             let responseError = errorResult.response.data.error
             console.log(responseError, responseError['code'])
@@ -252,6 +288,7 @@ export default {
       this.isLoading = false
       this.isSuggestionSelected = null
       this.toJoinRelation = null
+      this.toLinkRelation = null
       this.statement['id'] = null
       this.statement['text'] = ''
       this.statement['relation']['relation_type_id'] = '2'

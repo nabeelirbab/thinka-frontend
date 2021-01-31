@@ -27,7 +27,6 @@ const isMainRelationSelected = computed(() => {
   return mainRelationId.value && selectedStatementId.value && mainRelationId.value * 1 === selectedStatementId.value * 1
 })
 const hasFilterApplied = computed(() => {
-  console.log('hasFilterApplied', authorFilter.value, statementTextFilter.value)
   return Object.keys(authorFilter.value).length !== 0 || statementTextFilter.value !== ''
 })
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
@@ -42,6 +41,13 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
   subRelationIds.value.push({id: relation['id']})
   let toDeleteCircularRelationIndices = []
   relation['is_author_filter_passed'] = true
+  console.log('relation', relation['id'],relation['virtual_relation_id'], relation)
+  relation['is_virtual_relation'] = false
+  if(relation['virtual_relation_id']){
+    relation['is_virtual_relation'] = true
+    relation['statement'] = relation['virtual_relation']['statement']
+    relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+  }
   subRelationParents.value[relation['id']] = parentIds
   const subRelationParentIds = parentIds.concat([relation['id']])
   relation['relations'].forEach((subRelation, index) => {
@@ -49,11 +55,11 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
     if(isAlreadyExisted === -1){
       authors.value[subRelation['user_id']] = subRelation['user']
       subRelationMap.value[subRelation['id']] = parentIndexIds.concat([index])
-      if(typeof subRelation['relations'] !== 'undefined' && subRelation['relations'].length){
-        mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds)
-      }else{
+      if(typeof subRelation['relations'] !== 'undefined' || subRelation['relations'].length){
         subRelationParents.value[subRelation['id']] = subRelationParentIds
       }
+      subRelation['is_virtual_relation'] = relation['is_virtual_relation']
+      mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds)
     }else{
       toDeleteCircularRelationIndices.push(index)
     }

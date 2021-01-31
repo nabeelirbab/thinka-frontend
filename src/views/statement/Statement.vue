@@ -152,35 +152,48 @@ export default {
       this.isLoading = true
       this.statement = null
       this.mainRelationData = null
+      // const preFormattedSelect = RelationAPI.getPreFormattedSelect('recursive_relation_tree')
+      // const recursiveRelation = this.generateRecursiveRelationsSelect(1, 1)
       const param = {
-        select: {
-          logic_tree: {
-            select: ['description', 'published_at']
-          },
-          parent_relation: {
-            select: {
-              ...(['statement_id']),
-              statement: {
-                select: ['text']
-              }
-            }
-          },
-          relations: {
-            select: this.generateRecursiveRelationsSelect(1, 20),
-            sort: [{column: 'relevance_row', order: 'asc'}]
-          },
-          user_relation_bookmarks: {
-            select: ['user_id', 'relation_id', 'sub_relation_id']
-          },
-          ...RelationAPI.getPreFormattedSelect('recursive_relation_tree'),
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
-        },
-        condition: [{
-          column: 'id',
-          value: relationId * 1
-        }]
+        for_tree: true,
+        relation_id: relationId * 1,
+        // select: {
+        //   logic_tree: {
+        //     select: ['description', 'published_at']
+        //   },
+        //   parent_relation: {
+        //     select: {
+        //       ...(['statement_id']),
+        //       statement: {
+        //         select: ['text']
+        //       }
+        //     }
+        //   },
+        //   relations: {
+        //     select: recursiveRelation,
+        //     sort: [{column: 'relevance_row', order: 'asc'}]
+        //   },
+        //   user_relation_bookmarks: {
+        //     select: ['user_id', 'relation_id', 'sub_relation_id']
+        //   },
+        //   virtual_relation: {
+        //     select: {
+        //       ...preFormattedSelect,
+        //       relations: {
+        //         select: recursiveRelation
+        //       }
+        //     }
+        //   },
+        //   ...preFormattedSelect,
+        //   ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
+        // },
+        // condition: [{
+        //   column: 'id',
+        //   value: relationId * 1
+        // }]
       }
-      RelationAPI.retrieve(param).then(result => {
+      RelationAPI.post('/retrieve-tree', param).then(result => {
+        console.log('param', param)
         if(result['data'] && result['data'].length){
           this.mainRelationData = result['data'][0]
           this.setMainRelation(this.mainRelationData)
@@ -239,10 +252,19 @@ export default {
         },
         ...RelationAPI.getPreFormattedSelect('recursive_relation_tree')
       }
+      console.log('recurse')
       if(currentDeep <= deep){
+        ++currentDeep
+        const generateRecursiveRelationsSelect = this.generateRecursiveRelationsSelect(currentDeep, deep)
         selectParam['relations'] = {
-          select: this.generateRecursiveRelationsSelect(++currentDeep, deep),
+          select: generateRecursiveRelationsSelect,
           sort: [{column: 'relevance_row', order: 'asc'}]
+        }
+        selectParam['virtual_relation'] = {
+          select: {
+            relations: selectParam['relations'],
+            ...generateRecursiveRelationsSelect
+          }
         }
       }
       return selectParam
@@ -495,7 +517,9 @@ export default {
       if(this.mainRelationData && typeof this.mainRelationData['relations'] !== 'undefined'){
         let IdIndexLookUp = {}
         this.mainRelationData['relations'].forEach((childStatement, index) => {
-          IdIndexLookUp[childStatement['statement']['id']] = index
+          if(childStatement['statement']){
+            IdIndexLookUp[childStatement['statement']['id']] = index
+          }
         })
         return IdIndexLookUp
       }else{
