@@ -2,7 +2,13 @@
   <div class="d-flex align-items-center justify-content-center bg-white border border-secondary p-2 mb-1">
     <div class="pr-3 font-weight-bold">Impact</div>
     <div class="text-center" >
-      <vue-slider v-model="impact" :min="-100" :max="100" style="width:150px; margin-left:20px; margin-right:20px"/>
+      <vue-slider 
+        v-model="impact" 
+        :min="-100" 
+        :max="100"
+        :disblaed="isVirtualRelation"
+        style="width:150px; margin-left:20px; margin-right:20px"
+      />
       <div class="text-center text-sm">
         <span class="float-left">Disproving</span>
         <!-- <span class="mx-auto" style="position:absolute">None</span> -->
@@ -69,6 +75,11 @@ export default {
         }
       },
       immediate: true
+    }
+  },
+  computed: {
+    isVirtualRelation(){
+      return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
     }
   }
 }

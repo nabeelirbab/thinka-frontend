@@ -29,7 +29,7 @@ const isMainRelationSelected = computed(() => {
 const hasFilterApplied = computed(() => {
   return Object.keys(authorFilter.value).length !== 0 || statementTextFilter.value !== ''
 })
-const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
+const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = false) => {
   if(relation === null){
     relation = mainRelationData.value
   }
@@ -41,8 +41,8 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
   subRelationIds.value.push({id: relation['id']})
   let toDeleteCircularRelationIndices = []
   relation['is_author_filter_passed'] = true
-  console.log('relation', relation['id'],relation['virtual_relation_id'], relation)
-  relation['is_virtual_relation'] = false
+  // console.log('relation', relation['id'],relation['virtual_relation_id'], relation)
+  relation['is_virtual_relation'] = isVirtualRelation
   if(relation['virtual_relation_id']){
     relation['is_virtual_relation'] = true
     relation['statement'] = relation['virtual_relation']['statement']
@@ -58,8 +58,9 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = []) => {
       if(typeof subRelation['relations'] !== 'undefined' || subRelation['relations'].length){
         subRelationParents.value[subRelation['id']] = subRelationParentIds
       }
+      console.log('is_virtual_relation', relation['is_virtual_relation'])
       subRelation['is_virtual_relation'] = relation['is_virtual_relation']
-      mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds)
+      mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds, relation['is_virtual_relation'])
     }else{
       toDeleteCircularRelationIndices.push(index)
     }

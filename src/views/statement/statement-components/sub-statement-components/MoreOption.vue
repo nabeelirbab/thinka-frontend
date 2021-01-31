@@ -7,11 +7,24 @@
     <button class="border-0 rounded bg-transparent" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More options."><fa icon="ellipsis-v" style="color:#02bcd4"/></button>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-      <router-link :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
-      <button @click="editSelectedStatement = true" :disabled="user === null || !selectedStatementId || (selectedStatementId && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
-      <button @click="enableDragging = true" :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || (selectedStatementData && selectedStatementData['published_at'])" class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
-      <button @click="openContextLock" :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId)" :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
-      <button @click="bookmark" :disabled="true" class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
+      <router-link v-if="!isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
+      <button 
+        @click="editSelectedStatement = true" 
+        :disabled="user === null || !selectedStatementId || isPublished || isVirtualRelation"
+        class="dropdown-item" href="#"><fa icon="edit" /> Edit</button>
+      <button 
+        @click="enableDragging = true" 
+        :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || isPublished || isVirtualRelation"
+        class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
+      <button 
+        @click="openContextLock" 
+        :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId) || isVirtualRelation"
+        :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" 
+        class="dropdown-item" href="#"><fa icon="lock" /> Context Lock</button>
+      <button
+        @click="bookmark" 
+        :disabled="true" 
+        class="dropdown-item" href="#"><fa icon="leaf" /> Bookmark</button>
     </div>
   </div>
   <ContextLockModal ref="contextLockModal" />
@@ -55,6 +68,12 @@ export default {
         console.log('relation', this.relation['virtual_relation'])
         return ''
       }
+    },
+    isVirtualRelation(){
+      return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
+    },
+    isPublished(){
+      return this.selectedStatementId && this.selectedStatementData['published_at']
     }
   }
 }

@@ -1,6 +1,11 @@
 <template>
   <div class="text-center">
-    <button :class="(active ? 'btn-success' : buttonClass) + ' ' + (disabled ? 'disabled': '')" :disabled="disabled" class="btn btn-icon-circle btn-lg">
+    <button 
+      @click.stop="click"
+      :class="(active ? 'btn-success' : buttonClass) + ' ' + (disabled ? 'disabled': '')" 
+      :disabled="disabled" 
+      class="btn btn-icon-circle btn-lg"
+    >
       <fa :icon="icon" />
     </button> <br />
       {{text}}
@@ -22,6 +27,15 @@ export default {
     active: {
       type: Boolean,
       default: false
+    }
+  },
+  emits: ['click'],
+  methods: {
+    click(){
+      console.log('clicked', this.disabled)
+      if(!this.disabled){
+        this.$emit('click')
+      }
     }
   }
 }

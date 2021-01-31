@@ -142,6 +142,9 @@ export default {
         return 'Select an opinion'
       }
       return OpinionHelper.convertToMessage(this.type, this.confidence)
+    },
+    isVirtualRelation(){
+      return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
     }
   }
 }
