@@ -1,6 +1,10 @@
 const months = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 export default {
   methods: {
+    baseURL(url = ''){
+      console.log(window.location.origin , this.$route.path , url)
+      return window.location.origin + '/#' + url
+    },
     findArrayIndex(value, array, key = null){
       for(let x in array){
         if(key && array[x][key] + '' === value + ''){

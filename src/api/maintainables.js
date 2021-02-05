@@ -1,9 +1,10 @@
 import RelationTypeAPI from './relation-type'
 import ScopeAPI from './scope'
+import ContextAPI from './context'
 export default {
   prepare: () => {
     return new Promise(resolve => {
-      let countdown = 2
+      let countdown = 3
       const relationTypeParam = {
         select: ['description', 'symbol', 'relevance', 'relevance_window', 'default_impact'],
         sort: [{
@@ -26,6 +27,19 @@ export default {
         }]
       }
       ScopeAPI.retrieve(scopeParam, true).then(() => {
+        --countdown
+        if(countdown === 0){
+          resolve(true)
+        }
+      })
+      const contextParam = {
+        select: ['description'],
+        sort: [{
+          column: 'id',
+          order: 'asc'
+        }]
+      }
+      ContextAPI.retrieve(contextParam, true).then(() => {
         --countdown
         if(countdown === 0){
           resolve(true)

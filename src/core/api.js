@@ -28,7 +28,9 @@ export default class API {
         }
         resolve(response['data'])
       }).catch(errorResult => {
-        if(errorResult.response.status === 401){
+        if(typeof errorResult.response === 'undefined'){
+          console.log('Internet connection')
+        }else if(errorResult.response.status === 401){
           Auth.sessionExpired()
           // alert('Session Expired')
         }

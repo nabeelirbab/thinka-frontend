@@ -16,7 +16,8 @@
         @click="enableDragging = true" 
         :disabled="user === null || !selectedStatementId || selectedStatementId * 1 === mainRelationId || isPublished || isVirtualRelation"
         class="dropdown-item" href="#"><fa icon="arrows-alt" /> Drag </button>
-      <button 
+      <button
+        v-if="level > 1"
         @click="openContextLock" 
         :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId) || isVirtualRelation"
         :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" 
@@ -43,7 +44,8 @@ export default {
     relation: {
       type: Object,
       required: true
-    }
+    },
+    level: Number
   },
   data(){
     return {

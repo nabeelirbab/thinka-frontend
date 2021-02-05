@@ -30,7 +30,7 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="true" />
+                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element['id'])" @update="updateNewSubStatement($event, index)" :is-positive-statement="true" />
                 </div>
               </template>
             </draggable>
@@ -57,7 +57,7 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 1">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element)" @update="updateNewSubStatement($event, index)" :is-positive-statement="false" :group-name="'g2'"/>
+                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element['id'])" @update="updateNewSubStatement($event, index)" :is-positive-statement="false" :group-name="'g2'"/>
                 </div>
               </template>
             </draggable>
@@ -268,35 +268,34 @@ export default {
       }
       return selectParam
     },
-    addNewSubStatement(newSubStatement, parentStatement = null){
+    addNewSubStatement(newSubStatement, parentRelationId = null){
       let newSubRelations = null
-      let parentRelation = null
-      if(parentStatement === null){
+      let parentRelation = this.getRelationInstance(parentRelationId)
+      if(parentRelationId === null){
         newSubRelations = this.prepareNewSubStatement(newSubStatement)
-        parentRelation = this.mainRelationData
-        console.log('pushed here', newSubRelations)
-        parentRelation['relations'].push(newSubRelations)
+        // parentRelation = this.mainRelationData
+        // parentRelation['relations'].push(newSubRelations)
       }else{
         newSubRelations = this.prepareNewSubStatement(newSubStatement['event'])
-        const parentStatementId = parentStatement['statement']['id']
-        let currentStatement = this.mainRelationData['relations'][this.statementIdIndexLookUp[parentStatementId]]
-        const mappingIndex = newSubStatement['mappingIndex']
-        for(let index = mappingIndex.length - 1; index >= 0; index--){
-          currentStatement = currentStatement['relations'][mappingIndex[index]]
-        }
-        parentRelation = currentStatement
-        parentRelation['relations'].push(newSubRelations)
+        // const parentStatementId = parentStatement['statement']['id']
+        // let currentStatement = this.mainRelationData['relations'][this.statementIdIndexLookUp[parentStatementId]]
+        // const mappingIndex = newSubStatement['mappingIndex']
+        // for(let index = mappingIndex.length - 1; index >= 0; index--){
+        //   currentStatement = currentStatement['relations'][mappingIndex[index]]
+        // }
+        // parentRelation = currentStatement
+        // parentRelation['relations'].push(newSubRelations)
       }
-      if(typeof newSubRelations['retrieve_relations'] !== 'undefined'){
+
+      if(typeof newSubStatement['retrieve_relations'] !== 'undefined'){
         newSubRelations['is_Loading_relations'] = true
+        console.log('addNewSubStatement', newSubRelations)
         this.retrieveSubRelations(newSubRelations['id']).then(result => {
           if(result['data'].length){
             newSubRelations = result['data'][0]
-            console.log(result['data'][0])
-            this.mapRelations()
-          }else{
-            this.mapRelations()
           }
+          parentRelation['relations'].push(newSubRelations)
+          this.mapRelations()
         }).catch(error => {
           console.error(error)
           newSubRelations['is_Loading_relations'] = false
@@ -304,6 +303,9 @@ export default {
         })
         
       }else{
+        console.log('newSubRelations', newSubRelations, parentRelation)
+        newSubRelations['is_Loading_relations'] = false
+        parentRelation['relations'].push(newSubRelations)
         this.mapRelations()
       }
     },
@@ -334,44 +336,9 @@ export default {
     },
     retrieveSubRelations(relationId){
       const param = {
-        select: {
-          logic_tree: {
-            select: ['description', 'published_at']
-          },
-          parent_relation: {
-            select: {
-              ...(['statement_id']),
-              statement: {
-                select: ['text']
-              }
-            }
-          },
-          relations: {
-            select: this.generateRecursiveRelationsSelect(1),
-            sort: [{column: 'relevance_row', order: 'asc'}]
-          },
-          user_relation_bookmarks: {
-            select: ['user_id', 'relation_id', 'sub_relation_id']
-          },
-          statement: {
-            select: ['text', 'synopsis', 'comment', 'scope', 'scope_id', 'statement_type_id']
-          },
-          user: {
-            select: {
-              ...(['id', 'username']),
-              user_basic_information: {
-                select: ['user_id', 'first_name', 'last_name']
-              }
-            }
-          },
-          ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
-        },
-        condition: [{
-          column: 'id',
-          value: relationId * 1
-        }]
+        relation_id: relationId * 1
       }
-      return RelationAPI.retrieve(param)
+      return RelationAPI.post('/retrieve-tree', param)
     },
     updateNewSubStatement(newSubStatement, firstLevelIndex){
       let currentStatement = this.mainRelationData['relations'][firstLevelIndex]
@@ -391,11 +358,11 @@ export default {
       currentStatement['relation_type_id'] = updatedStatement['relation']['relation_type_id']
       currentStatement['relevance_row'] = updatedStatement['relation']['relevance_row']
       currentStatement['relevance_window'] = updatedStatement['relation']['relevance_window']
-      console.log('currentStatement', updatedStatement['relation'])
     },
     mainStatementUpdated(updatedMainStatement){
       this.mainRelationData['statement']['text'] = updatedMainStatement['text']
       this.mainRelationData['statement']['statement_type_id'] = updatedMainStatement['statement_type_id']
+      this.mainRelationData['statement']['context_id'] = updatedMainStatement['context_id']
       this.mainRelationData['statement']['id'] = updatedMainStatement['id']
       this.mainRelationData['relation_type_id'] = updatedMainStatement['relation']['relation_type_id']
     },
@@ -488,6 +455,7 @@ export default {
     relationId(){
       return this.$route.params.relationId * 1
     },
+    
     statementId(){
       return this.$route.params.relationId * 1
     },

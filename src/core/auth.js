@@ -57,7 +57,10 @@ class Auth {
         this.startSession(storedAuth['ttl'])
         authenticationStatus.value = 'authenticated'
       }).catch(error => {
-        if(error.response.status === 401){
+        if(typeof error.response === 'undefined'){
+          console.log('Maybe there is internet connection problem')
+          authenticationStatus.value = 'unauthenticated'
+        }else if(error.response.status === 401){
           authenticationStatus.value = 'unauthenticated'
         }else{
           console.log('an unknown error occured', error.response.status)

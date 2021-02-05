@@ -1,21 +1,21 @@
 <template>
   <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="container align-items-center statement-radius mb-1 border-width border-dark p-2" >
     <div class="flex-fill">
-        <select v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded   font-weight-bold mb-1">
-          <option default>Please Select</option>
-          <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
-            <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
-          </template>
-        </select>
+      <select v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded font-weight-bold mb-1">
+        <option value="0" default >Please Select</option>
+        <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
+          <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
+        </template>
+      </select>
 
-        <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 ml-1">
-          Cancel
-        </button>
-        <button @click="save" :disabled="statement.text.length < 3 || isLoading" class="btn btn-success py-1">
-          <fa v-if="isSuccess" icon="check" />
-          <fa v-else-if="isLoading" icon="spinner" spin />
-          <fa v-else icon="save" />
-        </button>
+      <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 mx-1">
+        Cancel
+      </button>
+      <button @click="save" :disabled="(statement.text.length < 3 || statement['relation']['relation_type_id'] * 1 === 0) || isLoading" class="btn btn-success py-1">
+        <fa v-if="isSuccess" icon="check" />
+        <fa v-else-if="isLoading" icon="spinner" spin />
+        <fa v-else icon="save" />
+      </button>
     </div>
     <div class="flex-basis pt-2">
       <div v-if="toJoinRelation">
@@ -34,6 +34,17 @@
         :no-link="this.mode !== 'create'"
       />
     </div>
+    <select 
+      v-if="isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null" 
+      v-model="statement.context_id"
+      :disabled="isLoading" 
+      class="border rounded font-weight-bold my-1 text-white bg-transparent text-capitalize"
+    >
+      <option default class="text-dark">Please Select</option>
+      <template v-for="context in contexts">
+        <option :value="context['id']" class="text-dark">{{context['description']}}</option>
+      </template>
+    </select>
     <Prompt ref="prompt"></Prompt>
   </div>
 </template>
@@ -44,6 +55,7 @@ import RelationTypeAPI from '@/api/relation-type'
 import Suggestion from './create-sub-statement-components/Suggestion'
 import GlobalData from '../global-data'
 import Prompt from '@/components/Prompt'
+import ContextAPI from '@/api/context'
 export default {
   components: {
     Suggestion,
@@ -56,6 +68,7 @@ export default {
       default: false
     },
     parentRelationId: Number,
+    parentRelation: Object,
     level: Number,
     logicTreeId: {
       type: Number,
@@ -99,7 +112,8 @@ export default {
         },
         id: null,
         statement_type_id: 1,
-        text: ''
+        text: '',
+        context_id: 1
       },
 
     }
@@ -156,9 +170,9 @@ export default {
       }
       if(this.mode === 'create'){
         if(this.toJoinRelation){
-          this.joinRelation()
+          this.joinRelation(JSON.parse(JSON.stringify(param)))
         }else if(this.toLinkRelation){
-          this.linkRelation()
+          this.linkRelation(JSON.parse(JSON.stringify(param)))
         }else{
           this.createStatement(JSON.parse(JSON.stringify(param)))
         }
@@ -167,15 +181,18 @@ export default {
       }
     },
     joinRelation(){
+      const selectedRelationType = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
       RelationAPI.post('/join', {
         parent_relation_id: this.parentRelationId,
-        virtual_relation_id: this.toJoinRelation['id'],
+        relation_id: this.toJoinRelation['id'],
         relevance_window: this.isPositiveStatement ? 0 : 1,
+        relation_type_id: this.statement['relation']['relation_type_id'],
+        impact_amount: (typeof selectedRelationType !== 'undefined') ? selectedRelationType['default_impact'] : 0,
       }).then(result => {
         if(result){
           this.$emit('save', {
             ...this.toJoinRelation,
-            retrieve_relations: true,
+            retrieve_relations: true, // retrieve the relation's tree on success
             relevance_window: this.isPositiveStatement ? 0 : 1,
           })
           this.isSuccess = true
@@ -190,17 +207,30 @@ export default {
       })
     },
     linkRelation(){
+      console.log('this.parentRelation', this.parentRelation)
+      const selectedRelation = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
       const param = {
         ...this.statement['relation'],
+        impact_amount: (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0,
         parent_relation_id: this.parentRelationId,
+        is_published: this.parentRelation['published_at'] ? true : false,
         virtual_relation_id: this.toLinkRelation['id'],
       }
       RelationAPI.post('/link', param).then(result => {
-        if(result){
+        console.log('link', {
+              ...this.statement['relation'],
+              statement: this.statement
+            })
+        if(result['data']){
           this.$emit('save', {
-            ...param,
-            id: result['id'],
-            retrieve_relations: true,
+            virtual_relation: {
+              ...this.statement['relation'],
+              statement: this.statement
+            },
+            parent_relation_id: this.parentRelationId,
+            virtual_relation_id: this.toLinkRelation['id'],
+            id: result['data']['id'],
+            retrieve_relations: true, // retrieve the relation's tree on success
             relevance_window: this.isPositiveStatement ? 0 : 1,
           })
           this.isSuccess = true
@@ -216,7 +246,7 @@ export default {
     },
     createStatement(param){
       const selectedRelation = this.relationTypes[(this.findArrayIndex(param['relation']['relation_type_id'], this.relationTypes, 'id'))]
-      param['relation']['impact_amount'] = selectedRelation['default_impact']
+      param['relation']['impact_amount'] = (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0
       StatementAPI.create(param).then(result => {
         if(result['data']){
           let newSubStatement = param
@@ -313,6 +343,7 @@ export default {
           this.statement['id'] = relation['statement']['id']
           this.statement['statement_type_id'] = relation['statement']['statement_type_id']
           this.statement['text'] = relation['statement']['text']
+          this.statement['context_id'] = relation['statement']['context_id']
           this.statement['relation']['id'] = relation['id']
           this.statement['relation']['parent_relation_id'] = relation['parent_relation_id']
           this.statement['relation']['relation_type_id'] = relation['relation_type_id']
@@ -339,6 +370,9 @@ export default {
         relationTypes = RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
       }
       return  relationTypes
+    },
+    contexts(){
+      return ContextAPI.cachedData.value ? ContextAPI.cachedData.value['data'] : []
     }
   }
 }

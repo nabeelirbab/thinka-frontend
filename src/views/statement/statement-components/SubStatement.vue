@@ -2,7 +2,7 @@
   <div :style="{'padding-left': (level > 1 ? 20 : 0)+ 'px'}">
     <div
       v-if="isLocked > 0"
-      v-show="!isEditing && (!isFilteredOut || (typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))"
+      v-show="!isEditing && (!isFilteredOut || hasFilterPassChildren)"
       :class="statementClass"
       class="sub-statement statement-radius mb-1 c-pointer border-width border-dark"
       style="min-height: 35px"
@@ -15,7 +15,7 @@
           >
             <fa icon="level-up-alt" rotation="90" />
           </button>
-          <button v-if="showStatement && (!hasFilterApplied || (hasFilterApplied && typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
+          <button v-if="showStatement && (!hasFilterApplied || hasFilterPassChildren)" @click="showStatement = false" class="btn btn-sm btn-outline-secondary"><fa icon="chevron-up"  /></button>
         </div>
         <div>
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
@@ -56,7 +56,16 @@
           </div>
           <div v-else class="d-inline-flex">
             <div v-if="isActive" class="mr-1" >
-              <router-link v-if="!enableDragging && !isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" ><CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" /></router-link>
+              <ZoomVirtualRelation 
+                v-if="isVirtualRelation"
+                :relation="relationData"
+              />
+              <router-link 
+                v-if="!enableDragging && !isVirtualRelation" 
+                :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30)) + (isLocked === 1 ? '/context/' + mainRelationId : '')"
+              >
+                <CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" />
+              </router-link>
               <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
               <CircleIconButton v-if="enableDragging && relation && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
             </div>
@@ -78,7 +87,7 @@
               <OpinionIcon :type="relationOpinionType" class="ml-1" />
             </div>
             <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
-              <MoreOption :relation="relationData"/>
+              <MoreOption :relation="relationData" :level="level" />
             </div>
           </div>
         </div>
@@ -102,6 +111,7 @@
       @save="$emit('save', {event: $event, mappingIndex: []})"
       :is-positive-statement="isPositiveStatement" 
       :parent-relation-id="relation['id']"
+      :parent-relation="relation"
       :level="level + 1"
       :logic-tree-id="logicTreeId"
       :statement-id="statementId"
@@ -152,6 +162,7 @@ import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
 import MoreOption from './sub-statement-components/MoreOption'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
+import ZoomVirtualRelation from './sub-statement-components/ZoomVirtualRelation.vue'
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -165,7 +176,8 @@ export default {
     CircleLabel,
     TextDisplayer,
     MoreOption,
-    OpinionIcon
+    OpinionIcon,
+    ZoomVirtualRelation
   },
   props: {
     level: Number,
@@ -294,7 +306,7 @@ export default {
           }
           this.relationData = currentRelation
         }
-        if(typeof this.relationData !== 'undefined' && typeof this.relationData['relations'] === 'undefined'){
+        if(typeof this.relationData !== 'undefined' && this.relationData && typeof this.relationData['relations'] === 'undefined'){
           this.relationData['relations'] = []
         }
       },
@@ -340,7 +352,7 @@ export default {
       //   console.log('relation', this.relation['virtual_relation'])
       //   return ''
       // }
-      return this.relationData && this.relationData['statement'] && typeof this.relationData['statement'] !== 'undefined' ? this.relationData['statement']['text'] : 'ERROR: Statement text not found. #' + this.relationData['id']
+      return this.relationData && this.relationData['statement'] && typeof this.relationData['statement'] !== 'undefined' ? this.relationData['statement']['text'] : 'ERROR: Statement text not found. #'
     },
     isVirtualRelation(){
       return this.relationData && this.relationData['is_virtual_relation']

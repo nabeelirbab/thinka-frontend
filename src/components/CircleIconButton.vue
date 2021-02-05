@@ -32,7 +32,6 @@ export default {
   emits: ['click'],
   methods: {
     click(){
-      console.log('clicked', this.disabled)
       if(!this.disabled){
         this.$emit('click')
       }

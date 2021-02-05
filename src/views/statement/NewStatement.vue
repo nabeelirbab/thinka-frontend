@@ -20,12 +20,13 @@
         v-model="statement.text" 
         placeholder="Write your statement here" 
         class="form-control mb-2" 
-        style="height: calc(100vh - 420px); min-height: 250px"
+        style="height: calc(100vh - 520px); min-height: 250px"
       ></textarea>
       <Suggestion ref="suggestion" 
         @select="sugestionSelected" 
         :logic-tree-id="null"
         :no-join="true"
+        class="mb-2"
       />
       <div class="mb-2">
         <select v-model="statement.scope_id" class="form-control">
@@ -35,9 +36,15 @@
           </template>
         </select>
       </div>
-      
-      
-      <input v-model="statement.context" placeholder="Context(General)" class="form-control mb-2" />
+      <div class="mb-2">
+        <select v-model="statement.context_id" class="form-control text-capitalize">
+          <option value="0">Please select</option>
+          <template v-for="context in contexts">
+            <option :value="context['id']">{{context['description']}}</option>
+          </template>
+        </select>
+      </div>
+
       <!-- <textarea v-model="statement.synopsis" placeholder="Synopsis" class="form-control mb-2" rows="1"></textarea>
       <textarea v-model="statement.comment" placeholder="Comment" class="form-control mb-2" rows="1"></textarea> -->
       <div class="text-right">
@@ -55,6 +62,7 @@
 import StatementAPI from '@/api/statement'
 import StatementTypeAPI from '@/api/statement-type'
 import ScopeAPI from '@/api/scope'
+import ContextAPI from '@/api/context'
 import Prompt from '@/components/Prompt'
 import Suggestion from '@/views/statement/statement-components/create-sub-statement-components/Suggestion'
 export default {
@@ -69,6 +77,7 @@ export default {
     return {
       statementTypes: [],
       scopes: [],
+      contexts: [],
       isSuggestionSelected: false,
       statement: {
         relation: {
@@ -81,7 +90,7 @@ export default {
         },
         text: '',
         scope_id: '0',
-        context: 'general',
+        context_id: 1,
         // synopsis: '',
         // comment: '',
         id: null,
@@ -93,9 +102,7 @@ export default {
     save(){
       this.isLoading = true
       this.statement['logic_tree']['name'] = this.statement.text
-      if(this.statement['context'] === ''){
-        this.statement['context'] = 'general'
-      }
+      
       StatementAPI.create(this.statement).then(result => {
         if(result['data']){
           console.log('success', result['data'])
@@ -142,8 +149,8 @@ export default {
       StatementTypeAPI.retrieve(param).then(result => {
         this.statementTypes = result['data']
       })
-      console.log('this.scope', this.scopes, ScopeAPI.cachedData.value)
       this.scopes = ScopeAPI.cachedData.value ? ScopeAPI.cachedData.value['data'] : []
+      this.contexts = ContextAPI.cachedData.value ? ContextAPI.cachedData.value['data'] : []
     },
     isTextTyping(e){
       if(e.keyCode !== 13){

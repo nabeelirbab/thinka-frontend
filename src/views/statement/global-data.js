@@ -29,6 +29,20 @@ const isMainRelationSelected = computed(() => {
 const hasFilterApplied = computed(() => {
   return Object.keys(authorFilter.value).length !== 0 || statementTextFilter.value !== ''
 })
+const contextPassed = (userRelationContextLocks) => {
+  if(userRelationContextLocks.length === 0){
+    return true
+  }else{
+    let hasPassed = false
+    userRelationContextLocks.forEach(userRelationContextLock => {
+      if(userRelationContextLock['root_relation_id'] * 1 === mainRelationId.value * 1){
+        hasPassed = true
+        return false
+      }
+    })
+    return hasPassed
+  }
+}
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = false) => {
   if(relation === null){
     relation = mainRelationData.value
@@ -39,34 +53,36 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
     subRelationMap.value = {}
   }
   subRelationIds.value.push({id: relation['id']})
-  let toDeleteCircularRelationIndices = []
+  let toDeleteIndices = [] // for both circular and out of context relations
   relation['is_author_filter_passed'] = true
-  // console.log('relation', relation['id'],relation['virtual_relation_id'], relation)
   relation['is_virtual_relation'] = isVirtualRelation
-  if(relation['virtual_relation_id']){
+  if(relation && relation['virtual_relation_id']){
     relation['is_virtual_relation'] = true
-    relation['statement'] = relation['virtual_relation']['statement']
-    relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+    if(relation['virtual_relation']){
+      relation['statement'] = relation['virtual_relation']['statement']
+      relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+    }
   }
   subRelationParents.value[relation['id']] = parentIds
   const subRelationParentIds = parentIds.concat([relation['id']])
   relation['relations'].forEach((subRelation, index) => {
     const isAlreadyExisted = QuickHelper.methods.findArrayIndex(subRelation['id'], subRelationIds.value, 'id') // check if subrelation already existed somewhere
-    if(isAlreadyExisted === -1){
+    if(isAlreadyExisted === -1 && contextPassed(subRelation['user_relation_context_locks'])){
       authors.value[subRelation['user_id']] = subRelation['user']
       subRelationMap.value[subRelation['id']] = parentIndexIds.concat([index])
-      if(typeof subRelation['relations'] !== 'undefined' || subRelation['relations'].length){
+      if(typeof subRelation['relations'] !== 'undefined' && subRelation['relations'].length){
         subRelationParents.value[subRelation['id']] = subRelationParentIds
+      }else{
+        subRelation['relations'] = []
       }
-      console.log('is_virtual_relation', relation['is_virtual_relation'])
       subRelation['is_virtual_relation'] = relation['is_virtual_relation']
       mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds, relation['is_virtual_relation'])
     }else{
-      toDeleteCircularRelationIndices.push(index)
+      toDeleteIndices.unshift(index)
     }
   })
-  toDeleteCircularRelationIndices.forEach(index => {
-    relation['relations'].slice(index, 1)
+  toDeleteIndices.forEach(index => {
+    relation['relations'].splice(index, 1)
   })
 }
 const hideToolbarDialog = () => {
@@ -129,6 +145,28 @@ watch(showScope, (value) => {
     showImpact.value = false
   }
 })
+const getRelationInstance = (relationId) => {
+  if(relationId === null || relationId === 0 || (relationId === mainRelationId.value)){
+    return mainRelationData.value
+  }else if(typeof subRelationMap.value[relationId] !== 'undefined'){
+    const statementRelationIndexMap = subRelationMap.value[relationId]
+    let currentRelation = mainRelationData.value
+    const map = statementRelationIndexMap
+    for(let x = 0; x < map.length; x++){
+      const index = map[x]
+      if(typeof currentRelation['relations'] !== 'undefined'){
+        currentRelation = currentRelation['relations'][index]
+      }
+    }
+    if(currentRelation['id'] * 1 !== relationId * 1){
+      console.error('There is problem with subRelationMap. Id not match', currentRelation, relationId)
+    }
+    return currentRelation
+  }else{
+    console.log('Cannot locate relation in subRelationMap', relationId, subRelationMap.value)
+    return null
+  }
+}
 export default {
   selectedStatementId: selectedStatementId,
   selectedStatementData: selectedStatementData,
@@ -154,5 +192,6 @@ export default {
   isMainRelationSelected: isMainRelationSelected,
   hasFilterApplied: hasFilterApplied,
   mapRelations: mapRelations,
-  hideToolbarDialog: hideToolbarDialog
+  hideToolbarDialog: hideToolbarDialog,
+  getRelationInstance: getRelationInstance
 }

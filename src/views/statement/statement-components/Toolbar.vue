@@ -44,13 +44,13 @@
         v-else
         @click="isUserAuthor ? (editSelectedStatement = true) : null" 
         :active="editSelectedStatement" 
-        :disabled="(!isUserAuthor || isVirtualRelation)" 
+        :disabled="(!isUserAuthor || isVirtualRelation || isPublished)" 
         icon="edit" :text="'Edit'" title="Add Statement" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top"
       />
       <!-- Remove -->
       <CircleIconButton
         @click="deleteStatement"  
-        :disabled="(authenticationStatus !== 'authenticated' || isVirtualRelation)" 
+        :disabled="(authenticationStatus !== 'authenticated')" 
         icon="folder-minus" text="Remove" title="Remove Statement" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top"
       />
     </div>
@@ -91,6 +91,9 @@ export default {
     },
     isVirtualRelation(){
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
+    },
+    isPublished(){
+      return this.selectedStatementData && this.selectedStatementData['published_at']
     }
   }
 }

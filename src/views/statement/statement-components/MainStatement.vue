@@ -29,11 +29,20 @@
                 class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center" 
                 style="height:35px!important; width:35px!important"
               >
-                <router-link :to="'/branch/'+ parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30))" class="text-primary"><fa icon="undo-alt" /></router-link>
+                <router-link :to="'/branch/'+ (contextRootRelationId ? (contextRootRelationId + '/t/context-locked') : parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30)))" class="text-primary">
+                  <fa icon="undo-alt" />
+                </router-link>
               </div>
             </div>
           </div>
-          <CreateSubStatement v-if="isEditing" :is-main-statement="true" :relation="relation" :mode="'update'" @save="statementEdited" @cancel="editSelectedStatement = false" :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"  />
+          <CreateSubStatement 
+            v-if="isEditing"
+            @save="statementEdited"
+            @cancel="editSelectedStatement = false"
+            :is-main-statement="true" 
+            :relation="relation" 
+            :mode="'update'" 
+             :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"  />
         </div>
         <div v-if="isSticky && stickySeeMore !== null" class="w-100 text-center c-pointer hover-underline ">
           <span v-if="stickySeeMore === true"  @click="stickySeeMore = false">Show more <fa icon="chevron-down" /></span>
@@ -171,6 +180,11 @@ export default {
       }else{
         return '??'
       }
+    },
+    contextRootRelationId(){
+      const hasContext = typeof this.relation !== 'undefined' && typeof this.relation['user_relation_context_locks'] !== 'undefined' && this.relation['user_relation_context_locks'].length
+      return hasContext ? this.relation['user_relation_context_locks'][0]['root_relation_id'] : null
+      // return typeof this.$route.params.rootRelationId !== 'undefined' ? this.$route.params.rootRelationId * 1 : null
     },
   }
 }
