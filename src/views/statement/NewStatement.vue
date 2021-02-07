@@ -22,8 +22,8 @@
         class="form-control mb-2" 
         style="height: calc(100vh - 520px); min-height: 250px"
       ></textarea>
-      <Suggestion ref="suggestion" 
-        @select="sugestionSelected" 
+      <Suggestion ref="suggestion"
+        @select="sugestionSelected"
         :logic-tree-id="null"
         :no-join="true"
         class="mb-2"
@@ -81,7 +81,7 @@ export default {
       isSuggestionSelected: false,
       statement: {
         relation: {
-          relation_type_id: 11, // Fact
+          relation_type_id: null, // Fact
           relevance_window: 0,
         },
         statement_type_id: '0',

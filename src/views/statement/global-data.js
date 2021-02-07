@@ -43,7 +43,7 @@ const contextPassed = (userRelationContextLocks) => {
     return hasPassed
   }
 }
-const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = false) => {
+const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0) => {
   if(relation === null){
     relation = mainRelationData.value
   }
@@ -54,18 +54,24 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   }
   subRelationIds.value.push({id: relation['id']})
   let toDeleteIndices = [] // for both circular and out of context relations
+  let subRelations = relation['relations']
   relation['is_author_filter_passed'] = true
-  relation['is_virtual_relation'] = isVirtualRelation
+  relation['is_virtual_relation'] = isVirtualRelation // if true, the value will be the root virtual relation id
   if(relation && relation['virtual_relation_id']){
-    relation['is_virtual_relation'] = true
-    if(relation['virtual_relation']){
-      relation['statement'] = relation['virtual_relation']['statement']
-      relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+    if(!isVirtualRelation){
+      relation['is_virtual_relation'] = relation['virtual_relation_id']
     }
+    if(relation['virtual_relation']){
+      subRelations = relation['virtual_relation']['relations']
+    }
+    // if(relation['virtual_relation']){
+    //   relation['statement'] = relation['virtual_relation']['statement']
+    //   relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+    // }
   }
   subRelationParents.value[relation['id']] = parentIds
   const subRelationParentIds = parentIds.concat([relation['id']])
-  relation['relations'].forEach((subRelation, index) => {
+  subRelations.forEach((subRelation, index) => {
     const isAlreadyExisted = QuickHelper.methods.findArrayIndex(subRelation['id'], subRelationIds.value, 'id') // check if subrelation already existed somewhere
     if(isAlreadyExisted === -1 && contextPassed(subRelation['user_relation_context_locks'])){
       authors.value[subRelation['user_id']] = subRelation['user']
@@ -82,7 +88,7 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
     }
   })
   toDeleteIndices.forEach(index => {
-    relation['relations'].splice(index, 1)
+    subRelations.splice(index, 1)
   })
 }
 const hideToolbarDialog = () => {
@@ -154,7 +160,9 @@ const getRelationInstance = (relationId) => {
     const map = statementRelationIndexMap
     for(let x = 0; x < map.length; x++){
       const index = map[x]
-      if(typeof currentRelation['relations'] !== 'undefined'){
+      if(currentRelation['virtual_relation_id']){
+        currentRelation = currentRelation['virtual_relation']['relations'][index]
+      }else {
         currentRelation = currentRelation['relations'][index]
       }
     }

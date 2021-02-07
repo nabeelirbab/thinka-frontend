@@ -21,7 +21,7 @@ export default {
         class: 'btn btn-info',
         callback: () => {
           console.log('this.baseURL', this.baseURL)
-          window.open(this.baseURL('/branch/' + this.relation['id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30))))
+          window.open(this.baseURL('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30))))
         }
       }, {
         label: 'No'
@@ -30,17 +30,7 @@ export default {
   },
   computed: {
     statementText(){
-      // if(typeof this.relation === 'undefined'){
-      //   return ''
-      // }else if(this.relation['statement']){
-      //   return this.relation['statement']['text']
-      // }else if(this.relation['virtual_relation'] && typeof this.relation['virtual_relation']['statement'] !== 'undefined'){
-      //   return this.relation['virtual_relation']['statement']['text']
-      // }else{
-      //   console.log('relation', this.relation['virtual_relation'])
-      //   return ''
-      // }
-      return this.relation && this.relation['statement'] && typeof this.relation['statement'] !== 'undefined' ? this.relation['statement']['text'] : 'ERROR: Statement text not found. #'
+      return this.relation && this.relation['virtual_relation'] && typeof this.relation['virtual_relation']['statement'] !== 'undefined' ? this.relation['virtual_relation']['statement']['text'] : 'ERROR: Statement text not found. #'
     }
   }
 }

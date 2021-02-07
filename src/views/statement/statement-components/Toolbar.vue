@@ -1,7 +1,6 @@
 <template>
   <div class="">
-    
-    <div v-if="!isVirtualRelation" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
+    <div v-if="!isVirtualRelation || isRootVirtualRelation" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
       <!-- Only the authors -->
       <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1">
         <ImpactSlider v-if="showImpact" />
@@ -21,7 +20,7 @@
       />
       <!-- Opinion -->
       <CircleIconButton
-        @click="showOpinion = !showOpinion" 
+        @click="showOpinion = !showOpinion"
         :active="showOpinion" 
         icon="comment-dots" text="Opinion" title="Show Opinion" class="mx-2" data-bs-toggle="tooltip" data-bs-placement="top" 
       />
@@ -88,6 +87,9 @@ export default {
   computed: {
     isUserAuthor(){ // true if the user author the selected statement
       return this.selectedStatementId && this.user && this.selectedStatementData['user_id'] * 1 === this.user.id
+    },
+    isRootVirtualRelation(){
+      return this.isVirtualRelation && (this.selectedStatementData['virtual_relation_id'] === this.isVirtualRelation)
     },
     isVirtualRelation(){
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']

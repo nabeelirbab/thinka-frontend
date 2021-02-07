@@ -10,7 +10,7 @@
       <div class="d-flex align-items-center pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
         <div class="ml-0 pl-0" style="min-width:30px">
           <button 
-            v-if="!showStatement && relationData && relationData['relations'].length && (!hasFilterApplied || (hasFilterApplied && typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))" 
+            v-if="!showStatement && relationData && subRelations.length && (!hasFilterApplied || (hasFilterApplied && typeof parentRelationIdsWithPassedFilterChildren[relationId] !== 'undefined'))" 
             @click="showStatement = true" class="btn btn-sm btn-outline-secondary"
           >
             <fa icon="level-up-alt" rotation="90" />
@@ -21,8 +21,8 @@
           <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
             <fa icon="spinner" spin />
           </CircleLabel>
-          <div v-else-if="showImpact || showScope" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
-            <small v-if="showImpact" class="text-nowrap">{{relationData['impact_amount'] !== null ? (relationData['impact_amount'] * 100).toFixed(0) : ''}}%</small>
+          <div v-else-if="(showImpact || showScope) && relationData" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
+            <small v-if="showImpact" class="text-nowrap">{{relationImpactAmount}}%</small>
             <small v-if="relationData && showScope" style="line-height: 1">
               {{relationData['statement']['scope_id'] ? scopes[findArrayIndex(relationData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
             </small>
@@ -42,11 +42,12 @@
                 <TextDisplayer :text="statementText"  />
               </div>
               <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
-              
-              <small v-if="isDevelopment && relationData && !isVirtualRelation" class="text-muted">#{{relationData['statement']['id']}} => #{{ relationData['id']}}</small>
+              <template v-if="isDevelopment && relationData">
+                <small class="text-muted">r#{{relationData['id']}}</small>
+                <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
+              </template>
           </div>
           <div>
-            
           </div>
         </div>
         <div class="pl-1 d-flex my-auto align-self-center">
@@ -118,9 +119,9 @@
     />
     <draggable
       v-if="relationData && isLocked > 0"
-      v-show="(showStatement || (relationData['relations'].length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
-      :relationid="relationData['id']"
-      :list="relationData['relations']"
+      v-show="(showStatement || (subRelations.length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
+      :relation-id="relationData['id']"
+      :list="subRelations"
       class="dragArea"
       :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
       item-key="id"
@@ -250,8 +251,13 @@ export default {
       this.$emit('save', event)
     },
     statementClicked(){
-      this.selectedStatementData = this.relationData
-      this.selectedStatementId = this.selectedStatementId === this.relation['id'] ? 0 : this.relation['id']
+      if(this.selectedStatementId === this.relation['id']){ // unselect
+        this.selectedStatementData = null
+        this.selectedStatementId = 0
+      }else{
+        this.selectedStatementData = this.relationData
+        this.selectedStatementId = this.relation['id']
+      }
     },
     startDragging(){
       this.isDraggingStatement = this.isPositiveStatement === true ? 1 : 2
@@ -259,7 +265,7 @@ export default {
     endDragging(){
       this.isDraggingStatement = 0
     },
-    listChanged(event){
+    listChanged(event){ // for dragging
       if(typeof event['added'] !== 'undefined' && this.relationData['relations']){
         this.isUpdating = true
         this.relationData['relations'][event['added']['newIndex']]['parent_relation_id'] = this.relationData['id']
@@ -293,22 +299,22 @@ export default {
     },
     statement: {
       handler(){
-        let statementRelationIndexMap = this.subRelationMap[this.statement['id']]
-        this.relationData = null
-        if(statementRelationIndexMap){
-          let currentRelation = this.mainRelationData
-          const map = statementRelationIndexMap
-          for(let x = 0; x < map.length; x++){
-            const index = map[x]
-            if(typeof currentRelation['relations'] !== 'undefined'){
-              currentRelation = currentRelation['relations'][index]
-            }
-          }
-          this.relationData = currentRelation
-        }
-        if(typeof this.relationData !== 'undefined' && this.relationData && typeof this.relationData['relations'] === 'undefined'){
-          this.relationData['relations'] = []
-        }
+        this.relationData = this.getRelationInstance(this.statement['id'])
+        // let statementRelationIndexMap = this.subRelationMap[this.statement['id']]
+        // if(statementRelationIndexMap){
+        //   let currentRelation = this.mainRelationData
+        //   const map = statementRelationIndexMap 
+        //   for(let x = 0; x < map.length; x++){
+        //     const index = map[x]
+        //     if(typeof currentRelation['relations'] !== 'undefined'){
+        //       currentRelation = currentRelation['relations'][index]
+        //     }
+        //   }
+        //   this.relationData = currentRelation
+        // }
+        // if(typeof this.relationData !== 'undefined' && this.relationData && typeof this.relationData['relations'] === 'undefined'){
+        //   this.relationData['relations'] = []
+        // }
       },
       immediate: true
     },
@@ -342,17 +348,43 @@ export default {
       return typeof this.statement['statement'] !== 'undefined' ? this.statement['statement']['id'] : 'ERROR: Statement text not found'
     },
     statementText(){
-      // if(typeof this.relation === 'undefined'){
-      //   return ''
-      // }else if(this.relation['statement']){
-      //   return this.relation['statement']['text']
-      // }else if(this.relation['virtual_relation'] && typeof this.relation['virtual_relation']['statement'] !== 'undefined'){
-      //   return this.relation['virtual_relation']['statement']['text']
-      // }else{
-      //   console.log('relation', this.relation['virtual_relation'])
-      //   return ''
-      // }
-      return this.relationData && this.relationData['statement'] && typeof this.relationData['statement'] !== 'undefined' ? this.relationData['statement']['text'] : 'ERROR: Statement text not found. #'
+      if(this.statement){
+        if(this.statement['virtual_relation_id']){ // if root virtual relation
+          if(this.statement['virtual_relation'] && this.statement['virtual_relation']['statement']){
+            return this.statement['virtual_relation']['statement']['text']
+          }else{ // if no virtual relation found
+            return 'ERROR: Virtual Relation has no statement. #' + this.statement['virtual_relation_id']
+          }
+        }else if(this.statement['statement']){
+          return this.statement['statement']['text']
+        }else{
+          return 'ERROR: No Statement'
+        }
+      }else{
+        return 'ERROR: No relation data.'
+      }
+    },
+    subRelations(){
+      if(this.relationData){
+        if(this.relationData['virtual_relation_id'] && this.relationData['virtual_relation'] && this.relationData['virtual_relation']['relations']){
+          return this.relationData['virtual_relation']['relations']
+        }else{
+          return this.relationData['relations']
+        }
+      }else{
+        return []
+      }
+    },
+    relationImpactAmount(){
+      let impactAmount = ''
+      if(this.relationData){
+        if(this.relationData['virtual_relation_id']){
+          impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
+        }else if(this.relationData['impact_amount'] !== null){
+          impactAmount = this.relationData['impact_amount']
+        }
+      }
+      return impactAmount !== '' ? (impactAmount * 100).toFixed(0) : ''
     },
     isVirtualRelation(){
       return this.relationData && this.relationData['is_virtual_relation']
@@ -386,10 +418,27 @@ export default {
       return failedTextFilter || !this.isAuthorFilterPassed
     },
     relationOpinionScoreRelation(){
-      return this.relationData === null || typeof this.relationData['user_opinion'] === 'undefined' || this.relationData['user_opinion'] === null ? 0 : this.relationData['user_opinion']['opinion_calculated_column']['score_relation']
+      let userOpinionScoreRelation = 0
+      if(this.relationData){
+        // if(this.relationData['virtual_relation_id']){
+        //   userOpinionScoreRelation = this.relationData['virtual_relation'] && this.relationData['virtual_relation']['user_opinion'] ? this.relationData['virtual_relation']['user_opinion']['opinion_calculated_column']['score_relation'] : 0
+        // }else 
+        if(this.relationData['user_opinion']){
+          userOpinionScoreRelation = this.relationData['user_opinion']['opinion_calculated_column']['score_relation']
+        }
+      }
+      return userOpinionScoreRelation
     },
     relationOpinionType(){
-      return this.relationData === null || typeof this.relationData['user_opinion'] === 'undefined' || this.relationData['user_opinion'] === null ? -1 : this.relationData['user_opinion']['type']
+      let userOpinionType = -1
+      if(this.relationData){
+        // if(this.relationData['virtual_relation_id']){
+        //   userOpinionType = this.relationData['virtual_relation'] && this.relationData['virtual_relation']['user_opinion'] ? this.relationData['virtual_relation']['user_opinion']['type'] : 0
+        if(this.relationData['user_opinion']){
+          userOpinionType = this.relationData['user_opinion']['type']
+        }
+      }
+      return userOpinionType
     },
     relationTypeName(){
       const relationTypeId = this.statement['relation_type_id']
