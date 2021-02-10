@@ -1,4 +1,17 @@
 const months = ['January', "February", 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+const formatDate = (date, format = null) => {
+  const dateToFormat = new Date(date)
+  if(date && dateToFormat.getFullYear() !== 1970){
+    switch(format){
+      case 'M d at H:m':
+        return months[dateToFormat.getMonth()] + ' ' + dateToFormat.getDate() + ', ' + dateToFormat.getFullYear() + ' at ' + this.toHourMedian(dateToFormat)
+      default:
+        return (dateToFormat.getMonth() + 1) + '/' + dateToFormat.getDate() + '/' + dateToFormat.getFullYear()
+    }
+  }else{
+    return null
+  }
+}
 export default {
   methods: {
     baseURL(url = ''){
@@ -25,21 +38,12 @@ export default {
       var strTime = hours + ':' + minutes + ' ' + ampm;
       return strTime;
     },
-    formatDate(date, format = null){
-      const dateToFormat = new Date(date)
-      if(date && dateToFormat.getFullYear() !== 1970){
-        switch(format){
-          case 'M d at H:m':
-            return months[dateToFormat.getMonth()] + ' ' + dateToFormat.getDate() + ', ' + dateToFormat.getFullYear() + ' at ' + this.toHourMedian(dateToFormat)
-          default:
-            return dateToFormat.getMonth() + '/' + dateToFormat.getDate() + '/' + dateToFormat.getFullYear()
-        }
-      }else{
-        return null
-      }
-    },
-    timeSince(date) {
+    formatDate: formatDate,
+    timeSince(date, maxMSeconds = false, dateFormat = null) { // if $maxMSeconds is exceeded, timesince will convert to formatDate(). The format of the date is determined by $dateFormat
       date = new Date(date)
+      if(((new Date()) - date) > maxMSeconds){
+        return formatDate(date, dateFormat)
+      }
       let seconds = Math.floor((new Date() - date) / 1000)
       let interval = seconds / 31536000
       if (interval > 1) {

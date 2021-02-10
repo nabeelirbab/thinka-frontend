@@ -12,7 +12,7 @@
       </template>
     </div>
     <div :class="selectedStatementId === 0 || selectedStatementId === null ? 'active' : ''" class="toolbar d-flex justify-content-between justify-content-md-center fixed-bottom bg-white py-2 px- border-top">
-      <!-- Impact -->
+      <!-- Impact --> 
       <CircleIconButton
         @click="showImpact = !showImpact" 
         :active="showImpact" 

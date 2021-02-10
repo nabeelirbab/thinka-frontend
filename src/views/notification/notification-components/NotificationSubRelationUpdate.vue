@@ -1,17 +1,14 @@
 <template>
-  <div  class="d-flex w-100">
-    <div class='pr-1'>
-      <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
-    </div>
-    <div class="flex-fill" style="min-width:0">
-      <div class="d-flex">
-        <div class="font-weight-bold flex-fill">{{notificationRelationUpdate['user']['username']}}</div>
-        <div class="float-right">{{formatDate(datetime)}}</div>
-      </div>
+  <div class="w-100">
+    <NotificationHead
+      :username="notificationRelationUpdate['user']['username']"
+      :created-at="datetime"
+    />
+    <div style="min-width:0">
       <div v-if="notificationRelationUpdate['sub_relation']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm mr-1" />
-        <div @click="readNotification" class="font-italic text-truncate c-pointer" style="min-width:0">
-          {{notificationRelationUpdate['sub_relation']['statement']['text']}}
+        <div @click="readNotification" class="font-italic text-truncate c-pointer px-1" style="min-width:0">
+          {{notificationRelationUpdate['sub_relation']['statement'] ? notificationRelationUpdate['sub_relation']['statement']['text'] : 'Error: No Text'}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
       </div>
@@ -25,8 +22,12 @@
   </div>
 </template>
 <script>
+import NotificationHead from './NotificationHead'
 import NotificationHelper from '../notification-helper'
 export default {
+  components: {
+    NotificationHead
+  },
   props: {
     notificationUserId: Number,
     notificationRelationUpdate: {

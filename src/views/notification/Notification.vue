@@ -38,13 +38,13 @@ export default {
     NotificationSubRelationUpdate
   },
   mounted(){
+    console.log('mounted')
     if(this.notifications.length === 0){
       NotificationUserAPI.checkNotification()
-    }else{
-      setTimeout(() => {
-        this.setStatusToNotified()
-      }, 2000)
     }
+    // setInterval(() => {
+    //   this.setStatusToNotified()
+    // }, 2000)
   },
   data(){
     return {
@@ -53,18 +53,35 @@ export default {
   },
   methods: {
     setStatusToNotified(){
+      const param = {
+        id_list: this.toSeenNotification,
+        status: 1
+      }
+      NotificationUserAPI.post('/change-status', param)
+    }
+  },
+  watch: {
+    toSeenNotification: {
+      handler(toSeenNotification){
+        if(toSeenNotification.length){
+          this.setStatusToNotified()
+        }
+        console.log('watching', toSeenNotification)
+      },
+      immediate: true
+    }
+  },
+  computed: {
+    toSeenNotification(){
       let idList = []
+      console.log('notifications', this.notifications)
       this.notifications.forEach(notification => {
         if(notification['status'] * 1 === 0){
           idList.push(notification['id'])
           notification['status'] = 1
         }
       })
-      const param = {
-        id_list: idList,
-        status: 1
-      }
-      NotificationUserAPI.post('/change-status', param)
+      return idList
     }
   }
 }

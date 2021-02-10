@@ -1,17 +1,13 @@
 <template>
-  <div class="container">
-    <small class="float-right">{{timeSince(datetime)}}</small>
+  <div class="w-100">
+    <NotificationHead
+      :username="notificationRelationUpdate['user']['username']"
+      :created-at="datetime"
+    />
     <div style="min-width:0">
-      <div class="d-flex">
-        <div class='pr-1'>
-          <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
-        </div>
-        <span class="font-weight-bold">{{toPascal(notificationRelationUpdate['user']['username'])}}</span>
-        <small class="float-right">{{formatDate(datetime)}}</small>
-      </div>
       <div v-if="notificationRelationUpdate['relation']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm mr-1" />
-        <div @click="readNotification" class="font-italic text-truncate c-pointer" style="min-width:0">
+        <div @click="readNotification" class="font-italic text-truncate c-pointer px-1" style="min-width:0">
           {{notificationRelationUpdate['relation']['statement']['text']}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
@@ -28,9 +24,13 @@
   </div>
 </template>
 <script>
+import NotificationHead from './NotificationHead'
 import NotificationHelper from '../notification-helper'
 import OpinionHelper from '@/helpers/opinion'
 export default {
+  components: {
+    NotificationHead
+  },
   props: {
     notificationUserId: Number,
     notificationRelationUpdate: {

@@ -1,16 +1,13 @@
 <template>
-  <div  class="d-flex w-100">
-    <div class='pr-1'>
-      <fa icon="user-circle" class="text-secondary" style="font-size:2em" />
-    </div>
-    <div class="flex-fill" style="min-width:0">
-      <div >
-        <span class="font-weight-bold">{{toPascal(notificationStatementUpdate['user']['username'])}}</span>
-        <small class="float-right">{{formatDate(datetime)}}</small>
-      </div>
+  <div class="w-100">
+    <NotificationHead
+      :username="notificationStatementUpdate['user']['username']"
+      :created-at="datetime"
+    />
+    <div style="min-width:0">
       <div v-if="notificationStatementUpdate['statement']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm mr-1" />
-        <div class="font-italic text-truncate" style="min-width:0">
+        <div class="font-italic text-truncate px-1" style="min-width:0">
           {{notificationStatementUpdate['statement']['text']}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
@@ -22,7 +19,11 @@
   </div>
 </template>
 <script>
+import NotificationHead from './NotificationHead'
 export default {
+  components: {
+    NotificationHead
+  },
   props: {
     notificationStatementUpdate: {
       type: Object,
@@ -32,3 +33,6 @@ export default {
   }
 }
 </script>
+<style>
+
+</style>
