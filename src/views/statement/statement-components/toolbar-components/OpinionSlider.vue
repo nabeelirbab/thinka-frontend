@@ -2,7 +2,7 @@
   <div class="bg-white border border-secondary p-2 mb-1">
     <div class="d-flex align-items-center justify-content-center">
       <div class="font-weight-bold mr-3" style="width: 100px">Opinion</div>
-      <div >
+      <div>
         <Opinion 
           v-if="selectedStatementData"
           v-model="type"
@@ -45,6 +45,7 @@
     </div>
     <div class="text-center">
       <fa v-if="isLoading" icon="spinner" spin />
+      <span v-else-if="isSuccess" class="text-success">Saved!</span>
       <button v-else @click="changeOpinion" :disabled="isLoading" class="btn btn-success"><fa icon="check" /> Save</button>
     </div>
     <Prompt ref="prompt" />
@@ -73,13 +74,14 @@ export default {
       typeDescriptions: OpinionHelper.typeDescriptions,
       user: Auth.user(),
       isLoading: false,
+      isSuccess: false,
       ...GlobalData,
     }
   },
   methods: {
     // tryChangeOpinion(type){
     //   this.$refs.prompt._open(
-    //     `You are about to change your opinion to: <p class="font-italic text-center font-weight-bold">"${typeDescription[type]}"</p>`,
+    //     `You are about to change your opinion to: <p class="font-italic text-center font-weight-bold ">"${typeDescription[type]}"</p>`,
     //     [{
     //       label: 'Proceed',
     //       class: 'btn btn-success',
@@ -104,12 +106,16 @@ export default {
         if(result['data']){
           statementToChange['user_opinion'] = {
             type: param['type'],
-            confidence: param['confidence'],
+            confidence: (param['confidence']).toFixed(4),
             ...result['data']
           }
         }
         console.log('result', result['data'])
         console.log('after', statementToChange)
+        this.isSuccess = true
+        setTimeout(() => {
+          this.isSuccess = false
+        }, 700)
       }).finally(() => {
         this.isLoading = false
       })
@@ -132,6 +138,7 @@ export default {
           this.type = -1
           this.isPublic = false
         }
+        this.isSuccess = false
       },
       immediate: true
     }
@@ -141,7 +148,7 @@ export default {
       if(typeof this.type === -1){
         return 'Select an opinion'
       }
-      return OpinionHelper.convertToMessage(this.type, this.confidence)
+      return OpinionHelper.convertToMessage(this.type, this.confidence / 100)
     },
     isVirtualRelation(){
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']

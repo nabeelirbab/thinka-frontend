@@ -18,7 +18,6 @@
             :no-join="noJoin"
             :no-link="noLink"
             :logic-tree-id="logicTreeId"
-
           />
           <div v-if="hasMoreSuggestions" class="border-top ">
             <span @click="showMore" class="text-info text-hover-underline c-pointer" >Show more...</span>
@@ -156,12 +155,12 @@ export default {
         }],
         condition: [{
           column: 'statement.text',
-          clause: 'like_alphanumeric_only',
+          clause: 'like',
           value: '%' + (this.typedText) + '%'
-        }, {
-          column: 'published_at',
-          clause: '!=',
-          value: null
+        // }, {
+        //   column: 'published_at',
+        //   clause: '!=',
+        //   value: null
         }]
       }
       if(!more){

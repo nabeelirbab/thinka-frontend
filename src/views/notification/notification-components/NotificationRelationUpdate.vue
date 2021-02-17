@@ -56,6 +56,7 @@ export default {
           const message = JSON.parse(this.notificationRelationUpdate['message'])
           const type = typeof message['type'] !== 'undefined' ? message['type'] : -1
           const confidence = typeof message['confidence'] !== 'undefined' ? message['confidence'] : 0
+          console.log('message', message)
           return OpinionHelper.convertToMessage(type, confidence)
         }
         default:

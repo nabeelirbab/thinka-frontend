@@ -22,11 +22,11 @@ export default class API {
   // }
   retrieve(parameter = {}, cache = false){
     return new Promise((resolve, reject) => {
-      axios.post(this.basePath + this.apiName + '/retrieve', parameter, Auth.generateHeader()).then(response => {
+      this.post('/retrieve', parameter).then(response => {
         if(cache){
-          this.cachedData.value = response['data']
+          this.cachedData.value = response
         }
-        resolve(response['data'])
+        resolve(response)
       }).catch(errorResult => {
         if(typeof errorResult.response === 'undefined'){
           console.log('Internet connection')
@@ -43,8 +43,8 @@ export default class API {
   }
   create(parameter){
     return new Promise((resolve, reject) => {
-      axios.post(this.basePath + this.apiName + '/create', parameter, Auth.generateHeader()).then(response => {
-        resolve(response['data'])
+      this.post('/create', parameter).then(response => {
+        resolve(response)
       }).catch(errorResult => {
         reject(errorResult)
       })
@@ -52,8 +52,8 @@ export default class API {
   }
   update(parameter){
     return new Promise((resolve, reject) => {
-      axios.post(this.basePath + this.apiName + '/update', parameter, Auth.generateHeader()).then(response => {
-        resolve(response['data'])
+      this.post('/update', parameter).then(response => {
+        resolve(response)
       }).catch(errorResult => {
         reject(errorResult)
       })
@@ -61,34 +61,45 @@ export default class API {
   }
   delete(parameter){
     return new Promise((resolve, reject) => {
-      axios.post(this.basePath + this.apiName + '/delete', parameter, Auth.generateHeader()).then(response => {
-        resolve(response['data'])
+      this.post('/delete', parameter).then(response => {
+        resolve(response)
       }).catch(errorResult => {
         reject(errorResult)
       })
     })
   }
-  apiRequest(path, parameter){
+  // apiRequest(path, parameter){
+  //   return new Promise((resolve, reject) => {
+  //     axios.post(this.basePath + path, parameter).then(response => {
+  //       resolve(response['data'])
+  //     }).catch(errorResult => {
+  //       reject(errorResult)
+  //     })
+  //   })
+  // }
+  async post(path, parameter = {}){
     return new Promise((resolve, reject) => {
-      axios.post(this.basePath + path, parameter).then(response => {
-        resolve(response['data'])
-      }).catch(errorResult => {
-        reject(errorResult)
-      })
-    })
-  }
-  post(path, parameter = {}){
-    return new Promise((resolve, reject) => {
-      axios.post(this.basePath + this.apiName + path, parameter, Auth.generateHeader()).then(response => {
-        resolve(response['data'])
-      }).catch(errorResult => {
-        if(errorResult.response.status === 401){
-          Auth.sessionExpired()
-          // alert('Session Expired')
+      (async () => {
+        while(Auth.isRefreshing()){
+          await this.sleep(300)
+          // console.log('sleeping', Auth.isRefreshing())
         }
-        reject(errorResult)
-      })
+        // console.log('Auth.generateHeader()', Auth.generateHeader())
+        axios.post(this.basePath + this.apiName + path, parameter, Auth.generateHeader()).then(response => {
+          resolve(response['data'])
+        }).catch(errorResult => {
+          if(errorResult.response.status === 401){
+            Auth.sessionExpired()
+            // alert('Session Expired')
+          }
+          reject(errorResult)
+        })
+      })()
+      
     })
+  }
+  async sleep(milliseconds){
+    await new Promise(r => setTimeout(r, milliseconds))
   }
   fileUpload(uploadLocation, uploadForm){
     return new Promise((resolve, reject) => {

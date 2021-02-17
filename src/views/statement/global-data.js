@@ -1,5 +1,7 @@
 import { ref, watch, computed } from 'vue'
 import QuickHelper from '@/helpers/quick-helper'
+import RelationAPI from '@/api/relation'
+import Auth from '@/core/auth'
 const authors = ref({})
 const selectedStatementId = ref(0)
 const mainRelationData = ref(null)
@@ -124,7 +126,6 @@ watch(authorFilter, () => {
 }, {deep: true})
 
 watch(selectedStatementId, (id) => {
-  
   if(id === 0 || id === null){
     showImpact.value = false
     showOpinion.value = false
@@ -175,6 +176,62 @@ const getRelationInstance = (relationId) => {
     return null
   }
 }
+const prepareNewSubStatement = (rawNewSubStatement) => {
+  let newSubStatement = null
+  if(typeof rawNewSubStatement['relation'] !== 'undefined'){ // from statement to relatio
+    newSubStatement = rawNewSubStatement['relation']
+    delete rawNewSubStatement['relation']
+    newSubStatement['statement'] = rawNewSubStatement
+  }else{ // its already a relation
+    newSubStatement = rawNewSubStatement
+  }
+  const user = Auth.user().value
+  console.log('prepareNewSubStatement', user)
+  newSubStatement['relations'] = []
+  newSubStatement['user_id'] = user['id']
+  newSubStatement['user'] = {
+    id: user['id'],
+    username: user['username'],
+    user_basic_information: {
+      user_id: user['id'],
+      first_name: user['first_name'],
+      last_name: user['last_name']
+    }
+  }
+  if(typeof newSubStatement['user_relation_context_locks'] === 'undefined'){
+    newSubStatement['user_relation_context_locks'] = []
+  }
+  return newSubStatement
+}
+const addNewSubStatement = (newSubStatement, parentRelationId = null) => {
+  let newSubRelations = null
+  let parentRelation = getRelationInstance(parentRelationId)
+  newSubRelations = prepareNewSubStatement(newSubStatement)
+  console.log('parentRelation', parentRelationId, parentRelation)
+  if(typeof newSubStatement['retrieve_relations'] !== 'undefined'){
+    newSubRelations['is_Loading_relations'] = true
+    console.log('addNewSubStatement', newSubRelations)
+    const param = {
+      relation_id: newSubRelations['id'] * 1
+    }
+    RelationAPI.post('/retrieve-tree', param).then(result => {
+      if(result['data'].length){
+        newSubRelations = result['data'][0]
+      }
+      parentRelation['relations'].push(newSubRelations)
+      mapRelations()
+    }).catch(error => {
+      console.error(error)
+      newSubRelations['is_Loading_relations'] = false
+      mapRelations()
+    })
+    
+  }else{
+    newSubRelations['is_Loading_relations'] = false
+    parentRelation['relations'].push(newSubRelations)
+    mapRelations()
+  }
+}
 export default {
   selectedStatementId: selectedStatementId,
   selectedStatementData: selectedStatementData,
@@ -201,5 +258,6 @@ export default {
   hasFilterApplied: hasFilterApplied,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
-  getRelationInstance: getRelationInstance
+  getRelationInstance: getRelationInstance,
+  addNewSubStatement: addNewSubStatement
 }

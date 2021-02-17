@@ -109,7 +109,8 @@
     <CreateSubStatement
       v-if="createSubStatementParentId === relation['id']" 
       @cancel="createSubStatementParentId = null"
-      @save="$emit('save', {event: $event, mappingIndex: []})"
+      @save="addNewSubStatement($event, relation['id'])"
+      @sav1e="$emit('save', {event: $event, mappingIndex: []})"
       :is-positive-statement="isPositiveStatement" 
       :parent-relation-id="relation['id']"
       :parent-relation="relation"

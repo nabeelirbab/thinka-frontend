@@ -269,7 +269,6 @@ export default {
         },
         ...RelationAPI.getPreFormattedSelect('recursive_relation_tree')
       }
-      console.log('recurse')
       if(currentDeep <= deep){
         ++currentDeep
         const generateRecursiveRelationsSelect = this.generateRecursiveRelationsSelect(currentDeep, deep)
@@ -285,78 +284,6 @@ export default {
         }
       }
       return selectParam
-    },
-    addNewSubStatement(newSubStatement, parentRelationId = null){
-      let newSubRelations = null
-      let parentRelation = this.getRelationInstance(parentRelationId)
-      if(parentRelationId === null){
-        newSubRelations = this.prepareNewSubStatement(newSubStatement)
-        // parentRelation = this.mainRelationData
-        // parentRelation['relations'].push(newSubRelations)
-      }else{
-        newSubRelations = this.prepareNewSubStatement(newSubStatement['event'])
-        // const parentStatementId = parentStatement['statement']['id']
-        // let currentStatement = this.mainRelationData['relations'][this.statementIdIndexLookUp[parentStatementId]]
-        // const mappingIndex = newSubStatement['mappingIndex']
-        // for(let index = mappingIndex.length - 1; index >= 0; index--){
-        //   currentStatement = currentStatement['relations'][mappingIndex[index]]
-        // }
-        // parentRelation = currentStatement
-        // parentRelation['relations'].push(newSubRelations)
-      }
-
-      if(typeof newSubStatement['retrieve_relations'] !== 'undefined'){
-        newSubRelations['is_Loading_relations'] = true
-        console.log('addNewSubStatement', newSubRelations)
-        this.retrieveSubRelations(newSubRelations['id']).then(result => {
-          if(result['data'].length){
-            newSubRelations = result['data'][0]
-          }
-          parentRelation['relations'].push(newSubRelations)
-          this.mapRelations()
-        }).catch(error => {
-          console.error(error)
-          newSubRelations['is_Loading_relations'] = false
-          this.mapRelations()
-        })
-        
-      }else{
-        console.log('newSubRelations', newSubRelations, parentRelation)
-        newSubRelations['is_Loading_relations'] = false
-        parentRelation['relations'].push(newSubRelations)
-        this.mapRelations()
-      }
-    },
-    prepareNewSubStatement(rawNewSubStatement){
-      let newSubStatement = null
-      if(typeof rawNewSubStatement['relation'] !== 'undefined'){ // from statement to relation
-        newSubStatement = rawNewSubStatement['relation']
-        delete rawNewSubStatement['relation']
-        newSubStatement['statement'] = rawNewSubStatement
-      }else{ // its already a relation
-        newSubStatement = rawNewSubStatement
-      }
-      newSubStatement['relations'] = []
-      newSubStatement['user_id'] = this.user['id']
-      newSubStatement['user'] = {
-        id: this.user['id'],
-        username: this.user['username'],
-        user_basic_information: {
-          user_id: this.user['id'],
-          first_name: this.user['first_name'],
-          last_name: this.user['last_name']
-        }
-      }
-      if(typeof newSubStatement['user_relation_context_locks'] === 'undefined'){
-        newSubStatement['user_relation_context_locks'] = []
-      }
-      return newSubStatement
-    },
-    retrieveSubRelations(relationId){
-      const param = {
-        relation_id: relationId * 1
-      }
-      return RelationAPI.post('/retrieve-tree', param)
     },
     updateNewSubStatement(newSubStatement, firstLevelIndex){
       let currentStatement = this.mainRelationData['relations'][firstLevelIndex]

@@ -13,6 +13,7 @@ const isRefreshing = ref(false)
 // const authReady = ref(false)
 class Auth {
   refreshIntervalInstance
+  storedAuth = null
   constructor(){
     this.refreshIntervalInstance = null
   }
@@ -22,12 +23,17 @@ class Auth {
   status(){
     return authenticationStatus
   }
+  isRefreshing(){
+    return isRefreshing.value
+  }
   generateHeader(){
-    const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-    if(storedAuth){
+    this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
+    // if(this.storedAuth === null && localStorage.getItem(localStorageKey)){
+    // }
+    if(this.storedAuth){
       return {
         headers: {
-          'Authorization':  'Bearer ' + storedAuth['accessToken']
+          'Authorization':  'Bearer ' + (this.storedAuth ? this.storedAuth['accessToken'] : null)
         }
       }
     }else{
@@ -41,7 +47,7 @@ class Auth {
       const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
       const header = {
         headers: {
-          'Authorization': storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
+          'Authorization': 'Bearer ' + storedAuth['accessToken']
         }
       }
       axios.post(userPath, {}, header).then(response => {
@@ -54,32 +60,34 @@ class Auth {
           first_name: userData['user_basic_information'] ? userData['user_basic_information']['first_name'] : null,
           last_name: userData['user_basic_information']['last_name'] ? userData['user_basic_information']['last_name'] : null
         }
-        this.startSession(storedAuth['ttl'])
+        this.storedAuth = storedAuth
+        this.startSession()
         authenticationStatus.value = 'authenticated'
       }).catch(error => {
         if(typeof error.response === 'undefined'){
-          console.log('Maybe there is internet connection problem')
+          console.error('Maybe there is internet connection problem')
           authenticationStatus.value = 'unauthenticated'
         }else if(error.response.status === 401){
           authenticationStatus.value = 'unauthenticated'
         }else{
-          console.log('an unknown error occured', error.response.status)
+          console.error('an unknown error occured', error.response.status)
         }
       })
     }else{
       authenticationStatus.value = 'unauthenticated'
     }
   }
-  startSession(ttl, immediate = true){
+  startSession(){
+    // ttl = ttl * 0.85
     isRefreshing.value = false
     clearInterval(this.refreshIntervalInstance)
-    if(immediate){
-      this.refreshToken()
-    }else{
-      setTimeout(() => {
-        this.refreshToken()
-      }, (ttl) * 1000)
-    }
+    // const timePassedSinceTokenCreated = new Date() - new Date(this.storedAuth['date']) // miliseconds
+    // let remainingTTL = timePassedSinceTokenCreated > ttl ? 0 : ttl - timePassedSinceTokenCreated
+    // console.log('startSession', remainingTTL, ttl, this.storedAuth['date'])
+    // setTimeout(() => {
+    //   this.refreshToken()
+    // }, remainingTTL)
+    this.refreshToken()
   }
   sessionExpired(){
     this.logout()
@@ -94,22 +102,39 @@ class Auth {
   }
   refreshToken(){
     if(localStorage.getItem(localStorageKey)){
-      const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-      const header = {
-        headers: {
-          'Authorization': storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
-        }
-      }
-      isRefreshing.value = true
-      axios.post(refreshPath, {}, header).then(() => {
-        isRefreshing.value = false
-        // console.log('refresh', response)
-        this.refreshIntervalInstance = setTimeout(() => {
+      this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
+      const ttl = this.storedAuth['ttl'] * 1
+      const timePassedSinceTokenCreated = new Date() - new Date(this.storedAuth['date']) // miliseconds
+      let remainingTTL = timePassedSinceTokenCreated > ttl ? 0 : ttl - timePassedSinceTokenCreated
+      console.log('startSession', remainingTTL, ttl, this.storedAuth['date'])
+      if(remainingTTL){
+        setTimeout(() => {
           this.refreshToken()
-        }, (storedAuth['ttl'] * 1) * 1000)
-      }).catch(() => {
-        isRefreshing.value = false
-      })
+        }, remainingTTL)
+      }else{
+        console.log('refreshing')
+        const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
+        const header = {
+          headers: {
+            'Authorization': 'Bearer ' + storedAuth['accessToken'] // storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
+          }
+        }
+        isRefreshing.value = true
+        axios.post(refreshPath, {}, header).then(result => {
+          storedAuth['accessToken'] = result['data']['token']
+          storedAuth['date'] = new Date()
+          localStorage.setItem(localStorageKey, JSON.stringify(storedAuth))
+          this.storedAuth = storedAuth
+          isRefreshing.value = false
+          this.refreshIntervalInstance = setTimeout(() => {
+            this.refreshToken()
+          }, storedAuth['ttl'] * 0.85)
+        }).catch(() => {
+          isRefreshing.value = false
+          authenticationStatus.value = 'unauthenticated'
+          user.value = null
+        })
+      }
     }else{
       authenticationStatus.value = 'unauthenticated'
       user.value = null
@@ -120,12 +145,14 @@ class Auth {
       const parameter = { email: email, password: password }
       axios.post(logInPath, parameter).then(response => {
         const { token_type: tokenType, access_token: accessToken, user: userData, expires_in: ttl } = response['data']
-        localStorage.setItem(localStorageKey, JSON.stringify({
+        this.storedAuth = {
           tokenType: tokenType,
           accessToken: accessToken,
           userId: userData['id'],
-          ttl: ttl, // time to live in seconds
-        }))
+          ttl: ttl * 60000,// ttl * 60000, // time to live in seconds. TTL from server is in minutes
+          date: new Date()
+        }
+        localStorage.setItem(localStorageKey, JSON.stringify(this.storedAuth))
         let userInformation = userData['user']
         user.value = {
           id: userData['id'],
@@ -135,7 +162,7 @@ class Auth {
           last_name: userInformation['last_name']
         }
         authenticationStatus.value = 'authenticated'
-        this.startSession(ttl, false)
+        this.startSession()
         resolve(userData)
       }).catch(error => {
         if(typeof error.response === 'undefined'){

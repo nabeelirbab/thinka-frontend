@@ -19,7 +19,7 @@
 import RelationAPI from '@/api/relation'
 export default {
   mounted(){
-    this.getTrending();
+    this.getTrending()
   },
   data(){
     return {
@@ -32,7 +32,6 @@ export default {
       this.trending = []
       this.isLoading = true
       RelationAPI.post('/my-list').then(result => {
-        console.log('result', result)
         if(result['data']){
           this.trending = result['data']
         }

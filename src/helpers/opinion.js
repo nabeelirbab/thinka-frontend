@@ -12,7 +12,7 @@ export default {
     }
     let message = '"' + typeDescriptions[type]
     if(type){
-      message += ` and I'm <em class="font-weight-bold">${(confidence).toFixed(0)}%</em> confident about it`
+      message += ` and I'm <em class="font-weight-bold">${(confidence * 100).toFixed(0)}%</em> confident about it`
     }
     return message
   }
