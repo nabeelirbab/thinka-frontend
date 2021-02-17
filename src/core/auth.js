@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import axios from 'axios'
 
 const localStorageKey = 'vue-jwt'
@@ -11,11 +11,33 @@ const authenticationStatus = ref('authenticating') // unauthenticated, authentic
 const user = ref(null) // contains user session data
 const isRefreshing = ref(false)
 // const authReady = ref(false)
+watch(isRefreshing, (value) => {
+  console.log('watcher refresh', value)
+  localStorage.setItem(localStorageKey + '-is-refreshing', value)
+})
 class Auth {
   refreshIntervalInstance
   storedAuth = null
+  refreshAttemptCount = 0 // attempt to rerefresh after a faild refresh
   constructor(){
     this.refreshIntervalInstance = null
+    window.addEventListener('storage', (e) => {
+      console.log('storage', e.key)
+      if(e.key === localStorageKey){ // session in localstorage has been changed
+        if(e.newValue){
+          this.storedAuth = JSON.parse(e.newValue)
+        }else{
+          this.storedAuth = {
+            accessToken: null,
+            ttl: null,
+            date: null,
+          }
+        }
+      }else if(e.key === localStorageKey + '-is-refreshing'){
+        console.log('listner refresh', e.newValue)
+        isRefreshing.value = e.newValue
+      }
+    })
   }
   user(){
     return user
@@ -27,9 +49,7 @@ class Auth {
     return isRefreshing.value
   }
   generateHeader(){
-    this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-    // if(this.storedAuth === null && localStorage.getItem(localStorageKey)){
-    // }
+    // this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
     if(this.storedAuth){
       return {
         headers: {
@@ -78,15 +98,8 @@ class Auth {
     }
   }
   startSession(){
-    // ttl = ttl * 0.85
     isRefreshing.value = false
     clearInterval(this.refreshIntervalInstance)
-    // const timePassedSinceTokenCreated = new Date() - new Date(this.storedAuth['date']) // miliseconds
-    // let remainingTTL = timePassedSinceTokenCreated > ttl ? 0 : ttl - timePassedSinceTokenCreated
-    // console.log('startSession', remainingTTL, ttl, this.storedAuth['date'])
-    // setTimeout(() => {
-    //   this.refreshToken()
-    // }, remainingTTL)
     this.refreshToken()
   }
   sessionExpired(){
@@ -102,25 +115,28 @@ class Auth {
   }
   refreshToken(){
     if(localStorage.getItem(localStorageKey)){
-      this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-      const ttl = this.storedAuth['ttl'] * 1
+      // this.storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
+      const ttl = this.storedAuth['ttl'] * 0.85
       const timePassedSinceTokenCreated = new Date() - new Date(this.storedAuth['date']) // miliseconds
       let remainingTTL = timePassedSinceTokenCreated > ttl ? 0 : ttl - timePassedSinceTokenCreated
-      console.log('startSession', remainingTTL, ttl, this.storedAuth['date'])
-      if(remainingTTL){
+      console.log('refreshToken', remainingTTL, ttl, this.storedAuth['date'])
+      if(remainingTTL || isRefreshing.value){
+        console.log('still have remaining time')
         setTimeout(() => {
           this.refreshToken()
-        }, remainingTTL)
+        }, remainingTTL ? remainingTTL : 2000)
       }else{
         console.log('refreshing')
-        const storedAuth = JSON.parse(localStorage.getItem(localStorageKey))
-        const header = {
+        const storedAuth = this.storedAuth
+        const currentToken = storedAuth['accessToken']
+        const  header = {
           headers: {
-            'Authorization': 'Bearer ' + storedAuth['accessToken'] // storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
+            'Authorization': 'Bearer ' + currentToken // storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
           }
         }
         isRefreshing.value = true
         axios.post(refreshPath, {}, header).then(result => {
+          console.log('refresh is successful')
           storedAuth['accessToken'] = result['data']['token']
           storedAuth['date'] = new Date()
           localStorage.setItem(localStorageKey, JSON.stringify(storedAuth))
@@ -130,15 +146,47 @@ class Auth {
             this.refreshToken()
           }, storedAuth['ttl'] * 0.85)
         }).catch(() => {
+          console.log('failed to refresh')
+          if(currentToken !== this.storedAuth['accessToken']){ // token has been changed
+            console.log('new token detected')
+            this.refreshIntervalInstance = setTimeout(() => {
+              this.refreshToken()
+            }, storedAuth['ttl'] * 0.85)
+          }else{
+            console.log('token invalid')
+            authenticationStatus.value = 'unauthenticated'
+            user.value = null
+          }
           isRefreshing.value = false
-          authenticationStatus.value = 'unauthenticated'
-          user.value = null
         })
       }
     }else{
       authenticationStatus.value = 'unauthenticated'
       user.value = null
     }
+  }
+  isTokenValid(){
+    console.log('is token valid?')
+    return new Promise((resolve, reject) => {
+      const sessionJSON = localStorage.getItem(localStorageKey)
+      if(sessionJSON && typeof this.storedAuth['accessToken'] !== 'undefined'){
+        this.storedAuth = JSON.parse(sessionJSON)
+        const header = {
+          headers: {
+            'Authorization': 'Bearer ' + this.storedAuth['accessToken'] // storedAuth['tokenType'] + ' ' + storedAuth['accessToken']
+          }
+        }
+        axios.post(userPath, {}, header).then(response => {
+          const userData = response['data']['data']
+          resolve(userData)
+        }).catch(() => {
+          reject(false)
+        })
+      }else{
+        reject(false)
+      }
+      
+    })
   }
   logIn(email, password){
     return new Promise((resolve, reject) => {
