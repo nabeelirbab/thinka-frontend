@@ -81,8 +81,12 @@ export default {
           logic_tree: {
             select: ['description', 'published_at', 'statement_id']
           },
-          ...(['logic_tree_id', 'statement_id', 'updated_at'])
+          ...(['logic_tree_id', 'statement_id', 'updated_at', 'user_id', 'virtual_relation_id',])
         },
+        condition: [{
+          column: 'virtual_relation_id',
+          value: null
+        }],
         sort: [{
           column: 'updated_at',
           order: 'desc'
@@ -90,19 +94,20 @@ export default {
       }
       if(filter){
         if(typeof filter['statementText'] !== 'undefined' && filter['statementText'] !== ''){
-          param['condition'] = [{
+          param['condition'].push({
             column: 'statement.text',
             clause: 'like',
             value: '%' + filter['statementText'] + '%'
-          }]
+          })
         } 
         if(typeof filter['mineOnly'] !== 'undefined' && filter['mineOnly'] !== false && this.user){
-          param['condition'] = [{
+          param['condition'].push({
             column: 'user_id',
             value: this.user['id']
-          }]
+          })
         }
       }
+      console.log('filter', filter)
       this.relations = []
       RelationAPI.retrieve(param).then(result => {
         if(filter){

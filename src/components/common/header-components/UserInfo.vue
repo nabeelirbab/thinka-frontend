@@ -7,7 +7,7 @@
       <template v-if="user">
         <div class="text-center py-2">{{user['email']}}</div>
         <div class="text-center" >
-          <router-link to="profile-setting" class="btn btn-outline-dark mb-1" type="button"><fa icon="user" /> Profile Setting</router-link>
+          <router-link to="profile-setting" class="btn btn-outline-dark mb-1 text-nowrap" type="button"><fa icon="user" /> Profile Setting</router-link>
           <button @click="logout" class="btn btn-outline-danger" type="button">Log Out</button>
         </div>
       </template>

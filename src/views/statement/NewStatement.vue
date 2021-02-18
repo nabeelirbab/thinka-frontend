@@ -4,7 +4,7 @@
     <div class="bg-primary text-white px-2 pb-3 pt-3 statement-radius">
       <!-- <input v-model="statement.logic_tree.name" placeholder="Logic Tree Name" class="form-control mb-2" /> -->
       <div class="mb-2">
-        <select v-model="statement.statement_type_id" class="form-control">
+        <select v-model="statement.statement_type_id" :disabled="isInitializing" class="form-control">
           <option value="0">Please select</option>
           <template v-for="(statementType, index) in statementTypes" :key="'statementId' + index">
             <option :value="statementType['id']">{{statementType['description']}} </option>
@@ -143,14 +143,17 @@ export default {
       )
     },
     initialize(){
+      this.isInitializing = true
       const param = {
         select: ['description', 'explaination']
       }
       StatementTypeAPI.retrieve(param).then(result => {
         this.statementTypes = result['data']
+        this.isInitializing = false
       })
       this.scopes = ScopeAPI.cachedData.value ? ScopeAPI.cachedData.value['data'] : []
       this.contexts = ContextAPI.cachedData.value ? ContextAPI.cachedData.value['data'] : []
+
     },
     isTextTyping(e){
       if(e.keyCode !== 13){

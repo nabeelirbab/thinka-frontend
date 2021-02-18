@@ -379,11 +379,11 @@ export default {
     relationImpactAmount(){
       let impactAmount = ''
       if(this.relationData){
-        if(this.relationData['virtual_relation_id']){
-          impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
-        }else if(this.relationData['impact_amount'] !== null){
+        // if(this.relationData['virtual_relation_id']){
+        //   impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
+        // }else if(this.relationData['impact_amount'] !== null){
           impactAmount = this.relationData['impact_amount']
-        }
+        // }
       }
       return impactAmount !== '' ? (impactAmount * 100).toFixed(0) : ''
     },

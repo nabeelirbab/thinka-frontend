@@ -106,6 +106,8 @@ class Auth {
     this.logout()
   }
   logout(){
+    localStorage.removeItem('search_page_filter')
+    localStorage.removeItem('search_page_result_cache')
     return new Promise((resolve) => {
       user.value = null
       localStorage.removeItem(localStorageKey)
@@ -189,6 +191,8 @@ class Auth {
     })
   }
   logIn(email, password){
+    localStorage.removeItem('search_page_filter')
+    localStorage.removeItem('search_page_result_cache')
     return new Promise((resolve, reject) => {
       const parameter = { email: email, password: password }
       axios.post(logInPath, parameter).then(response => {

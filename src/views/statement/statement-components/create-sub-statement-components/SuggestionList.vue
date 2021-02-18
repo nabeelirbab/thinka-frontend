@@ -8,7 +8,7 @@
         style="min-width: 0"
       >
         <div class="d-flex">
-          <div class="p-1">
+          <div class="p-1 text-nowrap">
             <!-- Select Suggestion -->
             <template v-if="noSelectedSuggestionItem || selectedSuggestionId">
               <span 

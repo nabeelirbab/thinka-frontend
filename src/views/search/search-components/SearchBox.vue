@@ -1,6 +1,6 @@
 <template>
   <div class="mb-3">
-    <div>
+    <div v-if="user">
       <div @click="searchForm.mineOnly = !searchForm.mineOnly" class="form-check c-pointer">
         <input  v-model="searchForm.mineOnly" type="checkbox" class="form-check-input" >
         <label class="form-check-label" >Show My Statements Only</label>
@@ -16,6 +16,7 @@
   </div>
 </template>
 <script>
+import Auth from '@/core/auth'
 export default {
   emits: ['search'],
   props: {
@@ -40,8 +41,9 @@ export default {
     return {
       searchForm: {
         statementText: '',
-        mineOnly: false
-      }
+        mineOnly: false,
+      },
+      user: Auth.user()
     }
   },
   methods: {
@@ -50,6 +52,7 @@ export default {
     },
     clearSearch(){
       this.searchForm['statementText'] = ''
+      this.searchForm['mineOnly'] = false
       this.search()
     }
   },
