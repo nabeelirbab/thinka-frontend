@@ -35,6 +35,12 @@
           <fa v-else icon="sun" />
         </button>
       </div>
+      <div class="pl-2 text-white">
+        <div class="text-primary text-center text-sm" style="position:absolute; width:21px; font-size:8px; padding-top:8px" >{{Object.keys(userFollowing).length}}</div>
+        <span class="text-lg">
+          <fa icon="star" />
+        </span>
+      </div>
     </div>
   </div>
   <LogInModal ref="logInModal" />
@@ -205,7 +211,20 @@ export default {
         this.isBookmarkLoading = false
       }else {
         this.isBookmarkLoading = true
-        UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelation['id']).then(result => {
+        UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelationData['id']).then(result => {
+          console.log('rootBookmarkId', this.rootBookmarkId, this.mainRelationData['all_user_relation_bookmarks'])
+          if(result === null && this.rootBookmarkId){ // unbookmark
+            const userRelationBookmarkIndex = this.findArrayIndex(this.rootBookmarkId, this.mainRelationData['all_user_relation_bookmarks'], 'id')
+            if(userRelationBookmarkIndex >= 0){
+              this.mainRelationData['all_user_relation_bookmarks'].splice(userRelationBookmarkIndex, 1)
+            }
+          }else if(result){
+            this.mainRelationData['all_user_relation_bookmarks'].push({
+              id: result,
+              user: this.user
+            })
+          }
+          this.countUserFollowing()
           this.rootBookmarkId = result
         }).finally(() => {
           this.isBookmarkLoading = false

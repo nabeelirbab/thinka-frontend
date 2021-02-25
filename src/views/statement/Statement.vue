@@ -43,6 +43,7 @@
               :parent-relation-id="mainRelationData['id']"
               :parent-relation="mainRelationData"
               :statement-id="statementId"
+              
             />
             <div v-else class="text-center pt-1 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>

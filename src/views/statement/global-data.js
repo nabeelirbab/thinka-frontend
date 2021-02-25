@@ -8,6 +8,7 @@ const mainRelationData = ref(null)
 const mainRelationId = ref(0)
 const deletedRelationId = ref(null)
 const selectedStatementData = ref(null) // this is actually selectedRelationData
+const userFollowing = ref({})
 
 const showImpact = ref(false)
 const showOpinion = ref(false)
@@ -45,22 +46,33 @@ const contextPassed = (userRelationContextLocks) => {
     return hasPassed
   }
 }
-const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0) => {
+const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0, ) => {
   if(relation === null){
     relation = mainRelationData.value
   }
-  if(parentIndexIds.length === 0){
+  if(parentIndexIds.length === 0){ // head of statement
     authors.value = {}
     subRelationIds.value = []
     subRelationMap.value = {}
+    for(let key in relation['parent_relation_user_following']){
+      const userId = relation['parent_relation_user_following'][key]['id']
+      userFollowing.value[userId] = relation['parent_relation_user_following'][key]
+    }
+    console.log(relation)
   }
+  userFollowing.value[relation['user_id']] = relation['user']
+  for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
+    const userId = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]['user_id']
+    userFollowing.value[userId] = (typeof userFollowing.value[userId] !== 'undefined') ? userFollowing.value[userId] : {}
+  }
+
   subRelationIds.value.push({id: relation['id']})
   let toDeleteIndices = [] // for both circular and out of context relations
   let subRelations = relation['relations']
   relation['is_author_filter_passed'] = true
   relation['is_virtual_relation'] = isVirtualRelation // if true, the value will be the root virtual relation id
   if(relation && relation['virtual_relation_id']){
-    if(!isVirtualRelation){
+    if(!isVirtualRelation){ 
       relation['is_virtual_relation'] = relation['virtual_relation_id']
     }
     if(relation['virtual_relation']){
@@ -68,7 +80,7 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
     }
     // if(relation['virtual_relation']){
     //   relation['statement'] = relation['virtual_relation']['statement']
-    //   relation['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
+    //   relaton['relations'] = typeof relation['virtual_relation']['relations'] !== 'undefined' ? relation['virtual_relation']['relations'] : []
     // }
   }
   subRelationParents.value[relation['id']] = parentIds
@@ -84,7 +96,12 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
         subRelation['relations'] = []
       }
       subRelation['is_virtual_relation'] = relation['is_virtual_relation']
-      mapRelations(subRelation, subRelationMap.value[subRelation['id']], subRelationParentIds, relation['is_virtual_relation'])
+      mapRelations(
+        subRelation, // relation
+        subRelationMap.value[subRelation['id']], // parentIndexIds
+        subRelationParentIds, // parentIds
+        relation['is_virtual_relation'] // isVirtualRelation
+      )
     }else{
       toDeleteIndices.unshift(index)
     }
@@ -92,6 +109,29 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   toDeleteIndices.forEach(index => {
     subRelations.splice(index, 1)
   })
+  if(parentIndexIds.length === 0){
+    console.log('done')
+  }
+}
+const countUserFollowing = (relation = null) => {
+  if(relation === null){
+    userFollowing.value = {}
+    relation = mainRelationData.value
+    for(let key in relation['parent_relation_user_following']){
+      const userId = relation['parent_relation_user_following'][key]['id']
+      userFollowing.value[userId] = relation['parent_relation_user_following'][key]
+    }
+  }
+  userFollowing.value[relation['user_id']] = relation['user']
+  for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
+    const userId = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]['user_id']
+    userFollowing.value[userId] = (typeof userFollowing.value[userId] !== 'undefined') ? userFollowing.value[userId] : {}
+  }
+  if(typeof relation['relations'] === 'object'){
+    relation['relations'].forEach((subRelation) => {
+      countUserFollowing(subRelation)
+    })
+  }
 }
 const hideToolbarDialog = () => {
   showImpact.value = false
@@ -107,6 +147,7 @@ watch(mainRelationData, (newMainRelationData) => {
     authors.value = []
     subRelationIds.value = []
     subRelationMap.value = {}
+    userFollowing.value = {}
   }
 })
 let filterByAuthor = (relationToFilter, authorFilters) => {
@@ -256,8 +297,10 @@ export default {
   parentRelationIdsWithPassedFilterChildren: parentRelationIdsWithPassedFilterChildren,
   isMainRelationSelected: isMainRelationSelected,
   hasFilterApplied: hasFilterApplied,
+  userFollowing: userFollowing,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,
-  addNewSubStatement: addNewSubStatement
+  addNewSubStatement: addNewSubStatement,
+  countUserFollowing: countUserFollowing
 }

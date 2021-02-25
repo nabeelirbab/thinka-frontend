@@ -46,7 +46,6 @@ class UserRelationBookmark extends API {
     }
     return new Promise((resolve, reject) => {
       this.delete(param).then(result => {
-        console.log('delete bookmark', result)
         resolve(result['data'] && result['data']['id'] ? null : bookmarkId)
       }).catch(error => {
         reject(error)

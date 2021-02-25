@@ -16,24 +16,25 @@ export default {
   methods: {
     attempZoomVirtualRelation(){
       console.log('attempting')
-      this.$refs.prompt._open('Are you sure you want to open the linked relation?', [{
-        label: 'Open',
-        class: 'btn btn-info',
-        callback: () => {
-          console.log('this.baseURL', this.baseURL)
-          this.$route.push('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30)))
-        }
-      }, {
-        label: 'Open in new window',
-        class: 'btn btn-outline-info',
-        callback: () => {
-          console.log('this.baseURL', this.baseURL)
-          window.open(this.baseURL('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30))))
-        }
-      }, {
-        class: 'btn btn-outline-secondary',
-        label: 'No'
-      }])
+      this.$router.push('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30)))
+      // this.$refs.prompt._open('Are you sure you want to open the linked relation?', [{
+      //   label: 'Open',
+      //   class: 'btn btn-info',
+      //   callback: () => {
+      //     console.log('this.baseURL', this.baseURL)
+      //     this.$route.push('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30)))
+      //   }
+      // }, {
+      //   label: 'Open in new window',
+      //   class: 'btn btn-outline-info',
+      //   callback: () => {
+      //     console.log('this.baseURL', this.baseURL)
+      //     window.open(this.baseURL('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30))))
+      //   }
+      // }, {
+      //   class: 'btn btn-outline-secondary',
+      //   label: 'No'
+      // }])
     }
   },
   computed: {

@@ -28,7 +28,10 @@
               </div>
               <template v-for="author in authors">
                 <div v-if="typeof author !== 'undefined'" @click="addAuthorFilter(author['id'])" class="c-pointer text-break d-flex align-items-center" style="min-width:0">
-                  <input :checked="typeof authorFilter[author['id']] === 'undefined' ? false : authorFilter[author['id']]" type="checkbox"  class="mr-1 ">
+                  <input 
+                    :checked="typeof authorFilter[author['id']] === 'undefined' ? false : authorFilter[author['id']]" 
+                    type="checkbox"  class="mr-1 "
+                  />
                   <label class="mb-2 flex-fill text-break c-pointer">{{author['username']}}</label>
                 </div>
               </template>

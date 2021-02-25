@@ -61,7 +61,7 @@ import CircleLabel from '@/components/CircleLabel'
 import RelationTypeAPI from '@/api/relation-type'
 import TextDisplayer from '@/components/TextDisplayer'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
-// import NoProfile from '@/components/NoProfile'
+// import NoProfile from '@/components/NoProfile' 
 export default {
   components: {
     CTPoints,

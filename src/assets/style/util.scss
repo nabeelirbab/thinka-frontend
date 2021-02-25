@@ -49,6 +49,9 @@ li.borderless { border-top: 0 none; }
 .text-sm {
   font-size: 80%
 }
+.text-lg {
+  font-size: larger
+}
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {
     width: 100%
