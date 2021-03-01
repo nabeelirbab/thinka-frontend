@@ -377,13 +377,17 @@ export default {
       }
     },
     relationImpactAmount(){
-      let impactAmount = ''
-      if(this.relationData){
+      let impactAmount = 0
+      if(this.relationData && typeof this.relationData['user_opinions'] === 'object'){
+        for(let x = 0; x < this.relationData['user_opinions'].length; x++){
+          impactAmount = this.relationData['user_opinions'][x]['impact_amount']
+        }
         // if(this.relationData['virtual_relation_id']){
-        //   impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
+          //   impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
         // }else if(this.relationData['impact_amount'] !== null){
-          impactAmount = this.relationData['impact_amount']
+          // impactAmount = this.relationData['impact_amount']
         // }
+        console.log('user_opinions', impactAmount, this.relationData['user_opinions'])
       }
       return impactAmount !== '' ? (impactAmount * 100).toFixed(0) : ''
     },

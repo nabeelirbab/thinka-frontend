@@ -33,7 +33,7 @@ import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
 import Auth from '@/core/auth'
 import GlobalData from '@/views/statement/global-data'
-import RelationAPI from '@/api/relation'
+import OpinionAPI from '@/api/opinion'
 export default {
   components: {
     VueSlider
@@ -42,7 +42,6 @@ export default {
     return {
       impact: 0,
       isLoading: false,
-      isPublic: false,
       ...GlobalData,
       user: Auth.user()
     }
@@ -50,28 +49,53 @@ export default {
   methods: {
     save(){
       this.isLoading = true
+      let selectedStatementData = this.selectedStatementData
       const param = {
-        id: this.selectedStatementData['id'],
+        relation_id: selectedStatementData['id'],
         impact_amount: this.impact / 100 // convert to decimal
       }
-      RelationAPI.update(param).then(result => {
-        if(result['data'] && this.selectedStatementId * 1 === result['data']['id']  * 1){
-          this.selectedStatementData['impact_amount'] = this.impact / 100
+      OpinionAPI.post('/change-impact', param).then(result => {
+        if(result['data']){
+          selectedStatementData['user_opinions'] = selectedStatementData['user_opinions'].filter(userOpinion => {
+            if(userOpinion['user_id'] !== this.user.id){
+              return true
+            }else{
+              return null
+            }
+          })
+          selectedStatementData['user_opinions'].push(result['data'])
         }
       }).finally(() => {
         this.isLoading = false
       })
-    }
+    },
+    // save(){
+    //   this.isLoading = true
+    //   const param = {
+    //     id: this.selectedStatementData['id'],
+    //     impact_amount: this.impact / 100 // convert to decimal
+    //   }
+    //   RelationAPI.update(param).then(result => {
+    //     if(result['data'] && this.selectedStatementId * 1 === result['data']['id']  * 1){
+    //       this.selectedStatementData['impact_amount'] = this.impact / 100
+    //     }
+    //   }).finally(() => {
+    //     this.isLoading = false
+    //   })
+    // },
   },
   watch: {
     selectedStatementData: {
       handler(){
         if(this.selectedStatementData){
-          this.impact = this.selectedStatementData['impact_amount'] * 100
-          this.isPublic = this.selectedStatementData['published_at']
+          let impactAmount = 0 
+          for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
+            if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id)
+            impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+          }
+          this.impact = impactAmount * 100
         }else{
           this.impact = null
-          this.isPublic = false
         }
       },
       immediate: true
