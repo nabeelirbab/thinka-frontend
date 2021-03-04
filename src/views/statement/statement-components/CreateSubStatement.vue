@@ -7,7 +7,6 @@
           <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
         </template>
       </select>
-
       <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 mx-1">
         Cancel
       </button>
@@ -30,8 +29,8 @@
         @join="suggestionJoined"
         @link="suggestionLinked"
         :logic-tree-id="logicTreeId"
-        :no-join="this.mode !== 'create'"
-        :no-link="this.mode !== 'create'"
+        :no-join="mode !== 'create'"
+        :no-link="mode !== 'create'"
       />
     </div>
     <select 

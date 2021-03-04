@@ -24,7 +24,7 @@
         if(typeof this.color !== 'undefined'){
           return (typeof predefinedColor[this.color] !== 'undefined') ? predefinedColor[this.color] : this.color
         }else{
-          return '#343a40' // default text color
+          return '#666000' // default text color
         }
       }
     }

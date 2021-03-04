@@ -1,10 +1,11 @@
 import RelationTypeAPI from './relation-type'
 import ScopeAPI from './scope'
 import ContextAPI from './context'
+import StatementTypeAPI from './statement-type'
 export default {
   prepare: () => {
     return new Promise(resolve => {
-      let countdown = 3
+      let countdown = 4
       const relationTypeParam = {
         select: ['description', 'symbol', 'relevance', 'relevance_window', 'default_impact'],
         sort: [{
@@ -18,7 +19,6 @@ export default {
           resolve(true)
         }
       })
-
       const scopeParam = {
         select: ['description', 'degree', 'comment'],
         sort: [{
@@ -40,6 +40,19 @@ export default {
         }]
       }
       ContextAPI.retrieve(contextParam, true).then(() => {
+        --countdown
+        if(countdown === 0){
+          resolve(true)
+        }
+      })
+      const statementTypeParam = {
+        select: ['description', 'explanation'],
+        sort: [{
+          column: 'id',
+          order: 'asc'
+        }]
+      }
+      StatementTypeAPI.retrieve(statementTypeParam, true).then(() => {
         --countdown
         if(countdown === 0){
           resolve(true)

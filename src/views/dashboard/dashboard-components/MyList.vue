@@ -4,12 +4,15 @@
     <div class="p-0" style="overflow-y:auto; height: 50vh">
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
       <div >
-        <div v-for="(trend, index) in trending" :key="'trendinag' + index" class="d-flex mb-2 border-bottom">
-          <div class="flex-fill text-break">
+        <div v-for="(trend) in trending" class="border-bottom p-2 px-3">
+          <RelationRow
+            :relation="trend"
+          />
+          <!-- <div class="flex-fill text-break">
             <small>{{timeSince(trend['updated_at'])}}</small>{{"   "}}
             <span  style="color: gray"><fa v-if="trend['published_at']" icon="sun" /><fa v-else icon="briefcase" /></span><br />
             <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase(trend['text']).slice(0,30)">{{trend['text']}}</router-link>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -17,7 +20,11 @@
 </template>
 <script>
 import RelationAPI from '@/api/relation'
+import RelationRow from './RelationRow'
 export default {
+  components: {
+    RelationRow
+  },
   mounted(){
     this.getTrending()
   },

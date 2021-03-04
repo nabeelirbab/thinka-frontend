@@ -1,56 +1,57 @@
 <template class="overflow-hidden">
-  <div class="container py-2 bg-white height-max">
-    <div id="welcomebox" class="container p-1" v-if="welcomeVisible">
-      <div class="d-flex border p-2 border rounded-lg">
-      <p>Good day! In your dashboard, you will see information and functionality to help guide you in using <strong class="text-uppercase">Thinka.io</strong>.<router-link to="/learning"> Click here to visit the learning centre. <fa icon="school" /></router-link><br></p>
-      <div><fa v-on:click="welcomeVisible = false" icon="window-close" /></div>
+  <div>
+    <div class="image-background p-4 mb-4">
+      <div class="container p-4">
+        <SearchTree />
+        <router-link to="/new-statement" class="btn btn-lg btn-primary d-flex align-items-center btn-shadow mb-3">
+          <div class="text-right flex-fill">
+            <fa icon="project-diagram" />
+          </div>
+          <small class="ml-2 flex-fill text-left">Create New Tree</small>
+        </router-link>
+        <router-link to="/new-statement" class="btn btn-lg btn-primary d-flex align-items-center btn-shadow">
+          <div class="text-right flex-fill">
+            <fa icon="book-reader" />
+          </div>
+          <small class="ml-2 flex-fill text-left">Visit Learning Center</small>
+        </router-link>
       </div>
     </div>
-
-    <div class="d-flex justify-content-center p-1">
-      <router-link to="/new-statement" class="btn btn-lg btn-primary d-flex align-items-center"><fa icon="project-diagram" /><small class="ml-2">Create New Tree</small></router-link>
-      <router-link to="/search" class="btn btn-lg btn-outline-primary d-flex align-items-center"><fa icon="search" /><small class="ml-2">Search Trees</small></router-link>
-    </div>
-
-    <div class="accordion pt-1" id="accordianList">
-      <div class="card">
-        <div class="card-header m-0 p-2" id="headingThree">
-          <h2 class="m-0 p-0">
-            <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-              <fa icon="chart-line" /> Trending <fa  class="float-right" icon="angle-down" />
-            </button>
-          </h2>
+    <div class="container py-2 mb-4">
+      <!-- <div  class="container p-1" v-if="welcomeVisible">
+        <div class="d-flex border p-2 border rounded-lg">
+          <p>Good day! In your dashboard, you will see information and functionality to help guide you in using <strong class="text-uppercase">Thinka.io</strong>.<router-link to="/learning"> Click here to visit the learning centre. <fa icon="school" /></router-link><br></p>
+          <div><fa v-on:click="welcomeVisible = false" icon="window-close" /></div>
         </div>
-        <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordianList">
-          <div class="card-body m-2 p-0">
-            <Trending />
+      </div> -->
+      <div class="accordion shadow rounded" id="accordianList">
+        <div class="card  rounded-t">
+          <AccordionHeader
+            data-target="#collapseThree"
+            icon="chart-line"
+            text="Trending"
+          />
+          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordianList">
+            <Trending class="card-body p-0" />
           </div>
         </div>
-      </div>
-      <div v-if="user" class="card">
-        <div class="card-header m-0 p-2" id="headingOne">
-          <h2 class="m-0 p-0">
-            <button class="btn btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-              <fa icon="list" /> My Trees <fa class="float-right" icon="angle-down" />
-            </button>
-          </h2>
-        </div>
-
-        <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordianList">
-          <div class="card-body m-2 p-0">
-            <MyList v-if="user" class="mb-2" />
+        <div v-if="user" class="card">
+          <AccordionHeader
+            data-target="#collapseOne"
+            icon="list"
+            text="My Trees"
+          />
+          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordianList">
+            <MyList v-if="user" class="card-body p-0" />
           </div>
         </div>
-      </div>
-      <div v-if="user" class="card">
-        <div class="card-header m-0 p-2" id="headingTwo">
-          <h2 class="m-0 p-0">
-            <button class="btn btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-              <fa icon="cloud" /> My Thinka Tanks <fa  class="float-right" icon="angle-down" />
-            </button>
-          </h2>
-        </div>
-        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordianList">
+        <div v-if="user" class="card rounded-b">
+          <AccordionHeader
+            data-target="#collapseTwo"
+            icon="cloud"
+            text="My Thinka Tanks"
+          />
+          <div id="collapseTwo" class="collapse rounded-b" aria-labelledby="headingTwo" data-parent="#accordianList">
             <div class="card-body m-2 p-0">
               <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
               <table class="table ">
@@ -66,21 +67,24 @@
                 </tbody>
               </table>
             </div>
+          </div>
         </div>
       </div>
-</div>
-
-
+    </div>
   </div>
 </template>
 <script>
 import Auth from '@/core/auth'
 import Trending from './dashboard-components/Trending'
 import MyList from './dashboard-components/MyList'
+import AccordionHeader from './dashboard-components/AccordionHeader'
+import SearchTree from './dashboard-components/SearchTree'
 export default {
   components: {
     Trending,
-    MyList
+    MyList,
+    AccordionHeader,
+    SearchTree
   },
   data(){
     return {

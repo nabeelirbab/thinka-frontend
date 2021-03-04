@@ -94,18 +94,15 @@ export default {
 </script>
 
 <style scoped>
+body {
+  background: #EDEEF0;
+}
 .top-padding {
-  padding-top:46px
+  padding-top:85px
 }
 .has-menu-top-padding {
-  padding-top: 84px;
+  padding-top: 90px;
 }
-@media (min-width: 768px) {
-  .top-padding {
-    padding-top:46px
-  }
-  .has-menu-top-padding {
-    padding-top: 46px;
-  }
+@media (min-width: 768px) { /* For non smartphone */
 }
 </style>

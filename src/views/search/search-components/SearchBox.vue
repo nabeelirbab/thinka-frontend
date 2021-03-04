@@ -23,18 +23,7 @@ export default {
     isLoading: Boolean
   },
   mounted(){
-    let previousSearchFilter
-    try {
-      previousSearchFilter = JSON.parse(localStorage.getItem('search_page_filter'));
-    } catch (exception) {
-      previousSearchFilter = null;
-    }
-    if(previousSearchFilter){
-      this.searchForm = previousSearchFilter
-      this.$refs.searchInput.focus()
-    }else{
-      this.search()
-    }
+    
 
   },
   data(){
@@ -47,7 +36,24 @@ export default {
     }
   },
   methods: {
+    initialize(){
+      let previousSearchFilter
+      try {
+        previousSearchFilter = JSON.parse(localStorage.getItem('search_page_filter'));
+      } catch (exception) {
+        previousSearchFilter = null;
+      }
+      if(previousSearchFilter){
+        this.searchForm = previousSearchFilter
+        if(typeof this.$refs.searchInput !== 'undefined' && this.$refs.searchInput){
+          this.$refs.searchInput.focus()
+        }
+      }else{
+        this.search()
+      }
+    },
     search(){
+      console.log('searching')
       this.$emit('search', this.searchForm)
     },
     clearSearch(){
@@ -61,6 +67,27 @@ export default {
       if(!isLoading){
         this.$refs.searchInput.focus()
       }
+    },
+    routeParamKeyword: {
+      handler(routeParamKeyword){
+        console.log('routeParamKeyword', routeParamKeyword)
+        if(routeParamKeyword){
+          setTimeout(() => {
+            this.searchForm['statementText'] = routeParamKeyword
+            this.search()
+          }, 250)
+        }else{
+          setTimeout(() => {
+            this.initialize()
+          }, 300)
+        }
+      },
+      immediate: true
+    }
+  },
+  computed: {
+    routeParamKeyword(){
+      return typeof this.$route.params.keyword !== 'undefined' ? (this.$route.params.keyword).replace(/-/g, ' ') : null
     }
   }
 }

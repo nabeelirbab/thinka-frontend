@@ -3,21 +3,21 @@
 @font-face {
   font-family: 'Theme Font';
   src: url('../OpenSans-Regular.ttf')
+  // src: url('../Alice-Regular.ttf')
 };
-
 
 $font-family-sans-serif: 'Theme Font'!default;
 $font-family-serif:      'Theme Font' !default;
 $font-family-monospace:  'Theme Font' !default;
 $font-family-base:       $font-family-sans-serif !default;
 // $font-family-monospace:       $font-family-sans-serif;
-// $primary: #550055;
-// $success: #00AF54;
-// $warning: #f2a11d;
-$text-color: #343a40;
+$primary: #358d92 ;
+$success: #41c08e;
+$warning: #f2a11d;
+$text-color: #666666;
 $info: #02bcd4;
 $secondary: #66676c;
-$body-bg: white;
+$body-bg: #EDEEF0; // white;
 $enable-shadows: true;
 @import "~bootstrap/scss/mixins/box-shadow";
 // @import "~bootstrap/scss/bootstrap";
@@ -28,6 +28,7 @@ $enable-shadows: true;
 #app {
   font-family: 'Theme Font'; // -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
   font-size: 16px;
+  color: $text-color!important;
 }
 // /*Remove Input Number Arrows*/
 // /* Chrome, Safari, Edge, Opera */

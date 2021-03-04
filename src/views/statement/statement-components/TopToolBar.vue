@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-info">
+  <div class="image-background">
     <div class="d-flex container px-2 align-items-center">
       <div class="flex-fill">
         <button v-if="!showSearchText && searchText === ''" @click="showSearchText = true" class="btn btn-square border-none shadow-none text-white py-1 icon-size" title="Search this tree."><fa icon="search" /></button>

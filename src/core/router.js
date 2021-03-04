@@ -25,7 +25,7 @@ const routes = [
     name: "Branch",
     component: Branch,
     meta: {
-      hideBranding: true
+      // hideBranding: true
     }
   },
   {
@@ -44,6 +44,11 @@ const routes = [
     component: Search,
   },
   {
+    path: "/search/:keyword",
+    name: "SearchWithKeyword",
+    component: Search,
+  },
+  {
     path: "/folder/:logicTreeId/:relationId",
     name: "Statement",
     component: Statement,
@@ -54,7 +59,7 @@ const routes = [
     name: "Statement",
     component: Statement,
     meta: {
-      hideBranding: true
+      // hideBranding: true
     }
   },
   {
@@ -62,7 +67,7 @@ const routes = [
     name: "Statement",
     component: Statement,
     meta: {
-      hideBranding: true
+      // hideBranding: true
     }
   },
   {
@@ -70,7 +75,7 @@ const routes = [
     name: "StatementWithTitle",
     component: Statement,
     meta: {
-      hideBranding: true
+      // hideBranding: true
     }
   },
   {
@@ -78,7 +83,7 @@ const routes = [
     name: "StatementWithTitleWithContext",
     component: Statement,
     meta: {
-      hideBranding: true
+      // hideBranding: true
     }
   },
   {

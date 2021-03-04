@@ -1,8 +1,12 @@
+@import "./custom-theme.scss";
+
 @font-face {
   font-family: 'Theme Font 2';
   src: url('../OpenSans-Bold.ttf')
 };
-
+input {
+  color: $text-color!important;
+}
 .font-style-2 {
   font-family: 'Theme Font 2'!important;
 }
@@ -31,7 +35,9 @@
   border-radius: 0px!important;
   text-align: center
 }
-
+.btn-shadow {
+  box-shadow: 0px 0px 10px #00000059;
+}
 .btn-circle { // used for icons
   text-align: center;
   border-radius: 50%;
@@ -39,14 +45,51 @@
   width:39px;
   padding: 0px
 }
-
-body {
-  background-color: whitesmoke;
-}
 .height-max{
   min-height: calc(100vh - 46px)
 }
-
+.header-image-background {
+  background-image:url("../images/header-background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #358d92;
+  // background-position: 0px -213px
+  background-position: 0px 0px
+}
+.image-background {
+  background-image:url("../images/header-background.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #358d92;
+  // background-position: 0px -260px
+  background-position: 0px -47px
+}
+.text-dark {
+  color: $text-color!important
+}
+.text-light {
+  color: #999999!important
+}
+.bg-light {
+  background-color: #EEEEEE
+}
+.btn-primary {
+  background-color: #41C08E!important
+}
+.rounded {
+  border-radius: 0.4rem !important
+}
+.rounded-t {
+  border-top-left-radius: 0.4rem!important;
+  border-top-right-radius: 0.4rem!important;
+}
+.rounded-b {
+  border-bottom-left-radius: 0.4rem!important;
+  border-bottom-right-radius: 0.4rem!important;
+}
+.bg-pastel-pink {
+  background-color: #f0d8ea
+}
 @media (min-width: 768px) {
   .container {
     max-width: 900px!important;
