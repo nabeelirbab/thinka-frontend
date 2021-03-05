@@ -1,23 +1,37 @@
 <template>
-  <div class="mb-3">
-    <div v-if="user">
-      <div @click="searchForm.mineOnly = !searchForm.mineOnly" class="form-check c-pointer">
-        <input  v-model="searchForm.mineOnly" type="checkbox" class="form-check-input" >
-        <label class="form-check-label" >Show My Statements Only</label>
+  <div class="">
+    
+    <div class="input-group btn-shadow rounded-oval mb-2">
+      <input
+        ref="searchInput"
+        v-model="searchForm.statementText"
+        @keydown.esc="_clearSearch" 
+        @keypress.enter="search" 
+        type="text" class="form-control rounded-l-oval" placeholder="Type statement keywords..."
+      >
+      <div class="input-group-append">
+        <!-- <button @click="clearSearch" class="border"><fa icon="trash" /></button> -->
+        <button @click="search" :disabled="isLoading" class="btn btn-primary rounded-r-oval" type="button" id="button-addon2"><fa icon="search" /> Search</button>
       </div>
     </div>
-    <div class="input-group ">
-      <input ref="searchInput" @keydown.esc="clearSearch" @keypress.enter="search" v-model="searchForm.statementText" type="text" class="form-control" placeholder="Type statement keywords...">
-      <div class="input-group-append">
-        <button @click="clearSearch" class="border"><fa icon="trash" /></button>
-        <button @click="search" :disabled="isLoading" class="btn btn-outline-secondary" type="button" id="button-addon2"><fa icon="search" /> Search</button>
+    <div v-if="user" class="text-center text-white ">
+      <div  class="form-check d-flex align-items-center justify-content-center">
+        <CustomCheckbox
+          v-model="searchForm.mineOnly"
+          class="mr-2 text-xl"
+        />
+        <label @click="searchForm.mineOnly = !searchForm.mineOnly" class="form-check-label c-pointer" >Show My Statements Only</label>
       </div>
     </div>
   </div>
 </template>
 <script>
 import Auth from '@/core/auth'
+import CustomCheckbox from '@/components/CustomCheckbox'
 export default {
+  components: {
+    CustomCheckbox
+  },
   emits: ['search'],
   props: {
     isLoading: Boolean
@@ -53,10 +67,9 @@ export default {
       }
     },
     search(){
-      console.log('searching')
       this.$emit('search', this.searchForm)
     },
-    clearSearch(){
+    _clearSearch(){
       this.searchForm['statementText'] = ''
       this.searchForm['mineOnly'] = false
       this.search()

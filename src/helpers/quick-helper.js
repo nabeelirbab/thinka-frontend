@@ -3,6 +3,8 @@ const formatDate = (date, format = null) => {
   const dateToFormat = new Date(date)
   if(date && dateToFormat.getFullYear() !== 1970){
     switch(format){
+      case 'm d, Y':
+        return (months[dateToFormat.getMonth()]).slice(0, 3) + ' ' + dateToFormat.getDate() + ', ' + dateToFormat.getFullYear()
       case 'M d at H:m':
         return months[dateToFormat.getMonth()] + ' ' + dateToFormat.getDate() + ', ' + dateToFormat.getFullYear() + ' at ' + this.toHourMedian(dateToFormat)
       default:
@@ -47,25 +49,31 @@ export default {
       let seconds = Math.floor((new Date() - date) / 1000)
       let interval = seconds / 31536000
       if (interval > 1) {
-        return Math.floor(interval) + " year" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+        return Math.floor(interval) + "Y" + ' ago'
+        // return Math.floor(interval) + " year" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 2592000
       if (interval > 1) {
-        return Math.floor(interval) + " month" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+        return Math.floor(interval) + "M" + ' ago'
+        // return Math.floor(interval) + " month" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 86400
       if (interval > 1) {
-        return Math.floor(interval) + " day" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+        return Math.floor(interval) + "d" + ' ago'
+        // return Math.floor(interval) + " day" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 3600
       if (interval > 1) {
-        return Math.floor(interval) + " hour" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+        return Math.floor(interval) + "h" + ' ago'
+        // return Math.floor(interval) + " hour" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
       interval = seconds / 60
       if (interval > 1) {
-        return Math.floor(interval) + " minute" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+        return Math.floor(interval) + "m" + ' ago'
+        // return Math.floor(interval) + " minute" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
       }
-      return Math.floor(seconds) + " second" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
+      return Math.floor(seconds) + "s" + ' ago'
+      // return Math.floor(seconds) + " second" + (Math.floor(interval) > 1 ? 's' : '') + ' ago'
     },
     toPascal(s){
       if (typeof s !== 'string') return ''

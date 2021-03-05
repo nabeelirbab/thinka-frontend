@@ -1,7 +1,13 @@
 <template>
-  <div class="container pt-4 height-max bg-white">
-    <SearchBox @search="search" :is-loading="isLoading"/>
-    <ResultList ref="resultList" @is-loading="isLoading = $event" />
+  <div>
+    <div class="image-background p-4 mb-4">
+      <div class="container px-4">
+        <SearchBox ref="searchBox" @search="search" :is-loading="isLoading"/>
+      </div>
+    </div>
+    <div class="container pt-4 height-max">
+      <ResultList ref="resultList" @is-loading="isLoading = $event" @clear-search="clearSearch" />
+    </div>
   </div>
 </template>
 <script>
@@ -22,6 +28,9 @@ export default {
   methods: {
     search(searchForm){
       this.$refs.resultList._search(searchForm)
+    },
+    clearSearch(){
+      this.$refs.searchBox._clearSearch()
     }
   }
 }

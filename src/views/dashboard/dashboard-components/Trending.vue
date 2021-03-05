@@ -14,7 +14,7 @@
 </template>
 <script>
 import RelationAPI from '@/api/relation'
-import RelationRow from './RelationRow'
+import RelationRow from '@/components/RelationRow'
 export default {
   components: {
     RelationRow
@@ -29,15 +29,47 @@ export default {
     }
   },
   methods: {
+    // getTrending(){
+    //   this.trending = []
+    //   this.isLoading = true
+    //   RelationAPI.post('/trending').then(result => {
+    //     if(result['data']){
+    //       this.trending = result['data']
+    //     }
+    //     this.isLoading = false
+    //   }).catch(() => {
+    //     this.isLoading = false
+    //   })
+    // }
     getTrending(){
       this.trending = []
       this.isLoading = true
-      RelationAPI.post('/trending').then(result => {
+      const param = {
+        select: {
+          statement: {
+            select: ['text', 'statement_type_id']
+          },
+          ...(['id', 'parent_relation_id', 'statement_id', 'created_at', 'updated_at'])
+        },
+        sort: [{
+          column: 'updated_at',
+          order: 'desc'
+        }],
+        condition: [{
+          column: 'published_at',
+          clause: '!=',
+          value: null
+        }, {
+          column: 'parent_relation_id',
+          value: null
+        }],
+        limit: 10
+      }
+      RelationAPI.retrieve(param).then(result => {
         if(result['data']){
           this.trending = result['data']
         }
-        this.isLoading = false
-      }).catch(() => {
+      }).finally(() => {
         this.isLoading = false
       })
     }

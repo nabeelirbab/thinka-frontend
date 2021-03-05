@@ -19,10 +19,10 @@
         @keypress.enter="search"
         v-model="keyword"
         type="text" 
-        class="form-control-no-border bg-transparent border-none flex-fill px-4 py-1 text-sm" 
+        class="form-control-no-border bg-transparent border-none flex-fill px-4 py-1 text-initial" 
         placeholder="Enter statement keyword..."
       />
-      <button @click.stop="search" class="border-none btn-lg rounded-r-oval px-3 text-white bg-primary  d-flex align-items-center" ><span class="text-sm"><fa icon="search" /> Seach</span> &nbsp;</button>
+      <button @click.stop="search" class="border-none btn-lg btn-primary rounded-r-oval px-3 text-white d-flex align-items-center" ><span class="text-sm"><fa icon="search" /> Seach</span> &nbsp;</button>
     </div>
   </div>
 </template>

@@ -45,6 +45,9 @@ li.borderless { border-top: 0 none; }
   border-top-right-radius: 0px!important;
   border-bottom-right-radius: 0px!important;
 }
+.rounded-oval {
+  border-radius: 1.3em!important;
+}
 .rounded-l-oval {
   border-top-left-radius: 1.3em!important;
   border-bottom-left-radius: 1.3em!important;
@@ -58,6 +61,12 @@ li.borderless { border-top: 0 none; }
 }
 .text-lg {
   font-size: larger
+}
+.text-xl {
+  font-size: x-large
+}
+.text-initial {
+  font-size: initial
 }
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {

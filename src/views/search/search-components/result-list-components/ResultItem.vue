@@ -1,35 +1,17 @@
 <template>
-  <div class="hover-border-dark border rounded px-3 py-2 mb-2 ">
-    <div class="d-flex" >
-      <div class="flex-grow-1 text-truncate" style="min-width: 0;">
-        <small v-if="statement" class="flex-fill align-self-baseline text-nowrap">{{formatDate(statement['created_at'])}}</small>
-        <div class="text-sm text-truncate">
-          {{parentStatement ? parentStatement['text'] : ''}}
-        </div>
-      </div>
-    </div>
-    <div v-if="statement" class="d-flex justify-content-between">
-      <div  class="text-break">
-        <span v-if="parentStatement"><fa icon=leaf /></span><span v-else><fa icon=tree /></span>
-        <router-link v-if="relation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((statement['text']).slice(0, 30))" class="font-weight-bold text-dark text-justify pr-2 mb-2">{{'    ' + statement['statement_type']['description'] + ': ' + statement['text']}}</router-link>
-        <!-- <p v-if="statement['synopsis'] && statement['synopsis'] !== ''" class="mb-0">{{statement['synopsis']}}</p>
-        <p v-if="statement['comment'] && statement['comment'] !== ''" class="text-secondary mb-1">{{statement['comment']}}</p> -->
-      </div>
-      <CTPoints :points="statement['ct_points']" />
-    </div>
-    <div>
-      <div>
-        <!-- <small class="badge badge-pill badge-primary mr-1 text-nowrap">Created by <strong>{{statement['user'] ? statement['user']['name'] : null}}</strong></small> -->
-        <!-- <small class="badge badge-pill badge-success text-nowrap"><strong>{{subscribers.length}}</strong> Subscribers</small> -->
-      </div>
-    </div>
+  <div class="hover-border-dark border-bottom px-3 py-2">
+    <RelationRow 
+      :relation="relation"
+    />
   </div>
 </template>
 <script>
+import RelationRow from '@/components/RelationRow'
 import CTPoints from '@/components/CTPoints'
 export default {
   components: {
-    CTPoints
+    CTPoints,
+    RelationRow
   },
   props: {
     relation: {
