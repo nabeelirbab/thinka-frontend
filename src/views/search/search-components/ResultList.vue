@@ -1,10 +1,10 @@
 <template>
-  <div class="mb-4 bg-white shadow">
-    <div v-if="isLoading" class="text-center py-2">
+  <div class="mb-4 bg-white shadow rounded">
+    <div v-if="isLoading" class="text-center py-3">
       Searching... <fa icon="spinner" spin />
     </div>
     <div v-else class="mb-4">
-      <div class="border-bottom px-3 py-2 d-flex align-items-center">
+      <div class="border-bottom px-3 py-3 d-flex align-items-center">
         <h6 class="text-primary mb-0 flex-fill text-uppercase">Results: {{totalPageResult}}</h6>
         <fa @click="clearSearch" icon="trash" class="text-light text-lg c-pointer" />
       </div>

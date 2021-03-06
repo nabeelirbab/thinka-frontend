@@ -2,23 +2,27 @@
   <div v-if="relation" class="w-100 py-2">
     <div class="d-flex mb-1">
       <div class="flex-fill d-flex align-items-center">
-        <fa icon="user-circle" class="mr-2 text-light" style="font-size:2.6em" />
+        <fa icon="user-circle" class="mr-2 text-light" style="font-size:2.9em" />
         <div>
           <div class="text-uppercase">
             <span class="badge badge-pill px-2" :style="{ 'background-color': statementTypeColor(statementTypeId) }">
               {{statementTypeDescription(statementTypeId)}}
             </span>
-            <span v-if="hasPublishedAt"  class="pl-2 text-light">
-              <fa v-if="relation['published_at']" icon="sun" />
-              <fa v-else icon="briefcase" />
-            </span>
+            
           </div>
           <div class="text-light text-sm pl-1">
             by James
           </div>
         </div>
       </div>
-      <small class="text-light">{{timeSince(relation['updated_at'], 2592000000, 'm d, Y')}}</small>
+      <small class="text-light">
+        <span v-if="hasPublishedAt"  class="pl-2 text-light">
+          <fa v-if="relation['published_at']" icon="sun" />
+          <fa v-else icon="briefcase" />
+        </span>
+        &#8226;
+        {{timeSince(relation['updated_at'], 2592000000, 'm d, Y')}}
+      </small>
     </div>
     <div class="d-flex w-100" >
       <div class="pr-1 text-primary">
@@ -37,8 +41,8 @@
         <span class="text-light">Statement Not Found. R#{{relation['id']}}</span>
       </div>
     </div>
-    <div v-if="relation['parent_relation'] && relation['parent_relation']['statement']" class="mt-2 px-3">
-      <div class="bg-light p-2 rounded text-sm">
+    <div v-if="relation['parent_relation'] && relation['parent_relation']['statement']" class="mt-2 ">
+      <div class="bg-light p-1 rounded-oval text-sm px-3 shadow-sm">
         <fa icon="tree" class="mr-2" />
         {{relation['parent_relation']['statement']['text']}}
       </div>

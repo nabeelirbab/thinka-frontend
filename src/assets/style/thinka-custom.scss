@@ -38,6 +38,9 @@ input {
 .btn-shadow {
   box-shadow: 0px 0px 10px #00000059;
 }
+.shadow-sm {
+  box-shadow: 0px 0px 6px #29292959!important;
+}
 .btn-circle { // used for icons
   text-align: center;
   border-radius: 50%;
@@ -48,22 +51,7 @@ input {
 .height-max{
   min-height: calc(100vh - 46px)
 }
-.header-image-background {
-  background-image:url("../images/header-background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-color: #358d92;
-  // background-position: 0px -213px
-  background-position: 0px 0px
-}
-.image-background {
-  background-image:url("../images/header-background.png");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-color: #358d92;
-  // background-position: 0px -260px
-  background-position: 0px -47px
-}
+
 .text-dark {
   color: $text-color!important
 }
@@ -91,9 +79,31 @@ input {
 .bg-pastel-pink {
   background-color: #f0d8ea
 }
+.header-image-background {
+  background-image:url("../images/header-background-mobile.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #358d92;
+  // background-position: 0px -213px
+  background-position: 0px 0px
+}
+.image-background {
+  background-image:url("../images/header-background-mobile.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #358d92;
+  // background-position: 0px -260px
+  background-position: 0px -47px
+}
 @media (min-width: 768px) {
   .container {
     max-width: 900px!important;
     width: 100%;
+  }
+  .header-image-background {
+    background-image:url("../images/header-background.png");
+  }
+  .image-background {
+    background-image:url("../images/header-background.png");
   }
 }
