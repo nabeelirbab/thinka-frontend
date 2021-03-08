@@ -11,7 +11,7 @@
     </div>
     <div
       v-else
-      class="d-flex mb-3 btn-lg btn-shadow w-100 bg-white p-0 border-width-none"
+      class="d-flex btn-lg btn-shadow w-100 bg-white p-0 border-width-none"
     >
       <input 
         ref="searchInput"
@@ -61,9 +61,14 @@ export default {
   watch: {
     isFocused(isFocused){
       if(isFocused){
+        
         setTimeout(() => {
-          this.$refs.searchInput.focus()
-        }, 100)
+          if(this.$refs.searchInput){
+            this.$refs.searchInput.focus()
+          }else{
+            isFocused(isFocused)
+          }
+        }, 200)
       }
     },
     modelValue: {

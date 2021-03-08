@@ -11,7 +11,7 @@
             
           </div>
           <div class="text-light text-sm pl-1">
-            by James
+            by {{relation['user'] ? relation['user']['username'] : 'Unknown User#' + relation['user_id']}}
           </div>
         </div>
       </div>
@@ -29,7 +29,7 @@
         <fa v-if="parentRelationId" icon=leaf />
         <fa v-else icon=tree />
       </div>
-      <div v-if="relation['statement']" class="flex-fill text-break">a
+      <div v-if="relation['statement']" class="flex-fill text-break">
         <router-link
           :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relation['statement']['text']).slice(0,30))"
           class="text-dark"
@@ -42,9 +42,9 @@
       </div>
     </div>
     <div v-if="relation['parent_relation'] && relation['parent_relation']['statement']" class="mt-2 ">
-      <div class="bg-light p-1 rounded-oval text-sm px-3 shadow-sm">
+      <div class="bg-light p-1 rounded-oval text-sm px-3 shadow-sm d-flex align-items-center">
         <fa icon="tree" class="mr-2" />
-        {{relation['parent_relation']['statement']['text']}}
+        <span class="text-break">{{relation['parent_relation']['statement']['text']}}</span>
       </div>
     </div>
   </div>

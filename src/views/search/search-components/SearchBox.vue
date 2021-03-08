@@ -1,19 +1,7 @@
 <template>
   <div class="">
     <SearchBar ref="searchBar" v-model="searchForm.statementText" @search="search" />
-    <!-- <div class="input-group btn-shadow rounded-oval mb-2">
-      <input
-        ref="searchInput"
-        
-        @keydown.esc="_clearSearch"
-        @keypress.enter="search"
-        type="text" class="form-control rounded-l-oval" placeholder="Type statement keywords..."
-      >
-      <div class="input-group-append">
-        <button @click="search" :disabled="isLoading" class="btn btn-primary rounded-r-oval" type="button" id="button-addon2"><fa icon="search" /> Search</button>
-      </div>
-    </div> -->
-    <div v-if="user" class="text-center text-white ">
+    <div v-if="user" class="text-center text-white mt-2">
       <div  class="form-check d-flex align-items-center justify-content-center">
         <CustomCheckbox
           v-model="searchForm.mineOnly"

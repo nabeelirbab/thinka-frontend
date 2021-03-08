@@ -5,7 +5,7 @@
         <SearchBox ref="searchBox" @search="search" :is-loading="isLoading"/>
       </div>
     </div>
-    <div class="container pt-4 height-max">
+    <div class="container py-2">
       <ResultList ref="resultList" @is-loading="isLoading = $event" @clear-search="clearSearch" />
     </div>
   </div>

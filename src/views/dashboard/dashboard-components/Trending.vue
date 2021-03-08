@@ -49,7 +49,12 @@ export default {
           statement: {
             select: ['text', 'statement_type_id']
           },
-          ...(['id', 'parent_relation_id', 'statement_id', 'created_at', 'updated_at'])
+          user: {
+            select: {
+            ...(['id', 'username'])
+            }
+          },
+          ...(['id', 'parent_relation_id', 'statement_id', 'user_id', 'created_at', 'updated_at'])
         },
         sort: [{
           column: 'updated_at',

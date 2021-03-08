@@ -1,15 +1,30 @@
 <template>
-  <div class="container pt-2 bg-white height-max">
-    <h6>These are your bookmarked statements</h6>
-    <div>
-      <div v-if="isLoading">Please wait... <fa icon="spinner" /></div>
-      <div v-else-if="userRelationBookmarks.length">
-        <template v-for="userRelationBookmark in userRelationBookmarks" :key="'asd' + userRelationBookmark['id']">
-          <div v-if="userRelationBookmark['relation']" class="mb-2">
-            <!-- <router-link :to="'/branch/' + userRelationBookmark['relation']['id']" class="text-dark">{{userRelationBookmark['relation']['statement']['text']}}</router-link> -->
-            <ResultItem :relation="userRelationBookmark['relation']" />
+  <div >
+    <div class="image-background p-4 mb-4">
+      <div class="container px-4">
+        <SearchBar ref="searchBar" @search="filterSearch" />
+      </div>
+    </div>
+    <div class='container'>
+      <div class=" mt-4 bg-white shadow rounded">
+        <div v-if="isLoading" class="text-center py-3">
+          Searching... <fa icon="spinner" spin />
+        </div>
+        <div v-else class="mb-4">
+          <div class="border-bottom px-3 py-3 d-flex align-items-center">
+            <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
+              <fa icon="search" class="mr-2 text-lg" /> Bookmarks: {{userRelationBookmarks.length}}
+            </h6>
+            <fa @click="clearSearch" icon="trash" class="text-light text-lg c-pointer" />
           </div>
-        </template>
+          <div>
+            <template v-for="userRelationBookmark in filteredBookmarks">
+              <div v-if="userRelationBookmark['relation']" class="hover-border-dark border-bottom px-3 py-2">
+                <RelationRow :relation="userRelationBookmark['relation']" />
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -18,9 +33,13 @@
 import UserRelationBookmarkAPI from '@/api/user-relation-bookmark'
 import Auth from '@/core/auth'
 import ResultItem from '@/views/search/search-components/result-list-components/ResultItem'
+import RelationRow from '@/components/RelationRow'
+import SearchBar from '@/components/SearchBar'
 export default {
   components: {
-    ResultItem
+    ResultItem,
+    RelationRow,
+    SearchBar
   },
   mounted(){
     this.initialize()
@@ -29,14 +48,21 @@ export default {
     return {
       user: Auth.user(),
       userRelationBookmarks: [],
+      filterKeyword: '',
       isLoading: false
     }
   },
   methods: {
     initialize(){
+      this.search()
+    },
+    filterSearch(keyword){ // just filter the array instead of searching through api
+      this.filterKeyword = keyword
+    },
+    search(search = null){
       this.isLoading = true
       this.userRelationBookmarks = []
-      const param = {
+      let param = {
         select: {
           relation: {
             select: {
@@ -56,9 +82,16 @@ export default {
                   ...(['id', 'statement_id', 'logic_tree_id'])
                 }
               },
-              ...(['id', 'logic_tree_id', 'statement_id'])
-            }
+              user: {
+                select: {
+                ...(['id', 'username'])
+                }
+              },
+              ...(['id', 'logic_tree_id', 'statement_id', 'user_id', 'created_at', 'updated_at', 'published_at'])
+            },
+            
           },
+          
           ...(['user_id', 'relation_id', 'sub_relation_id'])
         },
         condition: [{
@@ -66,8 +99,14 @@ export default {
           value: this.user['id']
         }]
       }
+      if(search && search !== ''){
+        param['condition'].push({
+          column: 'statement.text',
+          clause: 'like',
+          value: '%' + search + '%'
+        })
+      }
       UserRelationBookmarkAPI.retrieve(param).then(result => {
-        console.log('result', result)
         if(result['data']){
           this.userRelationBookmarks = result['data']
         }
@@ -75,6 +114,23 @@ export default {
       }).catch(() => {
         this.isLoading = false
       })
+    },
+    clearSearch(){
+      this.$refs.searchBar._clear()
+    }
+  },
+  computed: {
+    filteredBookmarks(){
+      if(this.filterKeyword !== ''){
+        return this.userRelationBookmarks.filter(bookmark => {
+          return bookmark['relation']
+            && bookmark['relation']['statement']
+            && bookmark['relation']['statement']['text']
+            && (bookmark['relation']['statement']['text']).indexOf(this.filterKeyword) !== -1
+        })
+      }else{
+        return this.userRelationBookmarks
+      }
     }
   }
 }

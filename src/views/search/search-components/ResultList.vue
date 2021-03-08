@@ -5,7 +5,9 @@
     </div>
     <div v-else class="mb-4">
       <div class="border-bottom px-3 py-3 d-flex align-items-center">
-        <h6 class="text-primary mb-0 flex-fill text-uppercase">Results: {{totalPageResult}}</h6>
+        <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
+          <fa icon="search" class="mr-2 text-lg" /> Search Results: {{relations.length}}
+        </h6>
         <fa @click="clearSearch" icon="trash" class="text-light text-lg c-pointer" />
       </div>
       <template v-for="(relation, index) in relations" :key="'result' + index">
@@ -82,7 +84,12 @@ export default {
           logic_tree: {
             select: ['description', 'published_at', 'statement_id']
           },
-          ...(['logic_tree_id', 'statement_id', 'updated_at', 'user_id', 'virtual_relation_id', 'published_at'])
+          user: {
+            select: {
+            ...(['id', 'username'])
+            }
+          },
+          ...(['logic_tree_id', 'statement_id', 'user_id', 'updated_at', 'user_id', 'virtual_relation_id', 'published_at'])
         },
         condition: [{
           column: 'virtual_relation_id',
