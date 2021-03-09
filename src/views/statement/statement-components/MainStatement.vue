@@ -1,15 +1,15 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox"  :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-primary text-white px-2 pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
+    <div ref="mainStatementBox"  :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-success shadow-sm text-white px-2 mb-2 pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
       <div class="d-flex justify-content-between">
       </div>
       <div class=" font-weight-bold text-white">
         <div >
           <div v-if="!isEditing" @click="_statementClicked" class="d-flex align-items-center text-break">
             <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              <div class="d-flex text-left mb-1" style="font-size:0.9em"  >
-                  <div class="column mr-2 ml-0" style="padding-left: 1em; text-indent: -0.9em;">
+              <div class="d-flex text-left mb-1"  >
+                  <div class="column mr-2 ml-0" style="padding-left: 0.1em; ">
                     <span>
                   <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/></span></div>
                   <div class="column text-break"><TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" /></div>
@@ -35,7 +35,7 @@
               </div>
             </div>
           </div>
-          <CreateSubStatement 
+          <CreateSubStatement
             v-if="isEditing"
             @save="statementEdited"
             @cancel="editSelectedStatement = false"

@@ -5,21 +5,21 @@
         <SearchBar ref="searchBar" @search="filterSearch" />
       </div>
     </div>
-    <div class='container'>
-      <div class=" mt-4 bg-white shadow rounded">
+    <div class='container py-2'>
+      <div class="bg-white shadow rounded">
         <div v-if="isLoading" class="text-center py-3">
           Searching... <fa icon="spinner" spin />
         </div>
         <div v-else class="mb-4">
           <div class="border-bottom px-3 py-3 d-flex align-items-center">
             <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
-              <fa icon="search" class="mr-2 text-lg" /> Bookmarks: {{userRelationBookmarks.length}}
+              <fa icon="bookmark" class="mr-2 text-lg" /> Bookmarks: {{filteredBookmarks.length}}
             </h6>
             <fa @click="clearSearch" icon="trash" class="text-light text-lg c-pointer" />
           </div>
           <div>
             <template v-for="userRelationBookmark in filteredBookmarks">
-              <div v-if="userRelationBookmark['relation']" class="hover-border-dark border-bottom px-3 py-2">
+              <div v-if="userRelationBookmark['relation']" class=" border-bottom">
                 <RelationRow :relation="userRelationBookmark['relation']" />
               </div>
             </template>
@@ -116,6 +116,7 @@ export default {
       })
     },
     clearSearch(){
+      this.filterKeyword = ''
       this.$refs.searchBar._clear()
     }
   },

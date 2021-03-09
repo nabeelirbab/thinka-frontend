@@ -1,29 +1,34 @@
 <template>
   <div>
-    <div 
+    <div
       v-if="!isToggled" @click="isFocused = true" 
-      class="btn-lg btn-shadow w-100 d-flex align-items-center text-lg text-white"
+      class="search-bar-y-padding c-pointer rounded-oval btn-shadow w-100 d-flex align-items-center text-white"
+      style="background-color:#ffffff1a"
     >
       <div class="text-right flex-fill">
         <fa icon="search" />
       </div>
-      <small class="ml-2 flex-fill text-left">Search Trees</small>
+      <span class="ml-2 flex-fill text-left text-nowrap">Search Trees</span>
     </div>
     <div
       v-else
-      class="d-flex btn-lg btn-shadow w-100 bg-white p-0 border-width-none"
+      class=" d-flex rounded-oval btn-shadow w-100 bg-white p-0 border-width-none"
     >
       <input 
         ref="searchInput"
-        @focus="isFocused = true"
         @blur="isFocused = false" 
         @keypress.enter="search"
         v-model="keyword"
         type="text" 
-        class="form-control-no-border bg-transparent border-none flex-fill px-4 py-1 text-initial" 
+        class="search-bar-y-padding form-control-no-border  bg-transparent border-none w-100 px-4 text-initial" 
         placeholder="Enter statement keyword..."
       />
-      <button @click.stop="search" class="border-none btn-lg btn-primary rounded-r-oval px-3 text-white d-flex align-items-center" ><span class="text-sm"><fa icon="search" /> Seach</span> &nbsp;</button>
+      <button 
+        @click.stop="search" 
+        class="btn-lg-height rounded-r-oval border-none btn-primary px-3 text-white d-flex align-items-center text-nowrap"
+      >
+        <span class="text-initial"><fa icon="search" /> Search</span> &nbsp;
+      </button>
     </div>
   </div>
 </template>
@@ -48,13 +53,13 @@ export default {
       this.keyword = ''
     },
     focus(){
+      console.log('focused?')
       this.isFocused = true
       setTimeout(() => {
         this.$refs.searchInput.focus()
       }, 200)
     },
     search(){
-      console.log('search 1')
       this.$emit('search', this.keyword)
     }
   },
@@ -91,3 +96,12 @@ export default {
   }
 }
 </script>
+<style>
+ .search-bar-height {
+   padding: 0.5rem 1rem!important
+ }
+ .search-bar-y-padding {
+   padding-top: 0.5rem;
+   padding-bottom: 0.5rem;
+ }
+</style>

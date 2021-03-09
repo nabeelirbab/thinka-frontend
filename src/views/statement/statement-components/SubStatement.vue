@@ -33,8 +33,8 @@
             <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
             <span v-if="relation['published_at']" class="font-italic text-muted">{{timeSince(relation['published_at'])}}</span>
           </div>
-          <div class="d-flex text-dark text-left mb-1 align-items-center" style="font-size:0.9em"  >
-              <div class="" style="margin-left: 0; padding-left: 1em; text-indent: -0.9em;" :title="relationTypeName" data-toggle="tooltip">
+          <div class="d-flex text-dark text-left mb-1 align-items-center" >
+              <div class="" style="margin-left: 0; padding-left: 1em; " :title="relationTypeName" data-toggle="tooltip">
                 <span class="text-danger font-weight-bold mr-1">{{relationTypeSymbol}}</span>
               </div>
               <div class="text-break">

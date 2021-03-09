@@ -1,5 +1,5 @@
 <template>
-  <div class="hover-border-dark border-bottom px-3 py-2">
+  <div class="">
     <RelationRow 
       :relation="relation"
     />

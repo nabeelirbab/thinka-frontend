@@ -1,5 +1,5 @@
 <template>
-  <div class="card-header c-pointer m-0 p-3 bg-white " data-toggle="collapse" :data-target="dataTarget" >
+  <div class="c-pointer m-0 p-3 border-bottom" data-toggle="collapse" :data-target="dataTarget" >
     <h6 class="mb-0 text-uppercase text-primary font-weight-bold  text-nowrap d-flex align-items-center" >
       <fa :icon="icon" class="mr-2 text-lg" />
       <div class="mr-1 flex-fill">

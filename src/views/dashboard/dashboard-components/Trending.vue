@@ -5,7 +5,7 @@
       <!-- <p class="card-text">The list below shows the most active conclusions</p> -->
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
       <div style="overflow-y:auto; height: 50vh">
-        <div v-for="(trend) in trending" class="d-flex p-2 px-3 border-bottom">
+        <div v-for="(trend) in trending" class="d-flex ">
           <RelationRow :relation="trend" />
         </div>
       </div>

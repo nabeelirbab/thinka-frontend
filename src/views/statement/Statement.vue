@@ -10,9 +10,17 @@
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
       <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
-      <div class="container py-2 bg-white">
-        <MainStatementProfile />
-        <MainStatement v-if="mainRelationData" ref="mainStatement" @updated="mainStatementUpdated" @height-changed="mainStatementHeight = $event" :relation="mainRelationData" :logic-tree-id="logicTreeId" class="mb-1 c-pointer"/>
+      <div class="container py-2 ">
+        <MainStatementProfile class="mb-2" />
+        <MainStatement
+          v-if="mainRelationData" 
+          ref="mainStatement" 
+          @updated="mainStatementUpdated" 
+          @height-changed="mainStatementHeight = $event" 
+          :relation="mainRelationData"
+          :logic-tree-id="logicTreeId" 
+          class="mb-1 c-pointer"
+        />
         <div v-if="mainRelationData" class="toolbar-bottom-space">
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable

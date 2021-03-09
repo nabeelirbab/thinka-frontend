@@ -104,5 +104,8 @@ body {
   padding-top: 90px;
 }
 @media (min-width: 768px) { /* For non smartphone */
+  .has-menu-top-padding {
+    padding-top: 94px;
+  }
 }
 </style>

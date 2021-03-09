@@ -4,7 +4,7 @@
     <div class="p-0" style="overflow-y:auto; height: 50vh">
       <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
       <div >
-        <div v-for="(trend) in relations" class="border-bottom p-2 px-3">
+        <div v-for="(trend) in relations" class="">
           <RelationRow
             :relation="trend"
             :root-parent-statement-text="trend['root_parent_statement_text']"

@@ -5,17 +5,19 @@
         <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
       </div>
       <div class="pl-1">
-        <div class="font-weight-bold text-capitalize">
-          {{mainRelationData['user']['username']}}
-        </div>
+        <StatementTypePill :statement-type-id="mainRelationData['statement'] ? mainRelationData['statement']['statement_type_id'] : 0" />
         <div class="text-sm">
-          {{timeSince(mainRelationData['created_at'])}}
+          by {{mainRelationData['user']['username']}}
         </div>
+        <!-- <div class="text-sm">
+          
+        </div> -->
       </div>
     </div>
     <div class="pl-2 text-right">
+      <span class="text-sm text-light">{{timeSince(mainRelationData['created_at'])}}</span>
       <div class="dropdown">
-        <button class="btn btn-outline-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Authors
         </button>
         <div @click.stop class="dropdown-menu dropdown-menu-right px-2" aria-labelledby="dropdownMenuButton">
@@ -27,7 +29,7 @@
                 <label class="mb-2">Show All</label>
               </div>
               <template v-for="author in authors">
-                <div v-if="typeof author !== 'undefined'" @click="addAuthorFilter(author['id'])" class="c-pointer text-break d-flex align-items-center" style="min-width:0">
+                <div @click="addAuthorFilter(author['id'])" class="c-pointer text-break d-flex align-items-center" style="min-width:0">
                   <input 
                     :checked="typeof authorFilter[author['id']] === 'undefined' ? false : authorFilter[author['id']]" 
                     type="checkbox"  class="mr-1 "
@@ -44,7 +46,11 @@
 </template>
 <script>
 import GlobalData from '../global-data'
+import StatementTypePill from '@/components/StatementTypePill'
 export default {
+  components: {
+    StatementTypePill
+  },
   data(){
     return {
       ...GlobalData

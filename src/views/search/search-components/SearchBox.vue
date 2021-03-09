@@ -48,6 +48,7 @@ export default {
         this.searchForm = previousSearchFilter
         if(typeof this.$refs.searchInput !== 'undefined' && this.$refs.searchInput){
           this.$refs.searchBar.focus()
+          console.log('fo A')
         }
       }else{
         this.search()
@@ -63,11 +64,6 @@ export default {
     }
   },
   watch: {
-    isLoading(isLoading){
-      if(!isLoading){
-        this.$refs.searchBar.focus()
-      }
-    },
     routeParamKeyword: {
       handler(routeParamKeyword){
         console.log('routeParamKeyword', routeParamKeyword)

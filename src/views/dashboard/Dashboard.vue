@@ -3,56 +3,58 @@
     <div class="image-background p-4 mb-4">
       <div class="container p-4">
         <SearchTree />
-        <router-link to="/new-statement" class="btn btn-lg btn-primary d-flex align-items-center btn-shadow mb-3">
+        <router-link to="/new-statement" class="btn text-initial btn-primary border-width-none d-flex align-items-center btn-shadow mb-3">
           <div class="text-right flex-fill">
             <fa icon="project-diagram" />
           </div>
-          <small class="ml-2 flex-fill text-left">Create New Tree</small>
+          <span class="ml-2 flex-fill text-left">Create New Tree</span>
         </router-link>
-        <router-link to="/new-statement" class="btn btn-lg btn-primary d-flex align-items-center btn-shadow">
+        <router-link to="/new-statement" class="btn text-initial btn-primary border-width-none d-flex align-items-center btn-shadow">
           <div class="text-right flex-fill">
             <fa icon="book-reader" />
           </div>
-          <small class="ml-2 flex-fill text-left">Visit Learning Center</small>
+          <span class="ml-2 flex-fill text-left">Visit Learning Center</span>
         </router-link>
       </div>
     </div>
-    <div class="container py-2 mb-4">
+    <div class="container py-2 mb-4 pb-4">
       <!-- <div  class="container p-1" v-if="welcomeVisible">
         <div class="d-flex border p-2 border rounded-lg">
           <p>Good day! In your dashboard, you will see information and functionality to help guide you in using <strong class="text-uppercase">Thinka.io</strong>.<router-link to="/learning"> Click here to visit the learning centre. <fa icon="school" /></router-link><br></p>
           <div><fa v-on:click="welcomeVisible = false" icon="window-close" /></div>
         </div>
       </div> -->
-      <div class="accordion shadow rounded" id="accordianList">
-        <div class="card  rounded-t">
+      <div class="shadow rounded bg-white" id="accordianList">
+        <div class="">
           <AccordionHeader
             data-target="#collapseThree"
             icon="chart-line"
             text="Trending"
+            class=""
           />
           <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordianList">
-            <Trending class="card-body p-0" />
+            <Trending />
           </div>
         </div>
-        <div v-if="user" class="card">
+        <div v-if="user" class="">
           <AccordionHeader
             data-target="#collapseOne"
             icon="list"
             text="My Trees"
           />
           <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordianList">
-            <MyList v-if="user" class="card-body p-0" />
+            <MyList v-if="user" class=" p-0" />
           </div>
         </div>
-        <div v-if="user" class="card rounded-b">
+        <div v-if="user" class=" rounded-b">
           <AccordionHeader
             data-target="#collapseTwo"
             icon="cloud"
             text="My Thinka Tanks"
+            class="border-top"
           />
           <div id="collapseTwo" class="collapse rounded-b" aria-labelledby="headingTwo" data-parent="#accordianList">
-            <div class="card-body m-2 p-0">
+            <div class=" m-2 p-0">
               <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
               <table class="table ">
                 <tbody>

@@ -27,7 +27,7 @@
           <router-link to="/more-menu" :class="(routePath === '/more-menu' ? activeLinkClass : 'text-white') + ' ' + linkClass"  tag="button"><fa icon="bars" /></router-link>
         </div>
       </div>
-      <div class="header-image-background main-menu-height" style="height:47px;"></div>
+      <div class="header-image-background main-menu-height"></div>
       <!-- <UserInfo v-if="!hideBranding" @open-login="openLogIn" class="d-none d-md-inline-block " style="position:absolute; margin-left: calc(100% - 63px)"/> -->
 
 
@@ -103,10 +103,18 @@ export default {
 <style scoped>
 
 .header-icon {
-  font-size: 1.16em!important
+  font-size: larger;
+}
+.main-menu-height {
+ height: 47px;
 }
 @media (min-width: 768px) {
-  
+  .header-icon {
+    font-size: 1.36em!important;
+  }
+  .main-menu-height {
+    height: 51px;
+  }
 }
 @media (min-width: 769px) and (max-width: 1230px) {
   

@@ -1,7 +1,9 @@
 <template>
   <div class="btn-group pt-md-1">
     <button type="button" class="btn border-0 shadow-none py-1 d-flex align-items-center" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <fa icon="user-circle" :class="user ? 'text-primary' : ''" class="mr-1" style="font-size:1.7em" /> <span v-if="user" class="d-md-none">{{toPascal(user['first_name'])}}</span>
+      <span v-if="user" class="mr-1">{{toPascal(user['username'])}}</span>
+
+      <fa icon="user-circle" :class="user ? 'text-regular' : 'text-light'" class="mr-1" style="font-size:1.7em" /> 
     </button>
     <div class="dropdown-menu dropdown-menu-right px-3 py-2">
       <template v-if="user">
