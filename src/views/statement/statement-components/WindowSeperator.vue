@@ -3,7 +3,7 @@
     @touchstart="dragStart"
     @mousedown="dragStart"
     style1="{transform:'translate3d(' + 0 + 'px, ' + currentY + 'px, 0)'}"
-    class="separator py-2 bg-white"
+    class="separator py-2"
   >
     <div :class="active ? 'bg-dark' : 'bg-secondary'" style="height:2px"></div>
   </div>

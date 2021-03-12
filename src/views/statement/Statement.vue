@@ -10,19 +10,21 @@
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
       <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
-      <div class="container py-2 ">
-        <MainStatementProfile class="mb-2" />
-        <MainStatement
-          v-if="mainRelationData" 
-          ref="mainStatement" 
-          @updated="mainStatementUpdated" 
-          @height-changed="mainStatementHeight = $event" 
-          :relation="mainRelationData"
-          :logic-tree-id="logicTreeId" 
-          class="mb-1 c-pointer"
-        />
+      <div class="container px-0 pb-2 ">
+        <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm">
+          <MainStatementProfile class="mb-2 px-2" />
+          <MainStatement
+            v-if="mainRelationData" 
+            ref="mainStatement" 
+            @updated="mainStatementUpdated" 
+            @height-changed="mainStatementHeight = $event" 
+            :relation="mainRelationData"
+            :logic-tree-id="logicTreeId" 
+            class="c-pointer px-2"
+          />
+        </div>
         <div v-if="mainRelationData" class="toolbar-bottom-space">
-          <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+          <div ref="positiveWindow" class="statement-window p-2" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
               :relation-id="mainRelationData['id']"
               :list="mainRelationData['relations']"
@@ -59,7 +61,7 @@
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
-          <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+          <div ref="negativeWindow" class="statement-window p-2" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
               :relation-id="mainRelationData['id']"
               :list="mainRelationData['relations']"
@@ -461,5 +463,9 @@ export default {
   min-height: 20px;
   border: 1px dashed;
   padding: 10px;
+}
+.main-statement-container {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
 }
 </style>

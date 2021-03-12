@@ -1,5 +1,5 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="container align-items-center statement-radius mb-1 border-width border-dark p-2" >
+  <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="container shadow-sm align-items-center statement-radius mb-1 border-width border-dark p-2" >
     <div class="flex-fill">
       <select v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded font-weight-bold mb-1">
         <option value="0" default >Please Select</option>
