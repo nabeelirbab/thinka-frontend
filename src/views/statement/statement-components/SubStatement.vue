@@ -1,80 +1,87 @@
 <template>
   <div
     :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
-    class="d-flex mb-2 shadow-sm border-width-none border-radius"
+    class="d-flex mb-2 shadow-sm border-width-none border-radius "
+    
   >
     <div
-      @click="showStatement = !showStatement"
+      @click.stop="showStatement = !showStatement"
       :class="statementClass"
-      class="align-items-stretch px-1 border-left-radius border-width-none"
-    ></div>
+      class="align-items-stretch align-items-center text-center px-1 border-left-radius border-width-none"
+      style="min-width: 17px"
+    >
+      <span v-if="!showStatement && hasToggleableChildren" class="">
+        +
+      </span>
+      <span v-else-if="showStatement && (!hasFilterApplied || hasFilterPassChildren)" style="">
+        -
+      </span>
+    </div>
+    <div v-if="showOpinion || showCTOpinion" class="bg-white py-2">
+      <Opinions :user-opinions="userOpinions" class="border-right px-2" />
+    </div>
     <div class="flex-fill px-2 py-2 border-right-radius bg-white">
       <div
         v-if="isLocked > 0"
         v-show="!isEditing && (!isFilteredOut || hasFilterPassChildren)"
-        class="sub-statement c-pointer border-width border-dark"
-        style="min-height: 35px"
+        class="sub-statement border-width border-dark"
+        style="min-height: 35px;"
       >
-        <div class="d-flex align-items-center pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
-          <div class="ml-0 pl-0" style1="min-width:30px">
+        <div class="d-flex align-items-center  pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
+          <!-- <div class="ml-0 pl-0  font-weight-bold" style1="min-width:30px">
             <button 
               v-if="!showStatement && hasToggleableChildren" 
-              @click="showStatement = true" class="btn btn-sm btn-outline-secondary"
+              @click="showStatement = true" class="btn border-none text-light font-weight-bold"
             >
               {{subRelations.length}}
-              <!-- <fa icon="level-up-alt" rotation="90" /> -->
             </button>
             <button 
-              v-if="showStatement && (!hasFilterApplied || hasFilterPassChildren)" @click="showStatement = false" 
-              class="btn btn-sm btn-light"
+              v-else-if="showStatement && (!hasFilterApplied || hasFilterPassChildren)" @click="showStatement = false" 
+              class="btn text-light font-weight-bold"
             >
-              <!-- <fa icon="chevron-up"  /> -->
               {{subRelations.length}}
             </button>
-          </div>
+          </div> -->
           <div>
             <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
               <fa icon="spinner" spin />
             </CircleLabel>
             <div v-else-if="(showImpact || showScope) && relationData" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
-              <small v-if="showImpact" class="text-nowrap">{{relationImpactAmount}}%</small>
+              <small v-if="showImpact" class="text-nowrap">{{userOpinionImpact}}%</small>
               <small v-if="relationData && showScope" style="line-height: 1">
                 {{relationData['statement']['scope_id'] ? scopes[findArrayIndex(relationData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
               </small>
             </div>
           </div>
-          <div class="flex-fill"  @click="statementClicked" >
-            <div v-if="isActive && relation && relation['user']" class="text-sm ml-3 d-flex">
-              <div class="flex-fill">
-                <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
-              </div>
-              <div class="">
-                <span v-if="relation['published_at']"  class="pl-2 text-light">
-                  <fa v-if="relation['published_at']" icon="sun" />
-                  <fa v-else icon="briefcase" />
-                  &#8226;
-                </span>
-                {{timeSince(relation['published_at'], 2592000000, 'm d, Y')}}
-              </div>
-            </div>
-            <div class="d-flex text-dark text-left mb-1 align-items-center pl-2" >
-                <!-- <div class="" style="margin-left: 0; padding-left: 1em; " data-toggle="tooltip">
-                  
-                </div> -->
-                <div class="text-break">
-                  <div v-if="isVirtualRelation" class="text-info text-sm">
-                    <fa icon="link" class="mr-1" />This is a linked Statement
-                  </div>
-                  <RelationTypeLabel :relation-type-id="statement['relation_type_id'] * 1" />
-                  <TextDisplayer :text="statementText"  />
-                </div>
-                <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
-                <template v-if="isDevelopment && relationData">
-                  <small class="text-muted">r#{{relationData['id']}}</small>
-                  <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
-                </template>
-            </div>
+          <div class="flex-fill c-pointer align-items-stretch"  @click="statementClicked" >
             <div>
+              <div v-if="isActive && relation && relation['user']" class="text-sm ml-3 d-flex">
+                <div class="flex-fill">
+                  <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
+                </div>
+                <div class="">
+                  <span v-if="relation['published_at']"  class="pl-2 text-light">
+                    <fa v-if="relation['published_at']" icon="sun" />
+                    <fa v-else icon="briefcase" />
+                    &#8226;
+                  </span>
+                  {{timeSince(relation['published_at'], 2592000000, 'm d, Y')}}
+                </div>
+              </div>
+              <div class="d-flex text-dark text-left mb-1 align-items-center pl-2" >
+                  <div class="text-break">
+                    <div v-if="isVirtualRelation" class="text-info text-sm">
+                      <fa icon="link" class="mr-1" />This is a linked Statement
+                    </div>
+                    <RelationTypeLabel :relation-type-id="statement['relation_type_id'] * 1" />
+                    <TextDisplayer :text="statementText"  />
+                  </div>
+                  <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
+                  <template v-if="isDevelopment && relationData">
+                    <small class="text-muted">r#{{relationData['id']}}</small>
+                    <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
+                  </template>
+              </div>
             </div>
           </div>
           <div class="pl-1 d-flex my-auto align-self-center">
@@ -99,10 +106,6 @@
               </div>
 
               <div v-else class="ml-2 mr-2 align-self-center" style="color: gray">
-                <!-- <div ref="tooltip2" v-if="!relation['published_at'] && mainRelationData['published_at']" class="tooltip2">
-                  <fa  icon="briefcase" title="Private" />
-                  <span class="tooltiptext">test</span>
-                </div> -->
                 
                 <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                   <fa  icon="briefcase"  />
@@ -112,7 +115,7 @@
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
-                <OpinionIcon :type="relationOpinionType" class="ml-1" />
+                <OpinionIcon v-if="relationOpinionType" :type="relationOpinionType" class="ml-1" />
               </div>
               <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
                 <MoreOption :relation="relationData" :level="level" />
@@ -121,59 +124,62 @@
           </div>
         </div>
       </div>
-      <CreateSubStatement
-        v-if="isEditing"
-        @save="statementEdited"
-        @cancel="editSelectedStatement = false"
-        :relation="relation"
-        :mode="'update'"
-        :level="level + 1"
-        :logic-tree-id="logicTreeId"
-        :statement-id="statementId"
-        :is-positive-statement="isPositiveStatement"
-        :parent-relation-id="relation['id']"  
-      />
-      <CreateSubStatement
-        v-if="createSubStatementParentId === relation['id']" 
-        @cancel="createSubStatementParentId = null"
-        @save="addNewSubStatement($event, relation['id'])"
-        @sav1e="$emit('save', {event: $event, mappingIndex: []})"
-        :is-positive-statement="isPositiveStatement" 
-        :parent-relation-id="relation['id']"
-        :parent-relation="relation"
-        :level="level + 1"
-        :logic-tree-id="logicTreeId"
-        :statement-id="statementId"
-      />
-      <draggable
-        v-if="relationData && isLocked > 0"
-        v-show="(showStatement || (subRelations.length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
-        :relation-id="relationData['id']"
-        :list="subRelations"
-        class="dragArea pt-1"
-        :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
-        item-key="id"
-        handle=".isRelationSelected.enableDragging"
-        :group="{ name: groupName }"
-        @start="startDragging"
-        @end="endDragging"
-        @change="listChanged"
-      >
-        <!-- <template #item="{element}">
-          {{element}}
-        </template> -->
-        <template #item="{element, index}">
-          <SubStatement
-            @save="newSubStatementSaved($event, index)"
-            @update="statementUpdated($event, index)"
-            :is-positive-statement="isPositiveStatement"
-            :statement="element"
-            :logic-tree-id="logicTreeId"
-            :level="level + 1"
-            :group-name="groupName"
-          />
-        </template>
-      </draggable>
+      <div>
+
+        <CreateSubStatement
+          v-if="isEditing"
+          @save="statementEdited"
+          @cancel="editSelectedStatement = false"
+          :relation="relation"
+          :mode="'update'"
+          :level="level + 1"
+          :logic-tree-id="logicTreeId"
+          :statement-id="statementId"
+          :is-positive-statement="isPositiveStatement"
+          :parent-relation-id="relation['id']"  
+        />
+        <CreateSubStatement
+          v-if="createSubStatementParentId === relation['id']" 
+          @cancel="createSubStatementParentId = null"
+          @save="addNewSubStatement($event, relation['id'])"
+          @sav1e="$emit('save', {event: $event, mappingIndex: []})"
+          :is-positive-statement="isPositiveStatement" 
+          :parent-relation-id="relation['id']"
+          :parent-relation="relation"
+          :level="level + 1"
+          :logic-tree-id="logicTreeId"
+          :statement-id="statementId"
+        />
+        <draggable
+          v-if="relationData && isLocked > 0"
+          v-show="(showStatement || (subRelations.length === 0)) && !(isDraggingStatement && selectedStatementData && selectedStatementData['id'] * 1 === relationData['id'] * 1)"
+          :relation-id="relationData['id']"
+          :list="subRelations"
+          class="dragArea"
+          :class="(((isPositiveStatement && isDraggingStatement === 1) || (!isPositiveStatement && isDraggingStatement === 2)) && !isActive) ? 'isDragging' : ''"
+          item-key="id"
+          handle=".isRelationSelected.enableDragging"
+          :group="{ name: groupName }"
+          @start="startDragging"
+          @end="endDragging"
+          @change="listChanged"
+        >
+          <!-- <template #item="{element}">
+            {{element}}
+          </template> -->
+          <template #item="{element, index}">
+            <SubStatement
+              @save="newSubStatementSaved($event, index)"
+              @update="statementUpdated($event, index)"
+              :is-positive-statement="isPositiveStatement"
+              :statement="element"
+              :logic-tree-id="logicTreeId"
+              :level="level + 1"
+              :group-name="groupName"
+            />
+          </template>
+        </draggable>
+      </div>
     </div>
   </div>
 </template>
@@ -192,8 +198,10 @@ import CircleLabel from '@/components/CircleLabel'
 import TextDisplayer from '@/components/TextDisplayer'
 import MoreOption from './sub-statement-components/MoreOption'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
+import Opinions from '@/views/statement/statement-components/sub-statement-components/Opinions'
 import ZoomVirtualRelation from './sub-statement-components/ZoomVirtualRelation.vue'
 import RelationTypeLabel from './sub-statement-components/RelationTypeLabel'
+
 // import AddStatementOption from './AddStatementOption'
 export default {
   name: 'SubStatement',
@@ -208,6 +216,7 @@ export default {
     TextDisplayer,
     MoreOption,
     OpinionIcon,
+    Opinions,
     ZoomVirtualRelation,
     RelationTypeLabel
   },
@@ -416,20 +425,28 @@ export default {
         return []
       }
     },
-    relationImpactAmount(){
-      let impactAmount = 0
-      if(this.relationData && typeof this.relationData['user_opinions'] === 'object'){
-        for(let x = 0; x < this.relationData['user_opinions'].length; x++){
-          impactAmount = this.relationData['user_opinions'][x]['impact_amount']
+    userOpinionImpact(){
+      let impactAmount = ''
+      if(Object.keys(this.authorFilter).length){
+        impactAmount = 0
+        for(let x = 0; x < this.userOpinions.length; x++){
+          const userId = this.userOpinions[x]['user_id']
+          if(typeof this.authorFilter[userId] !== 'undefined'){
+            impactAmount += this.userOpinions[x]['impact_amount']
+          }
         }
-        // if(this.relationData['virtual_relation_id']){
-          //   impactAmount =  this.relationData['virtual_relation'] ? this.relationData['virtual_relation']['impact_amount'] : ''
-        // }else if(this.relationData['impact_amount'] !== null){
-          // impactAmount = this.relationData['impact_amount']
-        // }
-        console.log('user_opinions', impactAmount, this.relationData['user_opinions'])
+        impactAmount = impactAmount / this.userOpinions.length
+      }else{
+        for(let x = 0; x < this.userOpinions.length; x++){
+          if(this.userOpinions[x]['user_id'] * 1 === this.mainRelationUserId){
+            impactAmount = this.userOpinions[x]['impact_amount']
+          }
+        }
       }
       return impactAmount !== '' ? (impactAmount * 100).toFixed(0) : ''
+    },
+    userOpinions(){
+      return typeof this.relationData['user_opinions'] === 'object' ? this.relationData['user_opinions'] : []
     },
     hasToggleableChildren(){
       return this.relationData && this.subRelations.length && (!this.hasFilterApplied || (this.hasFilterApplied && typeof this.parentRelationIdsWithPassedFilterChildren[this.relationId] !== 'undefined'))

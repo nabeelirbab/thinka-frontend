@@ -31,12 +31,27 @@ input {
 .btn {
   border-radius: 1.3em
 }
+.btn-sm {
+  padding-right: 1.15em;
+  padding-left: 1.15em;
+}
+.btn-lg {
+  font-size: 1.20rem;
+  padding: 0.6rem 1rem;
+}
 .btn-square {
   border-radius: 0px!important;
   text-align: center
 }
 .btn-shadow {
   box-shadow: 0px 0px 10px #00000059;
+}
+.bg-light {
+  background-color: #EEEEEE!important
+}
+.btn-primary {
+  border-color: #41C08E!important;
+  background-color: #41C08E!important;
 }
 .shadow-sm {
   box-shadow: 0px 0px 6px #29292959!important;
@@ -58,13 +73,7 @@ input {
 .text-light {
   color: #999999!important
 }
-.bg-light {
-  background-color: #EEEEEE!important
-}
-.btn-primary {
-  border-color: #41C08E!important;
-  background-color: #41C08E!important;
-}
+
 .rounded {
   border-radius: 0.4rem !important
 }
@@ -94,6 +103,9 @@ input {
   background-color: #358d92;
   // background-position: 0px -260px
   background-position: 0px -47px
+}
+.btn-outline-dark {
+  border-color: $text-color;
 }
 @media (min-width: 768px) {
   .container {

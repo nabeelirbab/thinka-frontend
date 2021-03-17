@@ -1,20 +1,22 @@
 <template>
-  <div :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" class="container shadow-sm align-items-center statement-radius mb-1 border-width border-dark p-2" >
+  <div 
+    :c1lass="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" 
+    class="container bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3"
+  >
     <div class="flex-fill">
-      <select v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" v-model="statement.relation.relation_type_id" :disabled="isLoading" :class="isMainStatement ? 'bg-danger text-white border-0' : 'border-danger text-danger bg-transparent'" class="border rounded font-weight-bold mb-1">
+      <select 
+        v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" 
+        v-model="statement.relation.relation_type_id"
+        :disabled="isLoading"
+        class="border-primary text-primary border rounded font-weight-bold mb-1"
+        style="padding:0.16em"
+      >
         <option value="0" default >Please Select</option>
         <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
           <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
         </template>
       </select>
-      <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 mx-1">
-        Cancel
-      </button>
-      <button @click="save" :disabled="(statement.text.length < 3 || statement['relation']['relation_type_id'] * 1 === 0) || isLoading" class="btn btn-success py-1">
-        <fa v-if="isSuccess" icon="check" />
-        <fa v-else-if="isLoading" icon="spinner" spin />
-        <fa v-else icon="save" />
-      </button>
+      
     </div>
     <div class="flex-basis pt-2">
       <div v-if="toJoinRelation">
@@ -44,6 +46,16 @@
         <option :value="context['id']" class="text-dark">{{context['description']}}</option>
       </template>
     </select>
+    <div class="text-right">
+      <button @click="save" :disabled="(statement.text.length < 3 || statement['relation']['relation_type_id'] * 1 === 0) || isLoading" class="btn btn-primary py-1">
+        <fa v-if="isSuccess" icon="check" />
+        <fa v-else-if="isLoading" icon="spinner" spin />
+        <span v-else><fa  icon="save" /> Save</span>
+      </button>
+      <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 px-3 ml-2">
+        Cancel
+      </button>
+    </div>
     <Prompt ref="prompt"></Prompt>
   </div>
 </template>

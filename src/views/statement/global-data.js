@@ -29,6 +29,9 @@ const subRelationIds = ref([]) // list of subrelation ids. Used to update all th
 const isMainRelationSelected = computed(() => {
   return mainRelationId.value && selectedStatementId.value && mainRelationId.value * 1 === selectedStatementId.value * 1
 })
+const mainRelationUserId = computed(() => {
+  return mainRelationData.value ? mainRelationData.value['user_id'] : null
+})
 const hasFilterApplied = computed(() => {
   return Object.keys(authorFilter.value).length !== 0 || statementTextFilter.value !== ''
 })
@@ -298,6 +301,7 @@ export default {
   isMainRelationSelected: isMainRelationSelected,
   hasFilterApplied: hasFilterApplied,
   userFollowing: userFollowing,
+  mainRelationUserId: mainRelationUserId,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,

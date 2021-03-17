@@ -3,8 +3,9 @@
     <Header />
     <div class="d-flex align-items-stretch">
       <div class="flex-grow-1" style="min-width:0">
-        <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center pt-4">
-          Please wait... <fa icon="spinner" spin />
+        <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center">
+          <!-- Please wait... <fa icon="spinner" spin /> -->
+          <Loader style="padding-top: 30vh" />
         </div>
         <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
         <div v-else class="text-center w-100 pt-4">
@@ -27,13 +28,14 @@ import Header from '@/components/common/Header'
 import Auth from '@/core/auth'
 import LogInModal from '@/components/login/LogInModal'
 import Maintanables from '@/api/maintainables' // maintainables do not require authentication
-
+import Loader from '@/components/Loader'
 
 export default {
   name: 'App',
   components: {
     Header,
-    LogInModal
+    LogInModal,
+    Loader
   },
   mounted(){
     Maintanables.prepare().then(() => {

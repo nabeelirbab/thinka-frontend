@@ -1,6 +1,6 @@
 <template>
-  <span :title="relationTypeDescription" class="text-primary ">
-    <span :style="relationTypeSymbolStyle" class="font-weight-bold" style="float:left">{{relationTypeSymbol}}</span>
+  <span :title="relationTypeDescription" class="text-primary font-weight-bold">
+    <span :style="relationTypeSymbolStyle" class="" style="float:left">{{relationTypeSymbol}}</span>
 
     <span class="pl-1">{{relationTypeDescription}}</span>
   </span>

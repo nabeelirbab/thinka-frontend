@@ -19,17 +19,17 @@
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
-        <button @click="bookmark" :class="rootBookmarkId ? 'text-primary' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark">
+        <button @click="bookmark" :class="rootBookmarkId ? 'text-primary-2' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark">
           <fa-layers full-width v-if="!isBookmarkLoading">
               <fa icon="bookmark" />
-              <fa icon="minus" class="text-info pb-1" style="width:.4em" v-show="rootBookmarkId" />
-              <fa icon="plus" class="text-info pb-1" style="width:.4em" v-show="!rootBookmarkId" />
+              <fa icon="minus" class="text-primary pb-1" style="width:.4em" v-show="rootBookmarkId" />
+              <fa icon="plus" class="text-primary pb-1" style="width:.4em" v-show="!rootBookmarkId" />
           </fa-layers>
           <fa v-else icon="spinner" spin />
         </button>
       </div>
       <div>
-        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['published_at'] ? 'text-published' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" v-bind:title="titlePublish">
+        <button v-if="mainRelation" @click="(user && relationUserId !== user['id']) ? nonAuthorPublish() : publish()" :class="mainRelation['published_at'] ? 'text-primary' : ''" :disabled="isPublishing" class="btn icon-size py-0 text-white btn-square px-0 shadow-none" v-bind:title="titlePublish">
           <fa v-if="isPublishing" icon="spinner" spin />
           <fa v-else-if="!mainRelation['published_at']" icon="briefcase" />
           <fa v-else icon="sun" />

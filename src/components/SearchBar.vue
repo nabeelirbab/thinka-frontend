@@ -2,7 +2,7 @@
   <div>
     <div
       v-if="!isToggled" @click="isFocused = true" 
-      class="search-bar-y-padding c-pointer rounded-oval btn-shadow w-100 d-flex align-items-center text-white"
+      class="btn-lg c-pointer rounded-oval btn-shadow w-100 d-flex align-items-center text-white"
       style="background-color:#ffffff1a"
     >
       <div class="text-right flex-fill">
@@ -12,7 +12,7 @@
     </div>
     <div
       v-else
-      class=" d-flex rounded-oval btn-shadow w-100 bg-white p-0 border-width-none"
+      class="search-bar-y-padding text-initial d-flex rounded-oval btn-shadow w-100 bg-white p-0 border-width-none"
     >
       <input 
         ref="searchInput"
@@ -20,14 +20,14 @@
         @keypress.enter="search"
         v-model="keyword"
         type="text" 
-        class="search-bar-y-padding form-control-no-border  bg-transparent border-none w-100 px-4 text-initial" 
+        class=" form-control-no-border  bg-transparent border-none w-100 pl-3 pr-1" 
         placeholder="Enter statement keyword..."
       />
       <button 
         @click.stop="search" 
-        class="btn-lg-height rounded-r-oval border-none btn-primary px-3 text-white d-flex align-items-center text-nowrap"
+        class="search-bar-y-padding rounded-r-oval border-none btn-primary px-3 text-white d-flex align-items-center text-nowrap"
       >
-        <span class="text-initial"><fa icon="search" /> Search</span> &nbsp;
+        <span class=""><fa icon="search" /> Search</span> &nbsp;
       </button>
     </div>
   </div>
@@ -101,7 +101,7 @@ export default {
    padding: 0.5rem 1rem!important
  }
  .search-bar-y-padding {
-   padding-top: 0.5rem;
-   padding-bottom: 0.5rem;
+   padding-top: 0.72rem;
+   padding-bottom: 0.72rem;
  }
 </style>

@@ -101,17 +101,28 @@ export default {
         relation_id: this.selectedStatementId,
         confidence: this.confidence / 100
       }
-      console.log('before statementToChange', statementToChange)
       OpinionAPI.create(param).then(result => {
-        if(result['data']){
-          statementToChange['user_opinion'] = {
-            type: param['type'],
-            confidence: (param['confidence']).toFixed(4),
-            ...result['data']
-          }
+        if(typeof statementToChange['user_opinions'] === 'undefined'){
+          statementToChange['user_opinions'] = []
         }
-        console.log('result', result['data'])
-        console.log('after', statementToChange)
+        if(result['data']){
+          if(statementToChange){
+            let previousUserOpinionId = statementToChange['user_opinion'] ? statementToChange['user_opinion']['id'] * 1 : null
+            statementToChange['user_opinion'] = {
+              type: param['type'],
+              confidence: (param['confidence']).toFixed(4),
+              ...result['data']
+            }
+            if(previousUserOpinionId){
+              
+              statementToChange['user_opinions'] = statementToChange['user_opinions'].filter(userOpinion => {
+                return userOpinion['id'] * 1 !== previousUserOpinionId
+              })
+            }
+          }
+          console.log('user_opinions', statementToChange['user_opinions'])
+          statementToChange['user_opinions'].push(result['data'])
+        }
         this.isSuccess = true
         setTimeout(() => {
           this.isSuccess = false

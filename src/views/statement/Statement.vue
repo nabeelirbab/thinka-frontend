@@ -1,7 +1,8 @@
 <template>
   <div class="statement-container">
-    <div v-if="isLoading" class="text-center">
-      Please wait... <fa icon="spinner" spin />
+    <div v-if="isLoading" >
+      <Loader style="padding-top: 30vh" />
+      <!-- Please wait... <fa icon="spinner" spin /> -->
     </div>
     <div v-else-if="mainRelationData === null" class="text-center mt-4">
       <fa icon="exclamation-triangle" /> Statement Not Found or is Private <br />
@@ -11,7 +12,7 @@
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
       <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
       <div class="container px-0 pb-2 ">
-        <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm">
+        <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="mb-2 px-2" />
           <MainStatement
             v-if="mainRelationData" 
@@ -23,20 +24,23 @@
             class="c-pointer px-2"
           />
         </div>
-        <div v-if="mainRelationData" class="toolbar-bottom-space">
-          <div ref="positiveWindow" class="statement-window p-2" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+        <div v-if="mainRelationData" class="toolbar-bottom-space" style="margin-left:-4px; margin-right: -4px">
+          <div class="text-center text-light">
+            - &nbsp;SUPPORT&nbsp; -
+          </div>
+          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
-              :relation-id="mainRelationData['id']"
-              :list="mainRelationData['relations']"
-              :disable="true"
-              class="dragArea"
-              :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
-              item-key="id"
-              handle=".isRelationSelected.enableDragging"
-              :group="{ name: 'g1' }"
               @start="startDragging(true)"
               @end="endDragging"
               @change="listChanged"
+              :relation-id="mainRelationData['id']"
+              :list="mainRelationData['relations']"
+              :disable="true"
+              :class="(isDraggingStatement === 1) ? 'isDragging' : ''"
+              :group="{ name: 'g1' }"
+              class="dragArea"
+              item-key="id"
+              handle=".isRelationSelected.enableDragging"
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
@@ -61,6 +65,9 @@
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
+          <div class="text-center text-light">
+            - &nbsp;COUNTER&nbsp; -
+          </div>
           <div ref="negativeWindow" class="statement-window p-2" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
               :relation-id="mainRelationData['id']"
@@ -117,9 +124,8 @@ import TopToolbar from './statement-components/TopToolBar'
 import GlobalData from './global-data'
 import LogInModal from '@/components/login/LogInModal'
 import Auth from '@/core/auth'
-
 import draggable from 'vuedraggable'
-
+import Loader from '@/components/Loader'
 export default {
   components: {
     // VueResizable,
@@ -132,7 +138,8 @@ export default {
     Toolbar,
     LogInModal,
     MainStatementProfile,
-    draggable
+    draggable,
+    Loader
   },
   mounted(){
     window.addEventListener('click', this.clickedOutside)
@@ -395,12 +402,12 @@ export default {
   },
   computed: {
     totaRelevanceWindowHeight(){
-      const headerHeight = 90 // px
-      const separatorHeight = 18 // px
-      const bodyTopPadding = 8 // px
+      const headerHeight = 93 // px
+      const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
+      const bodyTopPadding = 41 // px
       const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
-      const mainStatementProfile = 43
+      const mainStatementProfile = 66
       const mainStatementBorder = 4
       const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - mainStatementProfile - mainStatementBorder
       return totaRelevanceWindowHeight - this.mainStatementHeight
@@ -457,7 +464,9 @@ export default {
   padding-bottom: 60px
 }
 .statement-window {
+  /* overflow:visible; */
   overflow-y: auto;
+  padding:5px 5px
 }
 .dragArea.isDragging {
   min-height: 20px;

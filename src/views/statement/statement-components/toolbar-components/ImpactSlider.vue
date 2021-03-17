@@ -18,7 +18,6 @@
     <div class="mx-1 text-right" style="width: 75px!important">
       {{(impact).toFixed(0)}}%
       <button
-        v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1"
         :disabled="isLoading || impact === null"
         @click="save" class="btn text-success p-1"
       >
@@ -56,6 +55,9 @@ export default {
       }
       OpinionAPI.post('/change-impact', param).then(result => {
         if(result['data']){
+          if(typeof selectedStatementData['user_opinions'] === 'undefined'){
+            selectedStatementData['user_opinions'] = []
+          }
           selectedStatementData['user_opinions'] = selectedStatementData['user_opinions'].filter(userOpinion => {
             if(userOpinion['user_id'] !== this.user.id){
               return true
@@ -87,15 +89,17 @@ export default {
   watch: {
     selectedStatementData: {
       handler(){
-        if(this.selectedStatementData){
-          let impactAmount = 0 
+        if(this.selectedStatementData && typeof this.selectedStatementData['user_opinions'] !== 'undefined'){
+          let impactAmount = 0
           for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
-            if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id)
-            impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+            if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
+              impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+              break
+            }
           }
           this.impact = impactAmount * 100
         }else{
-          this.impact = null
+          this.impact = 0
         }
       },
       immediate: true

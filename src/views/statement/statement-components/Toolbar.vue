@@ -3,11 +3,11 @@
     <div v-if="!isVirtualRelation || isRootVirtualRelation" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
       <!-- Only the authors -->
       <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1">
-        <ImpactSlider v-if="showImpact" />
         <ScopeSlider v-if="showScope" />
       </template>
       <!-- Must be logged in user -->
       <template v-if="user">
+        <ImpactSlider v-if="showImpact" />
         <OpinionSlider v-if="showOpinion" />
       </template>
     </div>

@@ -1,15 +1,15 @@
 <template class="overflow-hidden">
   <div>
-    <div class="image-background p-4 mb-4">
-      <div class="container p-4">
+    <div class="image-background py-4 px-0 mb-4">
+      <div class="container py-2 ">
         <SearchTree />
-        <router-link to="/new-statement" class="btn text-initial btn-primary border-width-none d-flex align-items-center btn-shadow mb-3">
+        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3">
           <div class="text-right flex-fill">
             <fa icon="project-diagram" />
           </div>
           <span class="ml-2 flex-fill text-left">Create New Tree</span>
         </router-link>
-        <router-link to="/new-statement" class="btn text-initial btn-primary border-width-none d-flex align-items-center btn-shadow">
+        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow">
           <div class="text-right flex-fill">
             <fa icon="book-reader" />
           </div>
