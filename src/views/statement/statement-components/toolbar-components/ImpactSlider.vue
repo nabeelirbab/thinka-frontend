@@ -6,7 +6,8 @@
         v-model="impact" 
         :min="-100" 
         :max="100"
-        :disblaed="isVirtualRelation"
+        :disabled="(isVirtualRelation) ? true : false"
+        :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
         style="width:150px; margin-left:20px; margin-right:20px"
       />
       <div class="text-center text-sm">
@@ -16,7 +17,8 @@
       </div>
     </div>
     <div class="mx-1 text-right" style="width: 75px!important">
-      {{(impact).toFixed(0)}}%
+      <span v-if="impact * 1 ">{{(impact).toFixed(0)}}%</span>
+      <small v-else >Neutral</small>
       <button
         :disabled="isLoading || impact === null"
         @click="save" class="btn text-success p-1"
@@ -28,7 +30,7 @@
   </div>
 </template>
 <script>
-import VueSlider from 'vue-slider-component'
+import VueSlider from 'vue-slider-component' // https://nightcatsama.github.io/vue-slider-component
 import 'vue-slider-component/theme/antd.css'
 import Auth from '@/core/auth'
 import GlobalData from '@/views/statement/global-data'
@@ -97,7 +99,7 @@ export default {
               break
             }
           }
-          this.impact = impactAmount * 100
+          this.impact = (impactAmount * 100).toFixed(0) * 1
         }else{
           this.impact = 0
         }

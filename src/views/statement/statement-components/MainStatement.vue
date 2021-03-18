@@ -1,9 +1,13 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div ref="mainStatementBox"  :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" class="limitBoxborder bg-success shadow-sm text-white px-2  pb-2 pt-2 statement-radius" :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" v-bind:title="titleIds">
-      <div class="d-flex justify-content-between">
-      </div>
+    <div
+      ref="mainStatementBox" 
+      :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" 
+      :title="titleIds"
+      :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" 
+      class="limitBoxborder bg-success shadow-sm text-white px-2 pb-2 pt-2 mb-2 statement-radius" 
+    >
       <div class="text-white">
         <div >
           <div v-if="!isEditing" @click="_statementClicked" class="d-flex align-items-center text-break">
@@ -42,12 +46,26 @@
             :is-main-statement="true" 
             :relation="relation" 
             :mode="'update'" 
-             :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"  />
+             :logic-tree-id="logicTreeId" :parent-relation-id="relation['parent_relation_id']"
+          />
         </div>
+        
         <div v-if="isSticky && stickySeeMore !== null" class="w-100 text-center c-pointer hover-underline ">
           <span v-if="stickySeeMore === true"  @click="stickySeeMore = false">Show more <fa icon="chevron-down" /></span>
           <span v-else @click="stickySeeMore = true">Show less <fa icon="chevron-up" /></span>
         </div>
+      </div>
+    </div>
+    <div class="row px-2 ">
+      <div class="col-3 text-nowrap text-center">
+        <fa icon="users" /> {{Object.keys(userFollowing).length}}
+      </div>
+      <div class="col-9" >
+        <Opinions 
+          v-if="showOpinion || showCTOpinion" 
+          :user-opinions="userOpinions" 
+          :is-horizontal="true" 
+        />
       </div>
     </div>
   </div>
@@ -61,6 +79,7 @@ import CircleLabel from '@/components/CircleLabel'
 import RelationTypeAPI from '@/api/relation-type'
 import TextDisplayer from '@/components/TextDisplayer'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
+import Opinions from '@/views/statement/statement-components/sub-statement-components/Opinions'
 // import NoProfile from '@/components/NoProfile' 
 export default {
   components: {
@@ -69,7 +88,8 @@ export default {
     CircleIconButton,
     CircleLabel,
     TextDisplayer,
-    OpinionIcon
+    OpinionIcon,
+    Opinions
     // NoProfile
   },
   props: {
@@ -180,6 +200,9 @@ export default {
       }else{
         return '??'
       }
+    },
+    userOpinions(){
+      return typeof this.relation['user_opinions'] === 'object' ? this.relation['user_opinions'] : []
     },
     contextRootRelationId(){
       const hasContext = typeof this.relation !== 'undefined' && typeof this.relation['user_relation_context_locks'] !== 'undefined' && this.relation['user_relation_context_locks'].length

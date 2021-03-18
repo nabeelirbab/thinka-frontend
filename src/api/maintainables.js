@@ -7,7 +7,7 @@ export default {
     return new Promise(resolve => {
       let countdown = 4
       const relationTypeParam = {
-        select: ['description', 'symbol', 'relevance', 'relevance_window', 'default_impact'],
+        select: ['name', 'description', 'symbol', 'relevance', 'relevance_window', 'default_impact'],
         sort: [{
           column: 'relevance',
           order: 'desc'

@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import VueSlider from 'vue-slider-component'
+import VueSlider from 'vue-slider-component' // https://nightcatsama.github.io/vue-slider-component
 import 'vue-slider-component/theme/antd.css'
 import ScopeAPI from '@/api/scope'
 import StatementAPI from '@/api/statement'

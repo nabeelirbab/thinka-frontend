@@ -35,12 +35,12 @@
           <fa v-else icon="sun" />
         </button>
       </div>
-      <div class="pl-2 text-white">
+      <!-- <div class="pl-2 text-white">
         <div class="text-primary text-center text-sm" style="position:absolute; width:21px; font-size:8px; padding-top:8px" >{{Object.keys(userFollowing).length}}</div>
         <span class="text-lg">
           <fa icon="star" />
         </span>
-      </div>
+      </div> -->
     </div>
   </div>
   <LogInModal ref="logInModal" />

@@ -2,7 +2,7 @@
   <span :title="relationTypeDescription" class="text-primary font-weight-bold">
     <span :style="relationTypeSymbolStyle" class="" style="float:left">{{relationTypeSymbol}}</span>
 
-    <span class="pl-1">{{relationTypeDescription}}</span>
+    <span class="pl-1">{{relationTypeName}}</span>
   </span>
 </template>
 <script>
@@ -64,6 +64,19 @@ export default {
         const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
         if(relationTypeIndex >= 0){
           return this.relationTypes[relationTypeIndex]['description']
+        }else{
+          return 'Unknow'
+        }
+      }else{
+        return 0
+      }
+    },
+    relationTypeName(){
+      const relationTypeId = this.relationTypeId
+      if(typeof relationTypeId === 'number'){
+        const relationTypeIndex = this.findArrayIndex(relationTypeId * 1, this.relationTypes, 'id')
+        if(relationTypeIndex >= 0){
+          return this.relationTypes[relationTypeIndex]['name']
         }else{
           return 'Unknow'
         }

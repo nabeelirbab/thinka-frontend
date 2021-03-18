@@ -1,12 +1,12 @@
 <template>
-  <div class="">
-    <div class="">
+  <div :class="isHorizontal ? 'd-flex' : ''" class="text-center">
+    <div class="text-nowrap flex-fill">
       <OpinionIcon type="1" /> {{counts[1]}}
     </div>
-    <div class="">
+    <div class="text-nowrap flex-fill">
       <OpinionIcon type="2" /> {{counts[2]}}
     </div>
-    <div class="">
+    <div class="text-nowrap flex-fill">
       <OpinionIcon type="3" /> {{counts[3]}}
     </div>
   </div>
@@ -18,7 +18,11 @@ export default {
     OpinionIcon
   },
   props: {
-    userOpinions: Array 
+    userOpinions: Array,
+    isHorizontal: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return {
