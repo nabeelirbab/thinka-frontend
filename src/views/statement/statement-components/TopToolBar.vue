@@ -156,7 +156,7 @@ export default {
         <p>So you're ready to publish, well done! Currently this tree is private and so it can still be modified. Once published you will not be able to change your tree. So if you continue all the statements and logic will be fixed and will be visible to anyone.</p>
         <p>Are you sure you want to publish this tree now?</p>
       `
-      const unpublishMessage = '<p>Unpublishing the tree will make it private and there can no longer be seen by other users</p>Are you sure you want to unplish this tree?'
+      const unpublishMessage = '<p>Unpublishing the tree will make it private and it can no longer be seen by other users</p>Are you sure you want to unplish this tree?'
       this.$refs.prompt._open(
         this.mainRelation['published_at'] ? unpublishMessage: publishMessage,
         [{

@@ -1,22 +1,45 @@
 <template>
   <div class="bg-white border border-secondary p-2 mb-1">
     <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold mr-3" style="width: 100px">Opinion</div>
+      <div class="font-weight-bold" style="width: 100px">Impact</div>
       <div>
+        <div class="text-center" >
+          <vue-slider 
+            v-model="impact" 
+            :min="-100" 
+            :max="100"
+            :disabled="(isVirtualRelation) ? true : false"
+            :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
+            style="width:150px; margin-left:20px; margin-right:20px"
+          />
+          <div class="text-center text-sm">
+            <span class="float-left">Disproving</span>
+            <!-- <span class="mx-auto" style="position:absolute">None</span> -->
+            <span class="float-right">Proving</span>
+          </div>
+        </div>
+      </div>
+      <div class="mx-1 text-right" style="width: 75px!important"></div>
+    </div>
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="font-weight-bold " style="width: 100px">Opinion</div>
+      <div >
         <Opinion 
           v-if="selectedStatementData"
           v-model="type"
           :relation="selectedStatementData"
           :type-descriptions="typeDescriptions"
           :disabled="isLoading"
+          class="text-center"
+          style="width:190px"
         />
       </div>
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
     <div class="d-flex align-items-center justify-content-center ">
-      <div class="pr-3 font-weight-bold">Confidence</div>
+      <div class="font-weight-bold" style="width: 100px">Confidence</div>
       <div class="text-center">
-        <vue-slider 
+        <vue-slider
           v-model="confidence"
           :disabled="type <= 0 || isLoading"
           :min="0" 
@@ -69,8 +92,9 @@ export default {
   },
   data(){
     return {
+      impact: 0,
       confidence: 0,
-      type: -1,
+      type: 0,
       typeDescriptions: OpinionHelper.typeDescriptions,
       user: Auth.user(),
       isLoading: false,
@@ -92,14 +116,17 @@ export default {
     //     }],
     //     'Set Opinion'
     //   )
-    // },
+    // }, 
     changeOpinion(){
       this.isLoading = true
       let statementToChange = this.selectedStatementData
-      const param = {
-        type: this.type,
+      let param = {
         relation_id: this.selectedStatementId,
-        confidence: this.confidence / 100
+        confidence: this.confidence / 100,
+        impact_amount: this.impact / 100,
+      }
+      if(this.type){
+        param['type'] = this.type
       }
       OpinionAPI.create(param).then(result => {
         if(typeof statementToChange['user_opinions'] === 'undefined'){
@@ -114,7 +141,6 @@ export default {
               ...result['data']
             }
             if(previousUserOpinionId){
-              
               statementToChange['user_opinions'] = statementToChange['user_opinions'].filter(userOpinion => {
                 return userOpinion['id'] * 1 !== previousUserOpinionId
               })
@@ -144,10 +170,20 @@ export default {
           this.type = this.selectedStatementData['user_opinion']['type']
           this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
           this.isPublic = this.selectedStatementData['published_at']
+
+          let impactAmount = 0
+          for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
+            if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
+              impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+              break
+            }
+          }
+          this.impact = (impactAmount * 100).toFixed(0) * 1
         }else{
           this.confidence = 0
-          this.type = -1
+          this.type = 0
           this.isPublic = false
+          this.impact = 0
         }
         this.isSuccess = false
       },

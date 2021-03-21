@@ -87,12 +87,11 @@ export default {
       this.isLoading = true
       RelationAPI.post('/delete-' + type, {id: this.selectedStatementId}).then(result => {
         if(result['data']){
+          this.$refs.modal._close()
           this.recentlyDeletedRelationId = this.selectedStatementId
           if(this.mainRelationData['id'] * 1 === this.selectedStatementId * 1){ // main statement is being deleted
             if(type === 'clip'){
               this.mainRelationData['parent_relation_id'] = null
-              this.$refs.modal._close()
-                
             }else if(this.mainRelationData['parent_relation_id']){ // if main statement has parent statement
               this.isDeleted = 'go_to_parent'
             }else{
@@ -103,9 +102,11 @@ export default {
               this.isDeleted = 'go_to_clipped_relation'
             }else{
               this.deletedRelationId = this.selectedStatementId
-              setTimeout(() => {
-                this.$refs.modal._close()
-              }, 700)
+              // setTimeout(() => {
+              //   if(this.$refs.modal){
+              //     this.$refs.modal._close()
+              //   }
+              // }, 700)
             }
           }
         }

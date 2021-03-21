@@ -6,36 +6,58 @@
       :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" 
       :title="titleIds"
       :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" 
-      class="limitBoxborder bg-success shadow-sm text-white px-2 pb-2 pt-2 mb-2 statement-radius" 
+      class="limitBoxborder bg-success shadow-sm px-2 pb-2 pt-2 mb-2 statement-radius" 
     >
-      <div class="text-white">
+      <div>
         <div >
-          <div v-if="!isEditing" @click="_statementClicked" class="d-flex align-items-center text-break">
-            <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
-              <div class="d-flex text-left mb-1"  >
+          <div v-if="!isEditing"  class="d-flex align-items-center text-break">
+            <div @click="_statementClicked" class="d-flex flex-fill ">
+              <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true ? 'max-height: ' + (stickStatementHeightLimit - 32 - 21) + 'px!important;' : ''">
+                <div class="d-flex text-left mb-1 pt-1 text-white"  >
                   <div class="column mr-2 ml-0" style="padding-left: 0.1em; ">
                     <span>
-                  <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/></span></div>
-                  <div class="column text-break"><TextDisplayer :text="statement ? statement['text'] : 'No Text'" text-class="text-white" /></div>
+                      <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/>
+                    </span>
+                  </div>
+                  <div class="column text-break ">
+                    <TextDisplayer :text="statement ? statement['text'] : 'No Text'" />
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex align-items-center justify-content-center text-center">
+                <OpinionIcon v-if="selectedStatementId !== relation['id']" :type="relationOpinionType" class="mr-1 text-white" />
+                <div v-if="selectedStatementId === relation['id']" class=" ml-1">
+                  <CircleLabel>
+                    <CTPoints :points="ctPoints * 1" class="text-dark" />
+                  </CircleLabel>
+                  <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
+                </div>
+                <div
+                  v-else-if="parentRelationId" 
+                  @click.stop 
+                  class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center" 
+                  style="height:35px!important; width:35px!important"
+                >
+                  <router-link :to="'/branch/'+ (contextRootRelationId ? (contextRootRelationId + '/t/context-locked') : parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30)))" class="text-primary">
+                    <fa icon="undo-alt" />
+                  </router-link>
+                </div>
               </div>
             </div>
-            <div class="d-flex align-items-center justify-content-center text-center">
-              <OpinionIcon v-if="selectedStatementId !== relation['id']" :type="relationOpinionType" class="mr-1" />
-              <div v-if="selectedStatementId === relation['id']" class=" ml-1">
-                <CircleLabel>
-                  <CTPoints :points="ctPoints * 1" class="text-dark" />
-                </CircleLabel>
-                <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
-              </div>
-              <div
-                v-else-if="parentRelationId" 
-                @click.stop 
-                class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center" 
-                style="height:35px!important; width:35px!important"
-              >
-                <router-link :to="'/branch/'+ (contextRootRelationId ? (contextRootRelationId + '/t/context-locked') : parentRelationId + '/t/' + toKebabCase((parentRelation['statement']['text']).slice(0, 30)))" class="text-primary">
-                  <fa icon="undo-alt" />
-                </router-link>
+            <div v-if="isActive && !enableDragging" class="align-self-center">
+              <div class="dropdown show">
+                <button class="border-0 rounded bg-transparent text-white" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More options.">
+                  <fa icon="ellipsis-v" />
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                  <button 
+                    @click="editSelectedStatement = true" 
+                    :disabled="user === null || isPublished || !isAuthor"
+                    class="dropdown-item"
+                  >
+                    <fa icon="edit" /> Edit
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -80,6 +102,7 @@ import RelationTypeAPI from '@/api/relation-type'
 import TextDisplayer from '@/components/TextDisplayer'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
 import Opinions from '@/views/statement/statement-components/sub-statement-components/Opinions'
+import Auth from '@/core/auth'
 // import NoProfile from '@/components/NoProfile' 
 export default {
   components: {
@@ -107,6 +130,7 @@ export default {
     return {
       ...GlobalData,
       isSticky: false,
+      user: Auth.user(),
       stickySeeMore: null,
       stickStatementHeightLimit: 0,
       statementTextHeight: 0,
@@ -168,12 +192,19 @@ export default {
     isActive(){
       return this.relation && this.relation['id'] * 1 === this.selectedStatementId * 1
     },
+    isPublished(){
+      return this.relation && this.relation['published_at']
+    },
+    isAuthor(){
+      return this.relation && this.user && this.relation['user_id'] === this.user['id']
+    },
     isSelected(){
       return this.relation && this.selectedStatementId === this.relation['id']
     },
     statement(){
       return this.relation && this.relation['statement'] ? this.relation['statement'] : null
     },
+    
     statementId(){
       return this.statement && typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
     },

@@ -13,14 +13,35 @@
       <span v-if="!showStatement && hasToggleableChildren" class="">
         +
       </span>
-      <span v-else-if="showStatement && (!hasFilterApplied || hasFilterPassChildren)" style="">
+      <span v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" style="">
         -
       </span>
     </div>
-    <div v-if="showOpinion || showCTOpinion" class="bg-white py-2">
-      <Opinions :user-opinions="userOpinions" class="border-right px-2" />
+    <div v-if="isActive || showCTOpinion" class="bg-white py-2">
+      <Opinions 
+        @click="opinionSummaryClicked"
+        :user-opinions="userOpinions" 
+        class="border-right px-2 c-pointer"
+      />
     </div>
     <div class="flex-fill px-2 py-2 border-right-radius bg-white">
+      <div v-if="isActive && relation && relation['user']" class="text-sm ml-2 d-flex justify-content-end">
+        <div v-if="isActive" class="flex-fill">
+          <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
+        </div>
+        <div v-if="isVirtualRelation" class="text-info text-sm text-right">
+          <fa icon="link" class="mr-1" />
+          <span v-if="isActive && relation['published_at']">&#8226;</span>
+        </div>
+        <div v-if="isActive" class="">
+          <span v-if="relation['published_at']"  class="pl-2 text-light">
+            <fa v-if="relation['published_at']" icon="sun" />
+            <fa v-else icon="briefcase" />
+            &#8226;
+          </span>
+          {{timeSince(relation['published_at'], 2592000000, 'm d, Y')}}
+        </div>
+      </div>
       <div
         v-if="isLocked > 0"
         v-show="!isEditing && (!isFilteredOut || hasFilterPassChildren)"
@@ -55,11 +76,15 @@
           </div>
           <div class="flex-fill c-pointer align-items-stretch"  @click="statementClicked" >
             <div>
-              <div v-if="isActive && relation && relation['user']" class="text-sm ml-3 d-flex">
-                <div class="flex-fill">
+              <!-- <div v-if="relation && relation['user']" class="text-sm ml-3 d-flex justify-content-end">
+                <div v-if="isActive" class="flex-fill">
                   <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
                 </div>
-                <div class="">
+                <div v-if="isVirtualRelation" class="text-info text-sm text-right">
+                  <fa icon="link" class="mr-1" />
+                  <span v-if="isActive && relation['published_at']">&#8226;</span>
+                </div>
+                <div v-if="isActive" class="">
                   <span v-if="relation['published_at']"  class="pl-2 text-light">
                     <fa v-if="relation['published_at']" icon="sun" />
                     <fa v-else icon="briefcase" />
@@ -67,12 +92,12 @@
                   </span>
                   {{timeSince(relation['published_at'], 2592000000, 'm d, Y')}}
                 </div>
-              </div>
+              </div> -->
               <div class="d-flex text-dark text-left mb-1 align-items-center pl-2" >
                   <div class="text-break">
-                    <div v-if="isVirtualRelation" class="text-info text-sm">
+                    <!-- <div v-if="isVirtualRelation" class="text-info text-sm">
                       <fa icon="link" class="mr-1" />This is a linked Statement
-                    </div>
+                    </div> -->
                     <RelationTypeLabel :relation-type-id="statement['relation_type_id'] * 1" />
                     <TextDisplayer :text="statementText"  />
                   </div>
@@ -125,7 +150,6 @@
         </div>
       </div>
       <div>
-
         <CreateSubStatement
           v-if="isEditing"
           @save="statementEdited"
@@ -316,6 +340,14 @@ export default {
           this.mapRelations()
           this.isUpdating = false
         })
+      }
+    },
+    opinionSummaryClicked(){
+      if(this.selectedStatementId === this.relationId){
+        console.log('opinionSummaryClicked', this.selectedStatementId, this.relationId, this.showImpactOpinionDialog)
+        this.showImpactOpinionDialog = !this.showImpactOpinionDialog
+      }else{
+        this.statementClicked()
       }
     }
   },

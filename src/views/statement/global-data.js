@@ -13,6 +13,7 @@ const userFollowing = ref({})
 const showImpact = ref(false)
 const showOpinion = ref(false)
 const showScope = ref(false)
+const showImpactOpinionDialog = ref(false)
 const showCTOpinion = ref(false)
 const editSelectedStatement = ref(false)
 const enableDragging = ref(false)
@@ -75,7 +76,7 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   relation['is_author_filter_passed'] = true
   relation['is_virtual_relation'] = isVirtualRelation // if true, the value will be the root virtual relation id
   if(relation && relation['virtual_relation_id']){
-    if(!isVirtualRelation){ 
+    if(!isVirtualRelation){
       relation['is_virtual_relation'] = relation['virtual_relation_id']
     }
     if(relation['virtual_relation']){
@@ -176,6 +177,7 @@ watch(selectedStatementId, (id) => {
     showScope.value = false
     isDraggingStatement.value = 0
     selectedStatementData.value = null
+    showImpactOpinionDialog.value = false
   }
   editSelectedStatement.value = false
   enableDragging.value = false
@@ -302,6 +304,7 @@ export default {
   hasFilterApplied: hasFilterApplied,
   userFollowing: userFollowing,
   mainRelationUserId: mainRelationUserId,
+  showImpactOpinionDialog: showImpactOpinionDialog,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,

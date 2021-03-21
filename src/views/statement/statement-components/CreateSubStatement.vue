@@ -16,7 +16,6 @@
           <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
         </template>
       </select>
-      
     </div>
     <div class="flex-basis pt-2">
       <div v-if="toJoinRelation">
@@ -25,7 +24,7 @@
       <div v-else-if="toLinkRelation">
         {{toLinkRelation['statement']['text']}}
       </div>
-      <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" :class="isMainStatement ? 'text-white': ''" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
+      <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
       <Suggestion ref="suggestion" 
         @select="sugestionSelected" 
         @join="suggestionJoined"
