@@ -6,7 +6,7 @@
       </div>
       <span class="font-weight-bold flex-fill">{{toPascal(username)}}</span>
       <!-- <small class="float-right">{{formatDate(datetime)}}</small> -->
-      <small class="float-right">{{timeSince(createdAt, 259200000)}}</small>
+      <small class="float-right">{{timeSince(createdAt + ' UTC', 259200000)}}</small>
     </div>
   </div>
 </template>

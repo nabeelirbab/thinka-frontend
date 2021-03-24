@@ -62,7 +62,6 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
       const userId = relation['parent_relation_user_following'][key]['id']
       userFollowing.value[userId] = relation['parent_relation_user_following'][key]
     }
-    console.log(relation)
   }
   userFollowing.value[relation['user_id']] = relation['user']
   for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
@@ -213,8 +212,10 @@ const getRelationInstance = (relationId) => {
         currentRelation = currentRelation['relations'][index]
       }
     }
-    if(currentRelation['id'] * 1 !== relationId * 1){
-      console.error('There is problem with subRelationMap. Id not match', currentRelation, relationId)
+    if(typeof currentRelation === 'undefined'){
+      return null
+    }else if(currentRelation['id'] * 1 !== relationId * 1){
+      // console.error('There is problem with subRelationMap. Id not match', currentRelation, relationId)
     }
     return currentRelation
   }else{

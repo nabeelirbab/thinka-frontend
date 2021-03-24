@@ -10,7 +10,7 @@
             :root-parent-statement-text="trend['root_parent_statement_text']"
           />
           <!-- <div class="flex-fill text-break">
-            <small>{{timeSince(trend['updated_at'])}}</small>{{"   "}}
+            <small>{{timeSince(trend['updated_at'] + ' UTC')}}</small>{{"   "}}
             <span  style="color: gray"><fa v-if="trend['published_at']" icon="sun" /><fa v-else icon="briefcase" /></span><br />
             <router-link :to="'/branch/' + trend['id'] + '/t/' + toKebabCase(trend['text']).slice(0,30)">{{trend['text']}}</router-link>
           </div> -->

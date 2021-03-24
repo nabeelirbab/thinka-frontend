@@ -51,12 +51,19 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                   <button 
+                    @click="showScope = !showScope"
+                    class="dropdown-item"
+                  >
+                    <fa icon="edit" /> Scope
+                  </button>
+                  <button 
                     @click="editSelectedStatement = true" 
                     :disabled="user === null || isPublished || !isAuthor"
                     class="dropdown-item"
                   >
                     <fa icon="edit" /> Edit
                   </button>
+                  
                 </div>
               </div>
             </div>
@@ -85,6 +92,7 @@
       <div class="col-9" >
         <Opinions 
           v-if="showOpinion || showCTOpinion" 
+          @click="opinionSummaryClicked"
           :user-opinions="userOpinions" 
           :is-horizontal="true" 
         />
@@ -157,6 +165,13 @@ export default {
       const allowance = 60
       this.isSticky = (headerHeight + this.statementTextHeight + allowance) <= window.pageYOffset
     },
+    opinionSummaryClicked(){
+      if(this.selectedStatementId === this.relation['id']){
+        this.showImpactOpinionDialog = !this.showImpactOpinionDialog
+      }else{
+        this._statementClicked()
+      }
+    }
   },
   watch: {
     selectedStatementId(){

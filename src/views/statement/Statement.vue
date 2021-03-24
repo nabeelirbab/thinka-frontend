@@ -44,7 +44,15 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element['id'])" @update="updateNewSubStatement($event, index)" :is-positive-statement="true" />
+                  <SubStatement 
+                    @save="addNewSubStatement($event, element['id'])"
+                    @update="updateNewSubStatement($event, index)" 
+                    :relation-id="element['id']"
+                    :relation="element"
+                    :level="1" 
+                    :logic-tree-id="logicTreeId" 
+                    :is-positive-statement="true"
+                  />
                 </div>
               </template>
             </draggable>
@@ -84,7 +92,15 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 1">
-                  <SubStatement :statement="element" :level="1" :logic-tree-id="logicTreeId" @save="addNewSubStatement($event, element['id'])" @update="updateNewSubStatement($event, index)" :is-positive-statement="false" :group-name="'g2'"/>
+                  <SubStatement
+                    @save="addNewSubStatement($event, element['id'])" 
+                    @update="updateNewSubStatement($event, index)"
+                    :relation-id="element['id']"
+                    :level="1" 
+                    :logic-tree-id="logicTreeId" 
+                    :is-positive-statement="false" 
+                    :group-name="'g2'"
+                  />
                 </div>
               </template>
             </draggable>

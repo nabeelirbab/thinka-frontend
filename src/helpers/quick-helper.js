@@ -42,6 +42,9 @@ export default {
     },
     formatDate: formatDate,
     timeSince(date, maxMSeconds = false, dateFormat = null) { // if $maxMSeconds is exceeded, timesince will convert to formatDate(). The format of the date is determined by $dateFormat
+      if(typeof date === 'string' && date.indexOf('T') >= 0 && date.indexOf('Z') >= 0){
+        date = (date.replace('T', ' '))
+      }
       date = new Date(date)
       if(((new Date()) - date) > maxMSeconds){
         return formatDate(date, dateFormat)

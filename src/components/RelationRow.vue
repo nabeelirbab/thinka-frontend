@@ -18,7 +18,7 @@
           <fa v-else icon="briefcase" />
           &#8226;
         </span>
-        {{timeSince(relation['updated_at'], 2592000000, 'm d, Y')}}
+        {{timeSince(relation['updated_at'] + ' UTC', 2592000000, 'm d, Y')}}
       </small>
     </div>
     <div class="d-flex w-100" >

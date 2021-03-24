@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="pl-2 text-right">
-      <span class="text-sm text-light">{{timeSince(mainRelationData['created_at'], 2592000000, 'm d, Y')}}</span>
+      <span class="text-sm text-light">{{timeSince(mainRelationData['created_at'] + ' UTC', 2592000000, 'm d, Y')}}</span>
       <div class="dropdown">
         <button class="btn btn-outline-dark btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Authors
