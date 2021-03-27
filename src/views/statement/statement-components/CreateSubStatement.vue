@@ -259,8 +259,10 @@ export default {
       param['relation']['impact_amount'] = (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0
       StatementAPI.create(param).then(result => {
         if(result['data']){
+          console.log('new', result['data'])
           let newSubStatement = param
           newSubStatement['id'] = result['data']['id']
+          newSubStatement['created_at'] = result['data']['created_at']
           newSubStatement['relation']['id'] = result['data']['relation']['id']
           this.$emit('save', newSubStatement)
           this.isSuccess = true

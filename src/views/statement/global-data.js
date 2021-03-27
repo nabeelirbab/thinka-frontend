@@ -15,6 +15,7 @@ const showOpinion = ref(false)
 const showScope = ref(false)
 const showImpactOpinionDialog = ref(false)
 const showCTOpinion = ref(false)
+const showVirtualRelationLinkages = ref(false)
 const editSelectedStatement = ref(false)
 const enableDragging = ref(false)
 const isDraggingStatement = ref(0) // 1 - dragging on positive, 2 dragging on negative
@@ -232,8 +233,8 @@ const prepareNewSubStatement = (rawNewSubStatement) => {
   }else{ // its already a relation
     newSubStatement = rawNewSubStatement
   }
+  newSubStatement['created_at'] = rawNewSubStatement['created_at']
   const user = Auth.user().value
-  console.log('prepareNewSubStatement', user)
   newSubStatement['relations'] = []
   newSubStatement['user_id'] = user['id']
   newSubStatement['user'] = {
@@ -254,10 +255,8 @@ const addNewSubStatement = (newSubStatement, parentRelationId = null) => {
   let newSubRelations = null
   let parentRelation = getRelationInstance(parentRelationId)
   newSubRelations = prepareNewSubStatement(newSubStatement)
-  console.log('parentRelation', parentRelationId, parentRelation)
   if(typeof newSubStatement['retrieve_relations'] !== 'undefined'){
     newSubRelations['is_Loading_relations'] = true
-    console.log('addNewSubStatement', newSubRelations)
     const param = {
       relation_id: newSubRelations['id'] * 1
     }
@@ -306,6 +305,7 @@ export default {
   userFollowing: userFollowing,
   mainRelationUserId: mainRelationUserId,
   showImpactOpinionDialog: showImpactOpinionDialog,
+  showVirtualRelationLinkages: showVirtualRelationLinkages,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,

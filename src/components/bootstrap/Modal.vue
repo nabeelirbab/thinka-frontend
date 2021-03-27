@@ -63,8 +63,12 @@ export default {
     },
     paddingTop: String
   },
+  emits: ['close'],
   mounted(){
     this._close()
+    $(this.$refs.modal).on('hidden.bs.modal', () => {
+      this.$emit('close')
+    })
   },
   methods: {
     _open(){

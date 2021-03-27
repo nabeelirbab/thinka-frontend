@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <div v-if="!isVirtualRelation || isRootVirtualRelation" class="fixed-bottom px-2 px-md-4" style="padding-bottom:72px">
+    <div v-if="!isVirtualRelation || isRootVirtualRelation" class="fixed-bottom px-2 px-md-4" style1="padding-bottom:20px">
       <!-- Only the authors -->
       <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1">
         <ScopeSlider v-if="showScope" />
@@ -11,7 +11,7 @@
         <OpinionSlider v-if="showOpinion || showImpactOpinionDialog" /> 
       </template>
     </div>
-    <div :class="selectedStatementId === 0 || selectedStatementId === null ? 'active' : ''" class="toolbar d-flex justify-content-between justify-content-md-center fixed-bottom bg-white py-2 px- border-top">
+    <div :class="selectedStatementId === 0 || selectedStatementId === null ? 'active' : ''" class="toolbar d-none justify-content-between justify-content-md-center fixed-bottom bg-white py-2 px- border-top">
       <!-- Impact --> 
       <CircleIconButton
         @click="showImpact = !showImpact" 

@@ -3,6 +3,8 @@ import Auth from '@/core/auth'
 import { ref } from 'vue'
 export default class API {
   apiName
+  createCachedDataLookUpById = false
+  cachedDataLookUpById = ref({})
   cachedData = ref(null) // stores all data retrieved here for reusing
   basePath = process.env.VUE_APP_API_URL // . 'http://localhost/thinka-api/public/api/'
   mockAPI = {
@@ -25,6 +27,15 @@ export default class API {
       this.post('/retrieve', parameter).then(response => {
         if(cache){
           this.cachedData.value = response
+          if(this.createCachedDataLookUpById){
+            this.cachedDataLookUpById.value = {}
+            if(this.cachedData.value['data'].length){
+              this.cachedData.value['data'].forEach(entry => {
+                this.cachedDataLookUpById.value[entry['id']] = entry
+              })
+            }
+            
+          }
         }
         resolve(response)
       }).catch(errorResult => {

@@ -5,17 +5,17 @@
       <div>
         <div class="text-center" >
           <vue-slider 
-            v-model="impact" 
+            v-model="impact"
+            @click="hasImpactChanged = true"
             :min="-100" 
             :max="100"
-            :disabled="(isVirtualRelation) ? true : false"
             :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
             style="width:150px; margin-left:20px; margin-right:20px"
           />
           <div class="text-center text-sm">
-            <span class="float-left">Disproving</span>
-            <!-- <span class="mx-auto" style="position:absolute">None</span> -->
-            <span class="float-right">Proving</span>
+            <span @click="impact = -100" class="c-pointer float-left">Disproving</span>
+            <span @click="impact = -0" class="c-pointer mx-auto" >Neutral</span>
+            <span @click="impact = 100" class="c-pointer float-right">Proving</span>
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
     <div class="d-flex align-items-center justify-content-center">
       <div class="font-weight-bold " style="width: 100px">Opinion</div>
       <div >
-        <Opinion 
+        <Opinion
           v-if="selectedStatementData"
           v-model="type"
           :relation="selectedStatementData"
@@ -46,21 +46,12 @@
           :max="100" 
           style="width:150px; margin-left:20px; margin-right:20px"
         />
-        <div class="text-center text-sm">
-          <span class="float-left">0%</span>
-          <span class="float-right">100%</span>
+        <div v-if="type" class="text-center text-sm">
+          <span @click="confidence = 0" class="c-pointer float-left">0%</span>
+          <span @click="confidence = 100" class="c-pointer float-right">100%</span>
         </div>
       </div>
       <div class="mx-1 text-right" style="width: 75px!important">
-        <!-- {{(confidence).toFixed(0)}}% -->
-        <!-- <button
-          v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1"
-          :disabled="isLoading || confidence === null"
-          @click="save" class="btn text-success p-1"
-        >
-          <fa v-if="isLoading" icon="spinner" spin />
-          <fa v-else icon="check" />
-        </button> -->
       </div>
     </div>
     <div v-if="type !== -1" v-html="message" class="text-center py-2">
@@ -83,7 +74,7 @@ import OpinionAPI from '@/api/opinion'
 import Prompt from '@/components/Prompt'
 import Auth from '@/core/auth'
 import OpinionHelper from '@/helpers/opinion'
-// import RelationAPI from '@/api/relation'
+import RelationTypeAPI from '@/api/relation-type'
 export default {
   components: {
     VueSlider,
@@ -93,6 +84,7 @@ export default {
   data(){
     return {
       impact: 0,
+      hasImpactChanged: false,
       confidence: 0,
       type: 0,
       typeDescriptions: OpinionHelper.typeDescriptions,
@@ -103,20 +95,6 @@ export default {
     }
   },
   methods: {
-    // tryChangeOpinion(type){
-    //   this.$refs.prompt._open(
-    //     `You are about to change your opinion to: <p class="font-italic text-center font-weight-bold ">"${typeDescription[type]}"</p>`,
-    //     [{
-    //       label: 'Proceed',
-    //       class: 'btn btn-success',
-    //       close_on_click: false,
-    //       callback: () => {
-    //         this.changeOpinion(type)
-    //       }
-    //     }],
-    //     'Set Opinion'
-    //   )
-    // }, 
     changeOpinion(){
       this.isLoading = true
       let statementToChange = this.selectedStatementData
@@ -159,9 +137,28 @@ export default {
     }
   },
   watch: {
-    type(type){
+    type(type){ // 1 - thumbsdown, 2 - point up, 3 - thumbs up
       if(type <= 0){
         this.confidence = 0
+      }
+      if(!this.hasImpactChanged && this.selectedStatementData && !this.hasUserOpinion){ // setting default impact if no user opinion yet or impact slider is not yet manually set
+        const relationTypeId = this.selectedStatementData['relation_type_id']
+        console.log('type', type, relationTypeId)
+        switch(type * 1){
+          case 1:
+            this.impact = 0
+            break
+          case 2:
+            this.impact = 100
+            this.confidence = 100
+          break
+          case 3:
+            if(typeof RelationTypeAPI.cachedDataLookUpById.value[relationTypeId] !== 'undefined'){
+              console.log('default_impact', RelationTypeAPI.cachedDataLookUpById.value[relationTypeId]['default_impact'])
+              this.impact = (RelationTypeAPI.cachedDataLookUpById.value[relationTypeId]['default_impact'] * 100).toFixed(0) * 1
+            }
+          break
+        }
       }
     },
     selectedStatementData: {
@@ -186,6 +183,7 @@ export default {
           this.impact = 0
         }
         this.isSuccess = false
+        this.hasImpactChanged = false
       },
       immediate: true
     }
@@ -199,6 +197,9 @@ export default {
     },
     isVirtualRelation(){
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
+    },
+    hasUserOpinion(){
+      return this.selectedStatementData && this.selectedStatementData['user_opinion'] !== null
     }
   }
 }

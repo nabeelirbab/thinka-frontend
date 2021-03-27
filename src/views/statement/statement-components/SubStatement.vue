@@ -58,7 +58,7 @@
             </CircleLabel>
             <div v-else-if="(showImpact || showScope) && relationData" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
               <small v-if="showImpact" class="text-nowrap">{{userOpinionImpact}}%</small>
-              <small v-if="relationData && showScope" style="line-height: 1">
+              <small v-if="relationData && relationData['statement'] && showScope" style="line-height: 1">
                 {{relationData['statement']['scope_id'] ? scopes[findArrayIndex(relationData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
               </small>
             </div>
@@ -289,11 +289,9 @@ export default {
       this.isDraggingStatement = this.isPositiveStatement === true ? 1 : 2
     },
     endDragging(){
-      console.log('endDragging', this.relationData['relations'].length)
       this.isDraggingStatement = 0
     },
     listChanged(event){ // for dragging
-      console.log('listChanged', this.relationData['relations'].length)
       if(typeof event['added'] !== 'undefined' && this.relationData['relations']){
         const addedIndex = event['added']['newIndex']
         this.isUpdating = true

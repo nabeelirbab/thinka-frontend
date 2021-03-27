@@ -11,7 +11,7 @@
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
       <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
-      <div class="container px-0 pb-2 ">
+      <div class="container px-0">
         <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="mb-2 px-2" />
           <MainStatement
@@ -121,6 +121,7 @@
           </div>
         </div>
       </div>
+      <VirtualRelationLinkage />
       <Toolbar class="fixed toolbar" />
     </div>
   </div>
@@ -142,6 +143,7 @@ import LogInModal from '@/components/login/LogInModal'
 import Auth from '@/core/auth'
 import draggable from 'vuedraggable'
 import Loader from '@/components/Loader'
+import VirtualRelationLinkage from './statement-components/VirtualRelationLinkage'
 export default {
   components: {
     // VueResizable,
@@ -155,7 +157,8 @@ export default {
     LogInModal,
     MainStatementProfile,
     draggable,
-    Loader
+    Loader,
+    VirtualRelationLinkage
   },
   mounted(){
     window.addEventListener('click', this.clickedOutside)
@@ -209,40 +212,6 @@ export default {
       const param = {
         for_tree: true,
         relation_id: relationId * 1,
-        // select: {
-        //   logic_tree: {
-        //     select: ['description', 'published_at']
-        //   },
-        //   parent_relation: {
-        //     select: {
-        //       ...(['statement_id']),
-        //       statement: {
-        //         select: ['text']
-        //       }
-        //     }
-        //   },
-        //   relations: {
-        //     select: recursiveRelation,
-        //     sort: [{column: 'relevance_row', order: 'asc'}]
-        //   },
-        //   user_relation_bookmarks: {
-        //     select: ['user_id', 'relation_id', 'sub_relation_id']
-        //   },
-        //   virtual_relation: {
-        //     select: {
-        //       ...preFormattedSelect,
-        //       relations: {
-        //         select: recursiveRelation
-        //       }
-        //     }
-        //   },
-        //   ...preFormattedSelect,
-        //   ...(['parent_relation_id', 'logic_tree_id', 'statement_id', 'relation_type_id', 'relevance_window', 'user_id', 'published_at', 'logic_tree_id', 'impact', 'impact_amount', 'created_at'])
-        // },
-        // condition: [{
-        //   column: 'id',
-        //   value: relationId * 1
-        // }]
       }
       RelationAPI.post('/retrieve-tree', param).then(result => {
         if(result['data'] && result['data'].length){
@@ -420,7 +389,7 @@ export default {
     totaRelevanceWindowHeight(){
       const headerHeight = 93 // px
       const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
-      const bodyTopPadding = 41 // px
+      const bodyTopPadding = 10 // px
       const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
       const mainStatementProfile = 66
@@ -477,7 +446,7 @@ export default {
 </script>
 <style scoped>
 .toolbar-bottom-space{
-  padding-bottom: 60px
+  padding-bottom: 0px
 }
 .statement-window {
   /* overflow:visible; */

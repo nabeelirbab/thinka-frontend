@@ -11,9 +11,9 @@
         style="width:150px; margin-left:20px; margin-right:20px"
       />
       <div class="text-center text-sm">
-        <span class="float-left">Disproving</span>
+        <span @click="impact = -100" class="c-pointer float-left">Disprovinga</span>
         <!-- <span class="mx-auto" style="position:absolute">None</span> -->
-        <span class="float-right">Proving</span>
+        <span @click="impact = 100" class="c-pointer float-right">Proving</span>
       </div>
     </div>
     <div class="mx-1 text-right" style="width: 75px!important">
