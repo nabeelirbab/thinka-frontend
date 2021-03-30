@@ -11,13 +11,13 @@
         <OpinionIcon type="0" />
       </button> -->
       <button
-        @click="tryChangeOpinion(1)"
-        :class="modelValue === 1 ? 'bg-primary text-white' : 'bg-white text-primary'"
-        :title="typeDescriptions[1]"
+        @click="tryChangeOpinion(3)"
+        :class="modelValue === 3 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :title="typeDescriptions[3]"
         :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <OpinionIcon type="1" />
+        <OpinionIcon type="3" />
       </button>
       <button
         @click="tryChangeOpinion(2)"
@@ -29,14 +29,15 @@
         <OpinionIcon type="2" />
       </button>
       <button
-        @click="tryChangeOpinion(3)"
-        :class="modelValue === 3 ? 'bg-primary text-white' : 'bg-white text-primary'"
-        :title="typeDescriptions[3]"
+        @click="tryChangeOpinion(1)"
+        :class="modelValue === 1 ? 'bg-primary text-white' : 'bg-white text-primary'"
+        :title="typeDescriptions[1]"
         :disabled="disabled"
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
-        <OpinionIcon type="3" />
+        <OpinionIcon type="1" />
       </button>
+      
     </div>
     
   </div>

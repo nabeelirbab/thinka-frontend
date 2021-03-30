@@ -12,7 +12,7 @@
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
       </div>
-      <div class="text-break">
+      <div class="text-break bg-light p-1 rounded text-sm px-3 d-flex align-items-center">
         {{notificationStatementUpdate['message']}}
       </div>
     </div>

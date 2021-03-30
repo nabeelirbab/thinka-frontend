@@ -13,9 +13,9 @@
             style="width:150px; margin-left:20px; margin-right:20px"
           />
           <div class="text-center text-sm">
-            <span @click="impact = -100" class="c-pointer float-left">Disproving</span>
-            <span @click="impact = -0" class="c-pointer mx-auto" >Neutral</span>
-            <span @click="impact = 100" class="c-pointer float-right">Proving</span>
+            <span @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Disproving</span>
+            <span @click="impact = -0; hasImpactChanged = true" class="c-pointer mx-auto" >Neutral</span>
+            <span @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Proving</span>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@ export default {
     return {
       impact: 0,
       hasImpactChanged: false,
-      confidence: 0,
+      confidence: 100,
       type: 0,
       typeDescriptions: OpinionHelper.typeDescriptions,
       user: Auth.user(),
@@ -124,11 +124,11 @@ export default {
               })
             }
           }
-          console.log('user_opinions', statementToChange['user_opinions'])
           statementToChange['user_opinions'].push(result['data'])
         }
         this.isSuccess = true
         setTimeout(() => {
+          this.showImpactOpinionDialog = false
           this.isSuccess = false
         }, 700)
       }).finally(() => {
@@ -141,16 +141,15 @@ export default {
       if(type <= 0){
         this.confidence = 0
       }
+      console.log(!this.hasImpactChanged, !this.hasUserOpinion)
       if(!this.hasImpactChanged && this.selectedStatementData && !this.hasUserOpinion){ // setting default impact if no user opinion yet or impact slider is not yet manually set
         const relationTypeId = this.selectedStatementData['relation_type_id']
-        console.log('type', type, relationTypeId)
         switch(type * 1){
           case 1:
             this.impact = 0
             break
           case 2:
-            this.impact = 100
-            this.confidence = 100
+            this.impact = 0
           break
           case 3:
             if(typeof RelationTypeAPI.cachedDataLookUpById.value[relationTypeId] !== 'undefined'){
@@ -177,7 +176,7 @@ export default {
           }
           this.impact = (impactAmount * 100).toFixed(0) * 1
         }else{
-          this.confidence = 0
+          this.confidence = 100
           this.type = 0
           this.isPublic = false
           this.impact = 0
@@ -199,7 +198,7 @@ export default {
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
     },
     hasUserOpinion(){
-      return this.selectedStatementData && this.selectedStatementData['user_opinion'] !== null
+      return this.selectedStatementData && typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion'] !== null
     }
   }
 }

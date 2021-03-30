@@ -6,13 +6,13 @@
     />
     <div style="min-width:0">
       <div v-if="notificationRelationUpdate['relation']" class="d-flex">
-        <fa icon="quote-left" class="text-secondary text-sm mr-1" />
-        <div @click="readNotification" class="font-italic text-truncate c-pointer px-1" style="min-width:0">
+        <fa icon="quote-left" class="text-secondary text-sm" />
+        <div @click="readNotification" class="font-italic text-truncate c-pointer -1" style="min-width:0">
           {{notificationRelationUpdate['relation']['statement']['text']}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
       </div>
-      <div  class="text-break">
+      <div  class="text-break bg-light p-1 rounded text-sm px-3 d-flex align-items-center ">
         <template v-if="notificationRelationUpdate['type'] === 2">
           <div v-html="parsedNotificationMessage"></div>
         </template>

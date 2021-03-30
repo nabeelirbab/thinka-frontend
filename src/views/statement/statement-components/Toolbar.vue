@@ -8,7 +8,7 @@
       <!-- Must be logged in user -->
       <template v-if="user">
         <ImpactSlider v-if="showImpact" />
-        <OpinionSlider v-if="showOpinion || showImpactOpinionDialog" /> 
+        <OpinionSlider v-if="showImpactOpinionDialog" /> 
       </template>
     </div>
     <div :class="selectedStatementId === 0 || selectedStatementId === null ? 'active' : ''" class="toolbar d-none justify-content-between justify-content-md-center fixed-bottom bg-white py-2 px- border-top">

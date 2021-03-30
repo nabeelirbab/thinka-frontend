@@ -65,9 +65,9 @@
               :parent-relation-id="mainRelationData['id']"
               :parent-relation="mainRelationData"
               :statement-id="statementId"
-              
+              class="mt-2"
             />
-            <div v-else class="text-center pt-1 add-statement-container">
+            <div v-else class="text-center pt-3 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
@@ -91,15 +91,17 @@
               @change="listChanged"
             >
               <template #item="{element, index}">
-                <div v-if="element['relevance_window'] === 1">
+                
+                <div v-if="element['relevance_window'] * 1 === 1">
                   <SubStatement
-                    @save="addNewSubStatement($event, element['id'])" 
-                    @update="updateNewSubStatement($event, index)"
+                    @save="addNewSubStatement($event, element['id'])"
+                    @update="updateNewSubStatement($event, index)" 
                     :relation-id="element['id']"
+                    :relation="element"
                     :level="1" 
                     :logic-tree-id="logicTreeId" 
-                    :is-positive-statement="false" 
-                    :group-name="'g2'"
+                    :is-positive-statement="true"
+                    group-name="g2"
                   />
                 </div>
               </template>
@@ -112,9 +114,10 @@
               :logic-tree-id="logicTreeId"
               :parent-relation-id="mainRelationData['id']"
               :parent-relation="mainRelationData"
-              :statement-id="statementId" 
+              :statement-id="statementId"
+              class="mt-2"
             />
-            <div v-else class="text-center pt-1 add-statement-container">
+            <div v-else class="text-center pt-3 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
             </div>
             <div class="text-center text-secondary"><small>{{negativeStatements.length ? '- End of Line -' : 'No counter statements'}}</small></div>

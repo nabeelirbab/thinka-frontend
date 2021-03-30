@@ -2,7 +2,8 @@
   <div
     :class="statementClass"
     :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
-    class="d-flex mb-2 shadow-sm border-width-none border-radius isRelationSelected enableDragging"
+    class="d-flex mt-2 pt-1s1hadow-sm border-width-none border-radius isRelationSelected enableDragging"
+    style="box-shadow: #29292959  0px -1px 4px"
   >
     <div
       @click.stop="showStatement = !showStatement"
@@ -23,13 +24,13 @@
         class="border-right px-2 c-pointer"
       />
     </div>
-    <div v-if="relationData" class="flex-fill px-2 py-2 border-right-radius bg-white">
+    <div v-if="relationData" class="flex-fill px-2 pt-2 border-right-radius bg-white">
       <div v-if="isActive && relationData['user']" class="text-sm ml-2 d-flex justify-content-end">
         <div v-if="isActive" class="flex-fill">
           <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
         </div>
-        <div v-if="isVirtualRelation" class="text-info text-sm text-right">
-          <fa icon="link" class="mr-1" />
+        <div v-if="isVirtualRelation" class="text-info text-sm text-right text-dark">
+          <fa icon="link" class="mr-1 " /> &#8226; &nbsp;
           <span v-if="isActive && relationData['published_at']">&#8226;</span>
         </div>
         <div v-if="isActive" class="">
@@ -51,7 +52,7 @@
         class="sub-statement border-width border-dark"
         style="min-height: 35px;"
       >
-        <div class="d-flex align-items-center  pl-1 pt-1 pb-1 pr-0 mr-0 h-100">
+        <div class="d-flex align-items-center  pl-1 pt-1 pr-0 mr-0 h-100">
           <div>
             <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
               <fa icon="spinner" spin />
@@ -63,9 +64,9 @@
               </small>
             </div>
           </div>
-          <div class="flex-fill c-pointer align-items-stretch"  @click="statementClicked" >
+          <div @click="statementClicked" class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div v-if="relationData" class="d-flex text-dark text-left mb-1 align-items-center pl-2" >
+              <div v-if="relationData" class="d-flex text-dark text-left align-items-center pl-2" >
                   <div class="text-break">
                     <RelationTypeLabel :relation-type-id="relationData['relation_type_id'] * 1" />
                     <TextDisplayer :text="statementText"  />
@@ -117,7 +118,7 @@
           </div>
         </div>
       </div>
-      <div>
+      <div class="mt-1">
         <CreateSubStatement
           v-if="isEditing"
           @save="statementEdited"
@@ -128,7 +129,8 @@
           :logic-tree-id="logicTreeId"
           :statement-id="statementId"
           :is-positive-statement="isPositiveStatement"
-          :parent-relation-id="relationId"  
+          :parent-relation-id="relationId"
+          class="mt-2"
         />
         <CreateSubStatement
           v-if="createSubStatementParentId === relationId" 
@@ -141,6 +143,7 @@
           :level="level + 1"
           :logic-tree-id="logicTreeId"
           :statement-id="statementId"
+          class="mt-2"
         />
         <draggable
           v-if="relation && isLocked > 0"
@@ -171,6 +174,7 @@
         </draggable>
       </div>
     </div>
+    <div v-else class="text-center w-100"><fa icon="spinner" spin /></div>
   </div>
 </template>
 <script>
@@ -342,6 +346,8 @@ export default {
             if(typeof relationData !== 'undefined'){
               this.relationData = relationData
             }
+          }else{
+            console.error('No relation')
           }
         }, 500)
       },

@@ -2,7 +2,7 @@
   <div v-if="relation" class="w-100 hover-border-dark border-bottom px-3 py-3">
     <div class="d-flex mb-1">
       <div class="flex-fill d-flex align-items-center">
-        <fa icon="user-circle" class="mr-2 text-light" style="font-size:2.9em" />
+        <fa icon="user-circle" class="mr-2 text-light" style="font-size:42px" />
         <div>
           <div class="text-uppercase">
             <StatementTypePill :statementTypeId="statementTypeId" />
@@ -28,6 +28,7 @@
       </div>
       <div v-if="relation['statement']" class="flex-fill text-break">
         <router-link
+          @click="$emit('link-clicked')"
           :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relation['statement']['text']).slice(0,30))"
           class="text-dark"
         >
@@ -56,6 +57,7 @@ export default {
     relation: Object,
     rootParentStatementText: String
   },
+  emits: ['link-clicked'],
   methods: {
     
   },

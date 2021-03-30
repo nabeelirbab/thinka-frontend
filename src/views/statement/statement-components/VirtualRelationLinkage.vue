@@ -9,7 +9,7 @@
     <div v-else>
       This relation has been used by the statements below:
       <template v-for="relation in relations">
-        <RelationRow :relation="relation['parent_relation']" />
+        <RelationRow @link-clicked="linkClicked" :relation="relation['parent_relation']" />
       </template>
     </div>
   </modal>
@@ -83,8 +83,11 @@ export default {
         this.isLoading = false
       })
     },
+    linkClicked(){
+      this.$refs.modal._close()
+    },
     close(){ // modal is close event
-      console.log('close')
+      console.log('closed')
       this.showVirtualRelationLinkages = false
     }
   },
