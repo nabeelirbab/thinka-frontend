@@ -53,12 +53,20 @@ export default {
               ...(['id', 'logic_tree_id', 'statement_id'])
             }
           },
+          virtual_relation: {
+            select: {
+              statement: {
+                select: ['text', 'statement_type_id']
+              },
+              ...(['id', 'logic_tree_id', 'statement_id'])
+            }
+          },
           user: {
             select: {
             ...(['id', 'username'])
             }
           },
-          ...(['id', 'parent_relation_id', 'statement_id', 'user_id', 'created_at', 'updated_at', 'published_at'])
+          ...(['id', 'parent_relation_id', 'statement_id', 'virtual_relation_id', 'user_id', 'created_at', 'updated_at', 'published_at'])
         },
         sort: [{
           column: 'updated_at',

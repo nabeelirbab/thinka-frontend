@@ -3,19 +3,19 @@
     <div class="d-flex align-items-center justify-content-center">
       <div class="font-weight-bold" style="width: 100px">Impact</div>
       <div>
-        <div class="text-center" >
+        <div class="" >
           <vue-slider 
             v-model="impact"
             @click="hasImpactChanged = true"
-            :min="-100" 
-            :max="100"
+            :min="minImpactLimit"
+            :max="maxImpactLimit"
             :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
             style="width:150px; margin-left:20px; margin-right:20px"
           />
-          <div class="text-center text-sm">
-            <span @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Disproving</span>
-            <span @click="impact = -0; hasImpactChanged = true" class="c-pointer mx-auto" >Neutral</span>
-            <span @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Proving</span>
+          <div class="text-sm d-flex justify-content-between">
+            <span v-if="minImpactLimit === -100" @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Disproving</span>
+            <span @click="impact = 0; hasImpactChanged = true" class="c-pointer" >Neutral</span>
+            <span v-if="maxImpactLimit === 100" @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Proving</span>
           </div>
         </div>
       </div>
@@ -91,6 +91,9 @@ export default {
       user: Auth.user(),
       isLoading: false,
       isSuccess: false,
+      minImpactLimit: 0,
+      maxImpactLimit: 100,
+      relationTypes: RelationTypeAPI.cachedDataLookUpById,
       ...GlobalData,
     }
   },
@@ -141,7 +144,6 @@ export default {
       if(type <= 0){
         this.confidence = 0
       }
-      console.log(!this.hasImpactChanged, !this.hasUserOpinion)
       if(!this.hasImpactChanged && this.selectedStatementData && !this.hasUserOpinion){ // setting default impact if no user opinion yet or impact slider is not yet manually set
         const relationTypeId = this.selectedStatementData['relation_type_id']
         switch(type * 1){
@@ -152,9 +154,8 @@ export default {
             this.impact = 0
           break
           case 3:
-            if(typeof RelationTypeAPI.cachedDataLookUpById.value[relationTypeId] !== 'undefined'){
-              console.log('default_impact', RelationTypeAPI.cachedDataLookUpById.value[relationTypeId]['default_impact'])
-              this.impact = (RelationTypeAPI.cachedDataLookUpById.value[relationTypeId]['default_impact'] * 100).toFixed(0) * 1
+            if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
+              this.impact = (this.relationTypes[relationTypeId]['default_impact'] * 100).toFixed(0) * 1
             }
           break
         }
@@ -162,19 +163,36 @@ export default {
     },
     selectedStatementData: {
       handler(){
-        if(this.selectedStatementData && typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
-          this.type = this.selectedStatementData['user_opinion']['type']
-          this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
-          this.isPublic = this.selectedStatementData['published_at']
-
-          let impactAmount = 0
-          for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
-            if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
-              impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
-              break
+        if(this.selectedStatementData){
+          if(typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
+            this.type = this.selectedStatementData['user_opinion']['type']
+            this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
+            this.isPublic = this.selectedStatementData['published_at']
+  
+            let impactAmount = 0
+            for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
+              if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
+                impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+                break
+              }
+            }
+            this.impact = (impactAmount * 100).toFixed(0) * 1
+          }
+          const relationTypeId = this.selectedStatementData['relation_type_id']
+          if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
+            const defaultImpact = this.relationTypes[relationTypeId]['default_impact'] * 1
+            
+            if(defaultImpact === 0){
+              this.minImpactLimit = 0
+              this.maxImpactLimit = 0
+            }else if(defaultImpact < 0){
+              this.minImpactLimit = -100
+              this.maxImpactLimit = 0
+            }else if(defaultImpact > 0){
+              this.minImpactLimit = 0
+              this.maxImpactLimit = 100
             }
           }
-          this.impact = (impactAmount * 100).toFixed(0) * 1
         }else{
           this.confidence = 100
           this.type = 0
@@ -199,7 +217,7 @@ export default {
     },
     hasUserOpinion(){
       return this.selectedStatementData && typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion'] !== null
-    }
+    },
   }
 }
 </script>

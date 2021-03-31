@@ -26,16 +26,17 @@
         <fa v-if="parentRelationId" icon=leaf />
         <fa v-else icon=tree />
       </div>
-      <div v-if="relation['statement']" class="flex-fill text-break">
+      <div v-if="relationStatement" class="flex-fill text-break">
         <router-link
           @click="$emit('link-clicked')"
-          :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relation['statement']['text']).slice(0,30))"
+          :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30))"
           class="text-dark"
         >
-          {{relation['statement']['text']}}
+          {{relationStatement['text']}}
         </router-link>
       </div>
       <div v-else>
+        {{relation}}
         <span class="text-light">Statement Not Found. R#{{relation['id']}}</span>
       </div>
     </div>
@@ -70,6 +71,17 @@ export default {
     },
     hasPublishedAt(){
       return typeof this.relation['published_at'] !== 'undefined'
+    },
+    relationStatement(){
+      if(this.relation){
+        if(this.relation['virtual_relation']){
+          return this.relation['virtual_relation']['statement']
+        }else{
+          return this.relation['statement']
+        }
+      }else{
+        return null
+      }
     }
   }
 }

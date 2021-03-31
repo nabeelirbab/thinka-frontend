@@ -300,7 +300,6 @@ export default {
         const addedIndex = event['added']['newIndex']
         this.isUpdating = true
         this.relationData['relations'][addedIndex]['parent_relation_id'] = this.relationId
-        console.log('new relations', this.relationData['relations'])
         RelationAPI.update({
           id: this.relationData['relations'][addedIndex]['id'],
           parent_relation_id: this.relationData['relations'][addedIndex]['parent_relation_id'],
@@ -312,7 +311,6 @@ export default {
     },
     opinionSummaryClicked(){
       if(this.selectedStatementId === this.relationId){
-        console.log('opinionSummaryClicked', this.selectedStatementId, this.relationId, this.showImpactOpinionDialog)
         this.showImpactOpinionDialog = !this.showImpactOpinionDialog
       }else{
         this.statementClicked()
