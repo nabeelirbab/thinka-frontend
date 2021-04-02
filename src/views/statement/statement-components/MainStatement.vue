@@ -233,7 +233,7 @@ export default {
       return this.relation === null || typeof this.relation['user_opinion'] === 'undefined' || this.relation['user_opinion'] === null ? -1 : this.relation['user_opinion']['type']
     },
     ctPoints(){
-      return typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'
+      return this.statement && typeof this.statement['ct_points'] !== 'undefined' ? this.statement['ct_points'] : '00'
     },
     titleIds(){
         return '('+this.relation['parent_relation_id']+') [' + this.relation['id'] + ']'

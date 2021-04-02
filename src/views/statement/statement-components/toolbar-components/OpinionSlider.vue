@@ -1,5 +1,21 @@
 <template>
   <div class="bg-white border border-secondary p-2 mb-1">
+    <div v-if="type !== -1" v-html="message" class="text-center py-2"></div>
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="font-weight-bold " style="width: 100px">Opinion</div>
+      <div >
+        <Opinion
+          v-if="selectedStatementData"
+          v-model="type"
+          :relation="selectedStatementData"
+          :type-descriptions="typeDescriptions"
+          :disabled="isLoading"
+          class="text-center"
+          style="width:190px"
+        />
+      </div>
+      <div class="mx-1 text-right" style="width: 75px!important"></div>
+    </div>
     <div class="d-flex align-items-center justify-content-center">
       <div class="font-weight-bold" style="width: 100px">Impact</div>
       <div>
@@ -21,21 +37,7 @@
       </div>
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
-    <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold " style="width: 100px">Opinion</div>
-      <div >
-        <Opinion
-          v-if="selectedStatementData"
-          v-model="type"
-          :relation="selectedStatementData"
-          :type-descriptions="typeDescriptions"
-          :disabled="isLoading"
-          class="text-center"
-          style="width:190px"
-        />
-      </div>
-      <div class="mx-1 text-right" style="width: 75px!important"></div>
-    </div>
+    
     <div class="d-flex align-items-center justify-content-center ">
       <div class="font-weight-bold" style="width: 100px">Confidence</div>
       <div class="text-center">
@@ -54,9 +56,7 @@
       <div class="mx-1 text-right" style="width: 75px!important">
       </div>
     </div>
-    <div v-if="type !== -1" v-html="message" class="text-center py-2">
-      
-    </div>
+    
     <div class="text-center">
       <fa v-if="isLoading" icon="spinner" spin />
       <span v-else-if="isSuccess" class="text-success">Saved!</span>
@@ -87,11 +87,11 @@ export default {
       hasImpactChanged: false,
       confidence: 100,
       type: 0,
-      typeDescriptions: OpinionHelper.typeDescriptions,
+      typeDescriptions: OpinasdionHelper.typeDescriptions,
       user: Auth.user(),
       isLoading: false,
       isSuccess: false,
-      minImpactLimit: 0,
+      minImpactLimit: -100,
       maxImpactLimit: 100,
       relationTypes: RelationTypeAPI.cachedDataLookUpById,
       ...GlobalData,
@@ -163,7 +163,29 @@ export default {
     },
     selectedStatementData: {
       handler(){
+        this.minImpactLimit = -100
+        this.maxImpactLimit = 100
+        this.impact = 0
+        this.confidence = 100
+        this.type = 0
+        this.isPublic = false
         if(this.selectedStatementData){
+          
+          
+          const relationTypeId = this.selectedStatementData['relation_type_id']
+          if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
+            const defaultImpact = this.relationTypes[relationTypeId]['default_impact'] * 1
+            if(defaultImpact === 0){
+              this.minImpactLimit = 0
+              this.maxImpactLimit = 0
+            }else if(defaultImpact < 0){
+              this.minImpactLimit = -100
+              this.maxImpactLimit = 0
+            }else if(defaultImpact > 0){
+              this.minImpactLimit = 0
+              this.maxImpactLimit = 100
+            }
+          }
           if(typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
             this.type = this.selectedStatementData['user_opinion']['type']
             this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
@@ -176,28 +198,11 @@ export default {
                 break
               }
             }
-            this.impact = (impactAmount * 100).toFixed(0) * 1
+            setTimeout(() => {
+              this.impact = (impactAmount * 100).toFixed(0) * 1
+            }, 200)
           }
-          const relationTypeId = this.selectedStatementData['relation_type_id']
-          if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
-            const defaultImpact = this.relationTypes[relationTypeId]['default_impact'] * 1
-            
-            if(defaultImpact === 0){
-              this.minImpactLimit = 0
-              this.maxImpactLimit = 0
-            }else if(defaultImpact < 0){
-              this.minImpactLimit = -100
-              this.maxImpactLimit = 0
-            }else if(defaultImpact > 0){
-              this.minImpactLimit = 0
-              this.maxImpactLimit = 100
-            }
-          }
-        }else{
-          this.confidence = 100
-          this.type = 0
-          this.isPublic = false
-          this.impact = 0
+          
         }
         this.isSuccess = false
         this.hasImpactChanged = false
@@ -210,7 +215,7 @@ export default {
       if(typeof this.type === -1){
         return 'Select an opinion'
       }
-      return OpinionHelper.convertToMessage(this.type, this.confidence / 100)
+      return OpinionHelper.convertToMessage(this.type, this.confidence / 100, this.impact / 100)
     },
     isVirtualRelation(){
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']

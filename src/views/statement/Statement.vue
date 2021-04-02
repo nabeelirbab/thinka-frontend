@@ -76,7 +76,7 @@
           <div class="text-center text-light">
             - &nbsp;COUNTER&nbsp; -
           </div>
-          <div ref="negativeWindow" class="statement-window p-2" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+          <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
               :relation-id="mainRelationData['id']"
               :list="mainRelationData['relations']"
@@ -454,7 +454,7 @@ export default {
 .statement-window {
   /* overflow:visible; */
   overflow-y: auto;
-  padding:5px 5px
+  padding:0px 5px
 }
 .dragArea.isDragging {
   min-height: 20px;

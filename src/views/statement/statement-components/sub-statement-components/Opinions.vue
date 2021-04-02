@@ -1,13 +1,15 @@
 <template>
   <div :class="isHorizontal ? 'd-flex' : ''" class="text-center">
+    
+    
     <div class="text-nowrap flex-fill">
-      <OpinionIcon type="1" /> {{counts[1]}}
+      <OpinionIcon type="3" /> {{counts[3]}}
     </div>
     <div class="text-nowrap flex-fill">
       <OpinionIcon type="2" /> {{counts[2]}}
     </div>
     <div class="text-nowrap flex-fill">
-      <OpinionIcon type="3" /> {{counts[3]}}
+      <OpinionIcon type="1" /> {{counts[1]}}
     </div>
   </div>
 </template>

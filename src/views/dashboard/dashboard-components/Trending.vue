@@ -1,16 +1,12 @@
 <template>
-  <!-- <div class="border rounded"> -->
-    <!-- <h5 class="py-3 px-4 mb-0 bg-whitesmoke"><fa icon="chart-line" /> Trending</h5> -->
-    <div >
-      <!-- <p class="card-text">The list below shows the most active conclusions</p> -->
-      <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
-      <div style="overflow-y:auto; height: 50vh">
-        <div v-for="(trend) in trending" class="d-flex ">
-          <RelationRow :relation="trend" />
-        </div>
+  <div >
+    <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
+    <div style="overflow-y:auto; height: 50vh">
+      <div v-for="(trend) in trending" class="d-flex ">
+        <RelationRow :relation="trend" />
       </div>
     </div>
-  <!-- </div> -->
+  </div>
 </template>
 <script>
 import RelationAPI from '@/api/relation'
@@ -29,18 +25,6 @@ export default {
     }
   },
   methods: {
-    // getTrending(){
-    //   this.trending = []
-    //   this.isLoading = true
-    //   RelationAPI.post('/trending').then(result => {
-    //     if(result['data']){
-    //       this.trending = result['data']
-    //     }
-    //     this.isLoading = false
-    //   }).catch(() => {
-    //     this.isLoading = false
-    //   })
-    // }
     getTrending(){
       this.trending = []
       this.isLoading = true
@@ -66,6 +50,9 @@ export default {
           value: null
         }, {
           column: 'parent_relation_id',
+          value: null
+        }, {
+          column: 'virtual_relation_id',
           value: null
         }],
         limit: 10

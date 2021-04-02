@@ -75,6 +75,9 @@ export default {
         condition: [{
           column: 'user_id',
           value: this.user.id
+        }, {
+          column: 'virtual_relation_id',
+          value: null
         }],
         limit: 10
       }

@@ -30,8 +30,7 @@
           <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
         </div>
         <div v-if="isVirtualRelation" class="text-info text-sm text-right text-dark">
-          <fa icon="link" class="mr-1 " /> &#8226; &nbsp;
-          <span v-if="isActive && relationData['published_at']">&#8226;</span>
+          <fa icon="link" class="mr-1 " /> &#8226;
         </div>
         <div v-if="isActive" class="">
           <span v-if="publishedAt"  class="pl-2 text-light">
@@ -323,6 +322,7 @@ export default {
     },
     isActive(){
       this.statementClass['border'] = this.isActive
+      this.statementClass['border-primary'] = this.isActive
       this.statementClass['isRelationSelected'] = this.isActive
     },
     isDifferentAuthor: {
