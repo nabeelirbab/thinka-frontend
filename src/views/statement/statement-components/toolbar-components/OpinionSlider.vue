@@ -87,7 +87,7 @@ export default {
       hasImpactChanged: false,
       confidence: 100,
       type: 0,
-      typeDescriptions: OpinasdionHelper.typeDescriptions,
+      typeDescriptions: OpinionHelper.typeDescriptions,
       user: Auth.user(),
       isLoading: false,
       isSuccess: false,

@@ -1,8 +1,8 @@
 const typeDescriptions = [
-  'I have No Opinion',
-  'I think Statement is false', // thumbs down
-  'I think Statement is true', // but has no impact', // point
-  'I think Statement is true' // and has Impact' // thumbs up
+  'I have no opinion',
+  'I think statement is false', // thumbs down
+  'I think statement is true', // but has no impact', // point
+  'I think statement is true' // and has Impact' // thumbs up
 ]
 //I think the statement is true and has a 100% proving impact and I'm 100% confident about it
 export default {
@@ -24,7 +24,7 @@ export default {
     }
     // confidence
     if(type){
-      message += ` and I'm <em class="font-weight-bold">${(confidence * 100).toFixed(0)}%</em> confident about it`
+      message += ` and I'm <em class="font-weight-bold">${(confidence * 100).toFixed(0)}%</em> confident about it.`
     }
     return message
   }

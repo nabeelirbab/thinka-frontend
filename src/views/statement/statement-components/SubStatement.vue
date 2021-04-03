@@ -2,7 +2,7 @@
   <div
     :class="statementClass"
     :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
-    class="d-flex mt-2 pt-1s1hadow-sm border-width-none border-radius isRelationSelected enableDragging"
+    class="d-flex mt-2  border-width-none border-radius"
     style="box-shadow: #29292959  0px -1px 4px"
   >
     <div

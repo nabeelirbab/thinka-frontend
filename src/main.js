@@ -4,6 +4,8 @@ import router from '@/core/router'
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@/core/font-awesome'
 import Helpers from '@/helpers/index.js'
 import { VTooltip, VPopover, VClosePopover } from 'v-tooltip'
+import './registerServiceWorker'
+
 VTooltip.options.autoHide = false
 createApp(App)
   .use(router)

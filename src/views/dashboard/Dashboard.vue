@@ -9,7 +9,7 @@
           </div>
           <span class="ml-2 flex-fill text-left">Create New Tree</span>
         </router-link>
-        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow">
+        <router-link to="/learning" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow">
           <div class="text-right flex-fill">
             <fa icon="book-reader" />
           </div>
