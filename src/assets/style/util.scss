@@ -79,4 +79,10 @@ li.borderless { border-top: 0 none; }
   .text-sm-center {
     text-align: center
   }
+  
+}
+@media(min-width:768px) { /* Not SM Screen */
+  .rounded-md {
+    border-radius: 0.4rem
+  }
 }

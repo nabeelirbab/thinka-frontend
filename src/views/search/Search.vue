@@ -1,12 +1,17 @@
 <template>
   <div>
-    <div class="image-background p-4 mb-4">
+    <div class="image-background p-4 mb-0 mb-md-3">
       <div class="container px-4">
         <SearchBox ref="searchBox" @search="search" :is-loading="isLoading"/>
       </div>
     </div>
-    <div class="container py-2">
-      <ResultList ref="resultList" @is-loading="isLoading = $event" @clear-search="clearSearch" />
+    <div class="container pb-2 px-0">
+      <ResultList 
+        ref="resultList" 
+        @is-loading="isLoading = $event" 
+        @clear-search="clearSearch"
+        class="mb-4 bg-white rounded-md"
+      />
     </div>
   </div>
 </template>

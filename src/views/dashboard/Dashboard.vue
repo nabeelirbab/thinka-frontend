@@ -1,6 +1,6 @@
 <template class="overflow-hidden">
   <div>
-    <div class="image-background py-4 px-0 mb-4">
+    <div class="image-background py-4 px-0 mb-0 mb-md-3">
       <div class="container py-2 ">
         <SearchTree />
         <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3">
@@ -17,14 +17,8 @@
         </router-link>
       </div>
     </div>
-    <div class="container py-2 mb-4 pb-4">
-      <!-- <div  class="container p-1" v-if="welcomeVisible">
-        <div class="d-flex border p-2 border rounded-lg">
-          <p>Good day! In your dashboard, you will see information and functionality to help guide you in using <strong class="text-uppercase">Thinka.io</strong>.<router-link to="/learning"> Click here to visit the learning centre. <fa icon="school" /></router-link><br></p>
-          <div><fa v-on:click="welcomeVisible = false" icon="window-close" /></div>
-        </div>
-      </div> -->
-      <div class="shadow rounded bg-white" id="accordianList">
+    <div class="container mb-4 pb-4 px-0">
+      <div class="rounded-md bg-white" id="accordianList">
         <div class="">
           <AccordionHeader
             data-target="#collapseThree"

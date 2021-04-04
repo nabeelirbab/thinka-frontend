@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4 bg-white shadow rounded">
+  <div class="">
     <div v-if="isLoading" class="text-center py-3">
       Searching... <fa icon="spinner" spin />
     </div>

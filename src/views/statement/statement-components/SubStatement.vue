@@ -7,15 +7,11 @@
   >
     <div
       @click.stop="showStatement = !showStatement"
-      class="align-items-stretch align-items-center text-center px-1 border-left-radius border-width-none"
+      class="align-items-stretch align-items-center text-center px-1 border-left-radius border-width-none text-sm pt-1"
       style="min-width: 17px"
     >
-        <span v-if="!showStatement && hasToggleableChildren" class="">
-          +
-        </span>
-        <span v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" style="">
-          -
-        </span>
+        <fa v-if="!showStatement && hasToggleableChildren" icon="chevron-down" />
+        <fa v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" icon="chevron-up" />
     </div>
     <div v-if="isActive || showCTOpinion" class="bg-white py-2">
       <Opinions 

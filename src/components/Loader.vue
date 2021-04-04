@@ -1,7 +1,7 @@
 <template>
   <div class="text-center">
     <div>
-      <img class="animate-pulse" src="@/assets/logo.png" alt="Thinka" style="max-width:250px"/>
+      <img class="animate-pulse" src="@/assets/images/thinka-square-logo.png" alt="Thinka" style="max-width:250px"/>
     </div>
     <div class="mt-1">{{message}}... <fa icon="spinner" spin /></div>
   </div>
