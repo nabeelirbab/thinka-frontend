@@ -12,6 +12,8 @@
           <input ref="searchText" v-model="searchText" @keydown.esc="blurSearch" @keypress.enter="searchText === '' ? showSearchText = false : null" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
+      <button @click="toggleReadingMode" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Reading Mode."><fa icon="glasses" />
+      </button>
       <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Back.">
         <div ><fa icon="chevron-left" /></div>
       </button>
@@ -86,10 +88,14 @@ export default {
       rootBookmarkId: null,
       authenicationStatus: Auth.status(),
       user: Auth.user(),
-      isPublishing: false
+      isPublishing: false,
+      isReadingMode: false
     }
   },
   methods: {
+    toggleReadingMode(){
+      this.isReadingMode = !this.isReadingMode
+    },
     clearSearchText(){
       this.searchText = ''
       this.typing()
