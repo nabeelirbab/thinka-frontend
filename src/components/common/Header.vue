@@ -6,7 +6,8 @@
         <img src="@/assets/logo.png" style="height:27px; width:auto"/>
       </router-link>
       <!-- <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link> -->
-      <div class="flex-fill text-right">
+      <div class="flex-fill text-right align-items-center">
+        <InstallAppButton v-if="authenticationStatus !== 'authenticated'" class="btn1-sm py-1" />
         <UserInfo @open-login="openLogIn" />
       </div>
     </div>
@@ -14,17 +15,17 @@
       <!-- <LogInForm v-if="user === null" class="ml-auto d-none d-md-block" /> -->
       <div class="main-menu-height" style="position:absolute; width: 100vw!important; right: 0px; left: 0px; background: #00000066">
         <div class="mainMenuItems d-flex justify-content-around align-items-center container px-0" >
-          <router-link to="/dashboard" :class="(routePath === '/dashboard' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button"><fa icon="home" /> </router-link>
-          <router-link to="/search" :class="(routePath === '/search' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button"><fa icon="search" /></router-link>
-          <router-link to="/branch" :class="(routePath.indexOf('/branch') !== -1 ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button"><CustomIcon icon="tree" /></router-link>
-          <router-link to="/bookmarks" :class="(routePath === '/bookmarks' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button"><fa icon="bookmark" /></router-link>
-          <router-link to="/notification" :class="(routePath === '/notification' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button">
+          <router-link to="/dashboard" :class="(routePath === '/dashboard' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button" style="font-size:1.6em"><fa icon="home" fa-fw /> </router-link>
+          <router-link to="/search" :class="(routePath === '/search' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button" style="font-size:1.4em"><fa icon="search" fa-fw /></router-link>
+          <router-link to="/branch" :class="(routePath.indexOf('/branch') !== -1 ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button" style="font-size:1.15em"><CustomIcon icon="tree" fa-fw /></router-link>
+          <router-link to="/bookmarks" :class="(routePath === '/bookmarks' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button" style="font-size:1.4em"><fa icon="bookmark" fa-fw /></router-link>
+          <router-link to="/notification" :class="(routePath === '/notification' ? activeLinkClass : 'text-white') + ' ' + linkClass" tag="button" style="font-size:1.4em">
             <fa-layers full-width >
               <fa icon="bell" />
               <fa-layers-text v-if="rerenderNotificationCount && unopenedNotificationCount" counter :value="unopenedNotificationCount" position="top-right" class="fa-right-4 float-right" style="margin-left:auto; maright-right:0;font-size:1.5em" />
             </fa-layers>
           </router-link>
-          <router-link to="/more-menu" :class="(routePath === '/more-menu' ? activeLinkClass : 'text-white') + ' ' + linkClass"  tag="button"><fa icon="bars" /></router-link>
+          <router-link to="/more-menu" :class="(routePath === '/more-menu' ? activeLinkClass : 'text-white') + ' ' + linkClass"  tag="button" style="font-size:1.4em"><fa icon="bars" /></router-link>
         </div>
       </div>
       <div class="header-image-background main-menu-height"></div>
@@ -42,12 +43,14 @@ import UserInfo from './header-components/UserInfo'
 import CustomIcon from '@/components/CustomIcon'
 import LogInModal from '@/components/login/LogInModal'
 import NotificationUserAPI from '@/api/notification-user'
+import InstallAppButton from '@/components/InstallAppButton'
 export default {
   components: {
     // LogInForm,
     UserInfo,
     CustomIcon,
-    LogInModal
+    LogInModal,
+    InstallAppButton
   },
   mounted(){
     setTimeout(() => {
@@ -59,7 +62,7 @@ export default {
       user: Auth.user(),
       authenticationStatus: Auth.status(),
       rerenderNotificationCount: false,
-      linkClass: 'shadow-none py-2 -2 header-icon flex-fill text-center',
+      linkClass: 'shadow-none pt-2 header-icon flex-fill text-center',
       activeLinkClass: 'border-bottom border-white border-width text-white'
     }
   },
@@ -104,14 +107,12 @@ export default {
 
 .header-icon {
   font-size: larger;
+  height: 50px
 }
 .main-menu-height {
  height: 47px;
 }
 @media (min-width: 768px) {
-  .header-icon {
-    font-size: 1.36em!important;
-  }
   .main-menu-height {
     height: 51px;
   }

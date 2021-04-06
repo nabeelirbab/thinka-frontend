@@ -1,5 +1,11 @@
 <template>
   <div v-if="relation" class="w-100 hover-border-dark border-bottom px-3 py-3">
+    <router-link
+          @click="$emit('link-clicked')"
+          :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30))"
+          class="text-dark"
+          style="text-decoration-line: none"
+        >
     <div class="d-flex mb-1">
       <div class="flex-fill d-flex align-items-center">
         <fa icon="user-circle" class="mr-2 text-light" style="font-size:42px" />
@@ -27,13 +33,9 @@
         <fa v-else icon=tree />
       </div>
       <div v-if="relationStatement" class="flex-fill text-break">
-        <router-link
-          @click="$emit('link-clicked')"
-          :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30))"
-          class="text-dark"
-        >
+        
           {{relationStatement['text']}}
-        </router-link>
+        
       </div>
       <div v-else>
         {{relation}}
@@ -46,6 +48,7 @@
         <span class="text-break">{{relation['parent_relation']['statement']['text']}}</span>
       </div>
     </div>
+    </router-link>
   </div>
 </template>
 <script>

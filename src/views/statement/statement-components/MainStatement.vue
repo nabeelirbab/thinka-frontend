@@ -91,10 +91,10 @@
       </div>
       <div class="col-9" >
         <Opinions 
-          v-if="showOpinion || showCTOpinion" 
           @click="opinionSummaryClicked"
           :user-opinions="userOpinions" 
           :is-horizontal="true" 
+          :user-opinion-type="userOpinionType"
         />
       </div>
     </div>
@@ -249,6 +249,17 @@ export default {
     },
     userOpinions(){
       return typeof this.relation['user_opinions'] === 'object' ? this.relation['user_opinions'] : []
+    },
+    userOpinionType(){
+      let userOpinionType = -1
+      if(this.relation && typeof this.relation['user_opinion'] !== 'undefined'){
+        // if(this.relationData['virtual_relation_id']){
+        //   userOpinionType = this.relationData['virtual_relation'] && this.relationData['virtual_relation']['user_opinion'] ? this.relationData['virtual_relation']['user_opinion']['type'] : 0
+        if(this.relation['user_opinion']){
+          userOpinionType = this.relation['user_opinion']['type']
+        }
+      }
+      return userOpinionType
     },
     contextRootRelationId(){
       const hasContext = typeof this.relation !== 'undefined' && typeof this.relation['user_relation_context_locks'] !== 'undefined' && this.relation['user_relation_context_locks'].length

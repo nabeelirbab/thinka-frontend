@@ -31,7 +31,9 @@ $font-size: 16px;
   font-size: $font-size;
   color: $text-color!important;
 }
-
+button {
+  color: $text-color;
+}
 // /*Remove Input Number Arrows*/
 // /* Chrome, Safari, Edge, Opera */
 // input::-webkit-outer-spin-button,

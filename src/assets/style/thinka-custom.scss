@@ -22,6 +22,9 @@ input {
 .border-width {
   border-width: 2px!important;
 }
+.border-light {
+  border-width: 1px!important;
+}
 .statement-radius {
   border-radius: 8px
 }
@@ -107,6 +110,11 @@ input {
 .btn-outline-dark {
   border-color: $text-color;
 }
+@media (max-width: 768px) {
+  .btn-sm-xl {
+    padding-top:14px; padding-bottom:14px
+  }
+}
 @media (min-width: 768px) {
   .container {
     max-width: 900px!important;
@@ -117,5 +125,8 @@ input {
   }
   .image-background {
     background-image:url("../images/header-background.png");
+  }
+  .shadow-md-light {
+    box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 1px, rgba(0, 0, 0, 0.04) 0px 4px 8px, rgba(0, 0, 0, 0.04) 0px 16px 24px, rgba(0, 0, 0, 0.01) 0px 24px 32px;
   }
 }
