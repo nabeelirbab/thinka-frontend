@@ -10,23 +10,26 @@
       <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
-      <TopToolbar :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
-      <div class="container px-0">
+      <TopToolbar ref="topToolbar" :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
+      <div ref="treeContainer" class="container px-0" :style="readingModeStyle()">
         <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="mb-2 px-2" />
+          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 47%; z-index:10000"><fa icon="glasses" />
+          </button>
           <MainStatement
-            v-if="mainRelationData" 
-            ref="mainStatement" 
-            @updated="mainStatementUpdated" 
-            @height-changed="mainStatementHeight = $event" 
+            v-if="mainRelationData"
+            ref="mainStatement"
+            @updated="mainStatementUpdated"
+            @height-changed="mainStatementHeight = $event"
             :relation="mainRelationData"
-            :logic-tree-id="logicTreeId" 
+            :logic-tree-id="logicTreeId"
             class="c-pointer px-2"
           />
         </div>
+
         <div v-if="mainRelationData" class="toolbar-bottom-space" style="margin-left:-4px; margin-right: -4px">
-          <div class="text-center text-light">
-            - &nbsp;SUPPORT&nbsp; -
+          <div @click="toggleReadingMode" class="text-center text-light">
+            - &nbsp;SUPPORTS&nbsp; -
           </div>
           <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
@@ -44,20 +47,20 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
-                  <SubStatement 
+                  <SubStatement
                     @save="addNewSubStatement($event, element['id'])"
-                    @update="updateNewSubStatement($event, index)" 
+                    @update="updateNewSubStatement($event, index)"
                     :relation-id="element['id']"
                     :relation="element"
-                    :level="1" 
-                    :logic-tree-id="logicTreeId" 
+                    :level="1"
+                    :logic-tree-id="logicTreeId"
                     :is-positive-statement="true"
                   />
                 </div>
               </template>
             </draggable>
-            <CreateSubStatement 
-              v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated' " 
+            <CreateSubStatement
+              v-if="activeCreateWindow === 'support' && authenticationStatus === 'authenticated' "
               @save="addNewSubStatement"
               @cancel="activeCreateWindow = false"
               :is-positive-statement="true"
@@ -73,8 +76,8 @@
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
-          <div class="text-center text-light">
-            - &nbsp;COUNTER&nbsp; -
+          <div @click="toggleReadingMode" class="text-center text-light">
+            - &nbsp;COUNTERS&nbsp; -
           </div>
           <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
@@ -91,15 +94,15 @@
               @change="listChanged"
             >
               <template #item="{element, index}">
-                
+
                 <div v-if="element['relevance_window'] * 1 === 1">
                   <SubStatement
                     @save="addNewSubStatement($event, element['id'])"
-                    @update="updateNewSubStatement($event, index)" 
+                    @update="updateNewSubStatement($event, index)"
                     :relation-id="element['id']"
                     :relation="element"
-                    :level="1" 
-                    :logic-tree-id="logicTreeId" 
+                    :level="1"
+                    :logic-tree-id="logicTreeId"
                     :is-positive-statement="true"
                     group-name="g2"
                   />
@@ -107,8 +110,8 @@
               </template>
             </draggable>
             <CreateSubStatement
-              v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'" 
-              @save="addNewSubStatement" 
+              v-if="activeCreateWindow === 'counter' && authenticationStatus === 'authenticated'"
+              @save="addNewSubStatement"
               @cancel="activeCreateWindow = false"
               :is-positive-statement="false"
               :logic-tree-id="logicTreeId"
@@ -181,10 +184,30 @@ export default {
       positiveStatementHeight: 100,
       authenticationStatus: Auth.status(),
       user: Auth.user(),
-      activeCreateWindow: false,
+      activeCreateWindow: false
     }
   },
   methods: {
+    toggleReadingMode() {
+      this.$refs.topToolbar.toggleReadingMode()
+    },
+    readingModeStyle() {
+      if (this.$refs.topToolbar)
+      {
+        if (this.$refs.topToolbar.isReadingMode)
+          { return "position:absolute;top:0px;z-index:10000" }
+
+        else { return "" }
+      }
+    },
+    isReadingMode() {
+      if (this.$refs.topToolbar)
+      {
+        return this.$refs.topToolbar.isReadingMode
+      }
+
+      return false
+    },
     clickedOutside(event){ //deselect bubble when clicking outside
       const whiteListClass = ['statement-window', 'statement-container-body', 'add-statement-container']
       const classList = event.target.classList
@@ -390,13 +413,18 @@ export default {
   },
   computed: {
     totaRelevanceWindowHeight(){
-      const headerHeight = 93 // px
+      var headerHeight = 93 // px
+      var toolbarHeight = 76 //px
       const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
       const bodyTopPadding = 10 // px
-      const toolbarHeight = 76 //px
       const windowHeight = window.innerHeight // px
       const mainStatementProfile = 66
       const mainStatementBorder = 4
+      if (this.isReadingMode())
+      {
+        headerHeight = 0
+        toolbarHeight = 0
+      }
       const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - mainStatementProfile - mainStatementBorder
       return totaRelevanceWindowHeight - this.mainStatementHeight
     },
@@ -406,7 +434,7 @@ export default {
     relationId(){
       return this.$route.params.relationId * 1
     },
-    
+
     statementId(){
       return this.$route.params.relationId * 1
     },
