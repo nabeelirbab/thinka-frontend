@@ -51,6 +51,12 @@
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
                   <button 
+                    @click="showVirtualRelationLinkages = true" 
+                    class="dropdown-item"
+                  >
+                    <fa icon="link" /> Linkages
+                  </button>
+                  <button 
                     @click="showScope = !showScope"
                     class="dropdown-item"
                   >

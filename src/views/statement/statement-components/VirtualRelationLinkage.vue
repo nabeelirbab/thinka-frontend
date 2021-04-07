@@ -4,7 +4,7 @@
       Please wait... <fa icon="spinner" spin />
     </div>
     <div v-else-if="relations.length === 0" class="text-center">
-      No linkages found on this linked statement aside from this statement
+      No linkages found on this statement
     </div>
     <div v-else>
       This relation has been used by the statements below:
@@ -52,7 +52,7 @@ export default {
               },
               user: {
                 select: {
-                ...(['id', 'username'])
+                  ...(['id', 'username'])
                 }
               },
               ...(['id', 'user_id', 'logic_tree_id', 'statement_id', 'created_at', 'updated_at', 'published_at'])
@@ -66,7 +66,7 @@ export default {
         }],
         condition: [{
           column: 'virtual_relation_id',
-          value: this.selectedStatementData['virtual_relation']['id']
+          value: this.selectedStatementData['virtual_relation'] ? this.selectedStatementData['virtual_relation']['id'] : this.selectedStatementData['id']
         }, {
           column: 'id',
           clause: '!=',

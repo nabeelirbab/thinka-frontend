@@ -11,7 +11,6 @@
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
       <router-link v-if="!isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
       <button
-        v-if="isVirtualRelation"
         @click="showVirtualRelationLinkages = true" 
         class="dropdown-item" 
       >

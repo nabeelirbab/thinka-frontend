@@ -7,7 +7,7 @@
       </router-link>
       <!-- <router-link v-if="user === null" to="/login" class="btn btn-primary d-inline d-md-none ml-auto">Log In</router-link> -->
       <div class="flex-fill text-right align-items-center">
-        <InstallAppButton v-if="authenticationStatus !== 'authenticated'" class="btn1-sm py-1" />
+        <InstallAppButton v-if="!user" class="py-1" />
         <UserInfo @open-login="openLogIn" />
       </div>
     </div>

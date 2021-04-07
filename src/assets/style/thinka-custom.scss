@@ -4,11 +4,22 @@
   font-family: 'Theme Font 2';
   src: url('../OpenSans-Bold.ttf')
 };
+@font-face {
+  font-family: 'Theme Font 3';
+  src: url('../URWDIN-Medium.ttf')
+};
+
 input {
   color: $text-color!important;
 }
 .font-style-2 {
   font-family: 'Theme Font 2'!important;
+}
+.font-style-3 {
+  font-family: 'Theme Font 3'!important;
+}
+h6 {
+  font-family: 'Theme Font 3'!important;
 }
 .positive-statement {
   background-color: #f5dfdf

@@ -13,7 +13,7 @@
       </div>
     </div>
     <div :class="size === 'compact' ? 'd-none' : 'd-none d-md-block'">
-      <template v-for="(relation, index) in relations" :key="'rel2' + index">
+      <template v-for="(relation, index) in relations">
         <button class="btn btn-outline-secondary mx-1 mb-1"><strong>{{relation['symbol']}}</strong> {{relation['text']}}</button>
       </template>
     </div>
