@@ -2,8 +2,8 @@
   <div>
     <div
       v-if="!isToggled" @click="isFocused = true" 
-      class="btn-lg c-pointer rounded-oval btn-shadow w-100 d-flex align-items-center text-white"
-      style="background-color:#ffffff1a"
+      class="btn-lg btn-sm-xl c-pointer rounded-oval btn-shadow w-100 d-flex align-items-center text-white"
+      style="background-color:#ffffff1a;"
     >
       <div class="text-right flex-fill">
         <fa icon="search" />
@@ -20,8 +20,9 @@
         @keypress.enter="search"
         v-model="keyword"
         type="text" 
-        class=" form-control-no-border  bg-transparent border-none w-100 pl-3 pr-1" 
+        class="btn-sm-xl form-control-no-border bg-transparent border-none w-100 pl-3 pr-1" 
         placeholder="Enter statement keyword..."
+        
       />
       <button 
         @click.stop="search" 

@@ -4,7 +4,9 @@
       <fa icon="ellipsis-v" />
     </button> -->
     <!-- <CircleIconButton icon="ellipsis-v" button-class="btn-light bg-whitesmoke text-primary" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More tree options."/> -->
-    <button class="border-0 rounded bg-transparent" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More options."><fa icon="ellipsis-v" style="color:#02bcd4"/></button>
+    <button class="border-0 rounded bg-transparent text-regular" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More options.">
+      <span class="text-regular"><fa icon="ellipsis-v" /></span>
+    </button>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
       <router-link v-if="!isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>

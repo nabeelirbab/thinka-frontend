@@ -1,14 +1,12 @@
 <template>
   <div :class="isHorizontal ? 'd-flex' : ''" class="text-center">
-    
-    
-    <div class="text-nowrap flex-fill">
+    <div :class="userOpinionType === 3 ? 'text-primary' : '' " class="text-nowrap flex-fill">
       <OpinionIcon type="3" /> {{counts[3]}}
     </div>
-    <div class="text-nowrap flex-fill">
+    <div :class="userOpinionType === 2 ? 'text-primary' : '' " class="text-nowrap flex-fill">
       <OpinionIcon type="2" /> {{counts[2]}}
     </div>
-    <div class="text-nowrap flex-fill">
+    <div :class="userOpinionType === 1 ? 'text-primary' : '' " class="text-nowrap flex-fill">
       <OpinionIcon type="1" /> {{counts[1]}}
     </div>
   </div>
@@ -21,6 +19,10 @@ export default {
   },
   props: {
     userOpinions: Array,
+    userOpinionType: {
+      type: Number,
+      default: -1
+    },
     isHorizontal: {
       type: Boolean,
       default: false

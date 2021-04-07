@@ -6,7 +6,7 @@
       </div>
     </div>
     <div class='container pb-2 px-0'>
-      <div class="bg-white rounded-md">
+      <div class="bg-white rounded-md shadow-md-light">
         <div v-if="isLoading" class="text-center py-3">
           Searching... <fa icon="spinner" spin />
         </div>

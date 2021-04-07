@@ -1,15 +1,15 @@
 <template class="overflow-hidden">
   <div>
-    <div class="image-background py-4 px-0 mb-0 mb-md-3">
-      <div class="container py-2 ">
+    <div class="image-background py-3 px-0 mb-0 mb-md-3">
+      <div class="container ">
         <SearchTree />
-        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3">
+        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3 btn-sm-xl">
           <div class="text-right flex-fill">
             <fa icon="project-diagram" />
           </div>
           <span class="ml-2 flex-fill text-left">Create New Tree</span>
         </router-link>
-        <router-link to="/learning" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow">
+        <router-link to="/learning" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow btn-sm-xl">
           <div class="text-right flex-fill">
             <fa icon="book-reader" />
           </div>
@@ -18,7 +18,7 @@
       </div>
     </div>
     <div class="container mb-4 pb-4 px-0">
-      <div class="rounded-md bg-white" id="accordianList">
+      <div class="shadow-md-light rounded-md bg-white" id="accordianList">
         <div class="">
           <AccordionHeader
             data-target="#collapseThree"
@@ -26,7 +26,7 @@
             text="Trending"
             class=""
           />
-          <div id="collapseThree" class="collapse show" aria-labelledby="headingThree" data-parent="#accordianList">
+          <div id="collapseThree" class="collapse show border-bottom" aria-labelledby="headingThree" data-parent="#accordianList">
             <Trending />
           </div>
         </div>
@@ -36,7 +36,7 @@
             icon="list"
             text="My Trees"
           />
-          <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordianList">
+          <div id="collapseOne" class="collapse border-bottom" aria-labelledby="headingOne" data-parent="#accordianList">
             <MyList v-if="user" class=" p-0" />
           </div>
         </div>
@@ -45,9 +45,8 @@
             data-target="#collapseTwo"
             icon="cloud"
             text="My Thinka Tanks"
-            class="border-top"
           />
-          <div id="collapseTwo" class="collapse rounded-b" aria-labelledby="headingTwo" data-parent="#accordianList">
+          <div id="collapseTwo" class="collapse rounded-b border-bottom" aria-labelledby="headingTwo" data-parent="#accordianList">
             <div class=" m-2 p-0">
               <p class="card-text">Thinka Tanks can contain many logic trees and many users so they can chat and assist collaboration privately.</p>
               <table class="table ">

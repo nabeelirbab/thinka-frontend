@@ -1,6 +1,6 @@
 <template>
   <div class="container px-0">
-    <div class="mt-md-3 rounded-md bg-white">
+    <div class="shadow-md-light mt-md-3 rounded-md bg-white">
       <div class="border-bottom px-3 py-3 d-flex align-items-center">
         <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
           <fa icon="bell" class="mr-2 text-lg" /> You have {{notifications.length ? notifications.length : 'no'}} notifications.

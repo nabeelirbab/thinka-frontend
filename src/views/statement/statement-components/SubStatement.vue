@@ -3,7 +3,7 @@
     :class="statementClass"
     :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
     class="d-flex mt-2  border-width-none border-radius"
-    style="box-shadow: #29292959  0px -1px 4px"
+    :style="level > 1 ? 'box-shadow: #29292959  0px -1px 4px' : ''"
   >
     <div
       @click.stop="showStatement = !showStatement"
@@ -16,12 +16,13 @@
     <div v-if="isActive || showCTOpinion" class="bg-white py-2">
       <Opinions 
         @click="opinionSummaryClicked"
-        :user-opinions="userOpinions" 
+        :user-opinions="userOpinions"
+        :user-opinion-type="relationOpinionType"
         class="border-right px-2 c-pointer"
       />
     </div>
-    <div v-if="relationData" class="flex-fill px-2 pt-2 border-right-radius bg-white">
-      <div v-if="isActive && relationData['user']" class="text-sm ml-2 d-flex justify-content-end">
+    <div v-if="relationData" class="flex-fill pl-2 pt-2 border-right-radius bg-white">
+      <div v-if="isActive && relationData['user']" class="text-sm ml-2 pr-3 d-flex justify-content-end">
         <div v-if="isActive" class="flex-fill">
           <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
         </div>
@@ -44,7 +45,7 @@
       <div
         v-if="isLocked > 0"
         v-show="!isEditing && (!isFilteredOut || hasFilterPassChildren)"
-        class="sub-statement border-width border-dark"
+        class="sub-statement border-width border-dark pr-2"
         style="min-height: 35px;"
       >
         <div class="d-flex align-items-center  pl-1 pt-1 pr-0 mr-0 h-100">
@@ -85,16 +86,16 @@
                   v-if="isVirtualRelation"
                   :relation="relationData"
                 />
-                <router-link 
+                <!-- <router-link 
                   v-if="!enableDragging && !isVirtualRelation" 
                   :to="'/branch/' + relationId + '/t/' + toKebabCase(statementText.slice(0, 30)) + (isLocked === 1 ? '/context/' + mainRelationId : '')"
                 >
                   <CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" />
-                </router-link>
+                </router-link> -->
                 <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
                 <CircleIconButton v-if="enableDragging && relationData && !relationData['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
               </div>
-              <div v-else class="ml-2 mr-2 align-self-center" style="color: gray">
+              <div v-else class="ml-2 mr-2 align-self-center">
                 
                 <span v-if="!relationData['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                   <fa  icon="briefcase"  />
@@ -318,7 +319,7 @@ export default {
     },
     isActive(){
       this.statementClass['border'] = this.isActive
-      this.statementClass['border-primary'] = this.isActive
+      this.statementClass['border-success'] = this.isActive
       this.statementClass['isRelationSelected'] = this.isActive
     },
     isDifferentAuthor: {
