@@ -20,7 +20,7 @@
       <div class="font-weight-bold" style="width: 100px">Impact</div>
       <div>
         <div class="" >
-          <vue-slider 
+          <vue-slider
             v-model="impact"
             @click="hasImpactChanged = true"
             :min="minImpactLimit"
@@ -29,23 +29,23 @@
             style="width:150px; margin-left:20px; margin-right:20px"
           />
           <div class="text-sm d-flex justify-content-between">
-            <span v-if="minImpactLimit === -100" @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Disproving</span>
+            <span v-if="minImpactLimit === -100" @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Counter</span>
             <span @click="impact = 0; hasImpactChanged = true" class="c-pointer" >Neutral</span>
-            <span v-if="maxImpactLimit === 100" @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Proving</span>
+            <span v-if="maxImpactLimit === 100" @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Supportive</span>
           </div>
         </div>
       </div>
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
-    
+
     <div class="d-flex align-items-center justify-content-center ">
       <div class="font-weight-bold" style="width: 100px">Confidence</div>
       <div class="text-center">
         <vue-slider
           v-model="confidence"
           :disabled="type <= 0 || isLoading"
-          :min="0" 
-          :max="100" 
+          :min="0"
+          :max="100"
           style="width:150px; margin-left:20px; margin-right:20px"
         />
         <div v-if="type" class="text-center text-sm">
@@ -56,7 +56,7 @@
       <div class="mx-1 text-right" style="width: 75px!important">
       </div>
     </div>
-    
+
     <div class="text-center">
       <fa v-if="isLoading" icon="spinner" spin />
       <span v-else-if="isSuccess" class="text-success">Saved!</span>
@@ -170,8 +170,8 @@ export default {
         this.type = 0
         this.isPublic = false
         if(this.selectedStatementData){
-          
-          
+
+
           const relationTypeId = this.selectedStatementData['relation_type_id']
           if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
             const defaultImpact = this.relationTypes[relationTypeId]['default_impact'] * 1
@@ -190,7 +190,7 @@ export default {
             this.type = this.selectedStatementData['user_opinion']['type']
             this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
             this.isPublic = this.selectedStatementData['published_at']
-  
+
             let impactAmount = 0
             for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
               if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
@@ -202,7 +202,7 @@ export default {
               this.impact = (impactAmount * 100).toFixed(0) * 1
             }, 200)
           }
-          
+
         }
         this.isSuccess = false
         this.hasImpactChanged = false
