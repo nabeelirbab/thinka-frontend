@@ -2,18 +2,18 @@
   <div class="d-flex align-items-center justify-content-center bg-white border border-secondary p-2 mb-1">
     <div class="pr-3 font-weight-bold">Impact</div>
     <div class="text-center" >
-      <vue-slider 
-        v-model="impact" 
-        :min="-100" 
+      <vue-slider
+        v-model="impact"
+        :min="-100"
         :max="100"
         :disabled="(isVirtualRelation) ? true : false"
         :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
         style="width:150px; margin-left:20px; margin-right:20px"
       />
       <div class="text-center text-sm">
-        <span @click="impact = -100" class="c-pointer float-left">Disprovinga</span>
+        <span @click="impact = -100" class="c-pointer float-left">Counter</span>
         <!-- <span class="mx-auto" style="position:absolute">None</span> -->
-        <span @click="impact = 100" class="c-pointer float-right">Proving</span>
+        <span @click="impact = 100" class="c-pointer float-right">Supportive</span>
       </div>
     </div>
     <div class="mx-1 text-right" style="width: 75px!important">

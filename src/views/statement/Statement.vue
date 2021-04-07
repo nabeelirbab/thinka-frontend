@@ -14,7 +14,7 @@
       <div ref="treeContainer" class="container px-0" :style="readingModeStyle()">
         <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="mb-2 px-2" />
-          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 47%; z-index:10000"><fa icon="glasses" />
+          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%; z-index:10000"><fa icon="glasses" />
           </button>
           <MainStatement
             v-if="mainRelationData"
@@ -195,7 +195,7 @@ export default {
       if (this.$refs.topToolbar)
       {
         if (this.$refs.topToolbar.isReadingMode)
-          { return "position:absolute;top:0px;z-index:10000" }
+          { return "position:absolute;top:0;left-margin:auto;min-height:100%;min-width:100%;z-index:10000" }
 
         else { return "" }
       }
