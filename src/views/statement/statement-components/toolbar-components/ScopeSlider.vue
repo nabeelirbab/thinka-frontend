@@ -4,6 +4,11 @@
       <div class="pr-3 font-weight-bold">Scope</div>
       <div class="text-center mr-2 flex-fill">
         <vue-slider v-model="scope" :disabled="isLoading" :v-data="scopes" :marks="true" :hide-label="true" data-value="id" data-label="description" />
+        <div class="text-sm d-flex justify-content-between">
+          <span @click="setScope('None')" class="c-pointer float-left">None</span>
+          <span @click="setScope('Generally')" class="c-pointer" >Generally</span>
+          <span @click="setScope('Total')" class="c-pointer float-right">Total</span>
+        </div>
       </div>
       <button v-if="user && selectedStatementData && user['id'] * 1 === selectedStatementData['user_id'] * 1" :disabled="isLoading || scope === null" @click="save" class="btn text-success p-1"><fa  :icon="isLoading ? 'spinner' : 'check'" :spin="isLoading" /></button>
     </div>
@@ -34,6 +39,13 @@ export default {
     }
   },
   methods: {
+    setScope(description) {
+        // set the scope filtering by the description 
+        ScopeAPI.cachedData.value['data'].forEach(scope => {
+          if (scope['description'] == description) this.scope = scope['id']
+        })
+
+    },
     save(){
       this.isLoading = true
       const param = {
