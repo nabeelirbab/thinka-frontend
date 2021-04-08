@@ -59,6 +59,7 @@
     </div>
 
     <div class="text-center">
+      <button @click="this.showImpactOpinionDialog = false" :disabled="isLoading" class="btn btn-cancel"><fa icon="cancel" /> Cancel</button>
       <fa v-if="isLoading" icon="spinner" spin />
       <span v-else-if="isSuccess" class="text-success">Saved!</span>
       <button v-else @click="changeOpinion" :disabled="isLoading" class="btn btn-success"><fa icon="check" /> Save</button>
