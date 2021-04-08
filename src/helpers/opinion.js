@@ -11,7 +11,7 @@ export default {
     if(typeof typeDescriptions[type] === 'undefined'){
       return 'Unknown opinion'
     }
-    let message = '"' + typeDescriptions[type]
+    let message = typeDescriptions[type]
     //impact
     if(impact !== null && type > 0){
       if(impact === 0){
