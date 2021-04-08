@@ -154,10 +154,8 @@ export default {
           {
             if (relevance_window == 1)
             {  // thumbs down counter
-              this.minImpactLimit = -100
-              this.maxImpactLimit = -1
-              this.impact = -100
-              this.disableImpactSlider = false
+              this.impact = 0
+              this.disableImpactSlider = true
             }
             else
             { // thumbs down support
@@ -183,8 +181,10 @@ export default {
             }
             else
             { // thumbs up counter
-              this.impact = 0
-              this.disableImpactSlider = true
+              this.minImpactLimit = -100
+              this.maxImpactLimit = -1
+              this.impact = -100
+              this.disableImpactSlider = false
             }
             break;
             }
