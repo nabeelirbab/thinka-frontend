@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-dialog bg-white border border-secondary p-2 mb-1">
+  <div class="bg-white border border-secondary p-2 mb-1">
     <div v-if="type !== -1" v-html="message" class="text-center py-2"></div>
     <div class="d-flex align-items-center justify-content-center">
       <div class="font-weight-bold " style="width: 100px">Opinion</div>
