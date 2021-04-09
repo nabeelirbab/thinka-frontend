@@ -1,5 +1,5 @@
 <template>
-  <span :title="relationTypeDescription" class="badge badge-pill" style="background-color: lightgreen">
+  <span :title="relationTypeDescription" class="badge badge-pill" style="background-color: #d7e8e9;">
     <span class="p-0">{{relationTypeSymbol}} {{relationTypeName}}</span>
   </span>
 </template>
