@@ -23,15 +23,16 @@
           <vue-slider
             v-model="impact"
             @click="hasImpactChanged = true"
-            :min="minImpactLimit"
-            :max="maxImpactLimit"
-            :dot-options="{0: {disabled: true}, 100: {disabled: false}}"
+            :min="-100"
+            :max="100"
+            :dot-options="{0: {disabled: true}, 100: {disabled: false}, min: minImpactLimit, max: maxImpactLimit}"
+            :disabled="disableImpactSlider"
             style="width:150px; margin-left:20px; margin-right:20px"
           />
           <div class="text-sm d-flex justify-content-between">
-            <span v-if="minImpactLimit === -100" @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Counter</span>
+            <span @click="impact = -100; hasImpactChanged = true" class="c-pointer float-left">Counter</span>
             <span @click="impact = 0; hasImpactChanged = true" class="c-pointer" >Neutral</span>
-            <span v-if="maxImpactLimit === 100" @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Supportive</span>
+            <span @click="impact = 100; hasImpactChanged = true" class="c-pointer float-right">Supportive</span>
           </div>
         </div>
       </div>
@@ -58,6 +59,7 @@
     </div>
 
     <div class="text-center">
+      <button @click="this.showImpactOpinionDialog = false" :disabled="isLoading" class="btn btn-cancel"> Cancel</button>
       <fa v-if="isLoading" icon="spinner" spin />
       <span v-else-if="isSuccess" class="text-success">Saved!</span>
       <button v-else @click="changeOpinion" :disabled="isLoading" class="btn btn-success"><fa icon="check" /> Save</button>
@@ -95,6 +97,7 @@ export default {
       maxImpactLimit: 100,
       relationTypes: RelationTypeAPI.cachedDataLookUpById,
       ...GlobalData,
+      disableImpactSlider: false
     }
   },
   methods: {
@@ -144,22 +147,50 @@ export default {
       if(type <= 0){
         this.confidence = 0
       }
-      if(!this.hasImpactChanged && this.selectedStatementData && !this.hasUserOpinion){ // setting default impact if no user opinion yet or impact slider is not yet manually set
-        const relationTypeId = this.selectedStatementData['relation_type_id']
+      // setting impact if the type is manually set
+      if(this.selectedStatementData){
+        const relevance_window = this.selectedStatementData['relevance_window'];
         switch(type * 1){
           case 1:
-            this.impact = 0
-            break
-          case 2:
-            this.impact = 0
-          break
-          case 3:
-            if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
-              this.impact = (this.relationTypes[relationTypeId]['default_impact'] * 100).toFixed(0) * 1
+          {
+            if (relevance_window == 1)
+            {  // thumbs down counter
+              this.impact = 0
+              this.disableImpactSlider = true
             }
-          break
-        }
-      }
+            else
+            { // thumbs down support
+              this.impact = 0
+              this.disableImpactSlider = true
+            }
+            break;
+          }
+          case 2:
+          {
+            this.impact = 0
+            this.disableImpactSlider = true
+            break
+          }
+          case 3:
+          {
+            if (relevance_window == 0)
+            {  // thumbs up support
+              this.minImpactLimit = 1
+              this.maxImpactLimit = 100
+              this.impact = 100
+              this.disableImpactSlider = false
+            }
+            else
+            { // thumbs up counter
+              this.minImpactLimit = -100
+              this.maxImpactLimit = -1
+              this.impact = -100
+              this.disableImpactSlider = false
+            }
+            break;
+            }
+        } // switch
+      } // if(this.selectedStatementData){
     },
     selectedStatementData: {
       handler(){
@@ -171,21 +202,6 @@ export default {
         this.isPublic = false
         if(this.selectedStatementData){
 
-
-          const relationTypeId = this.selectedStatementData['relation_type_id']
-          if(typeof this.relationTypes[relationTypeId] !== 'undefined'){
-            const defaultImpact = this.relationTypes[relationTypeId]['default_impact'] * 1
-            if(defaultImpact === 0){
-              this.minImpactLimit = 0
-              this.maxImpactLimit = 0
-            }else if(defaultImpact < 0){
-              this.minImpactLimit = -100
-              this.maxImpactLimit = 0
-            }else if(defaultImpact > 0){
-              this.minImpactLimit = 0
-              this.maxImpactLimit = 100
-            }
-          }
           if(typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
             this.type = this.selectedStatementData['user_opinion']['type']
             this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100

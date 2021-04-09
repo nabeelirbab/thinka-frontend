@@ -21,7 +21,7 @@
         class="border-right px-2 c-pointer"
       />
     </div>
-    <div v-if="relationData" class="flex-fill pl-2 pt-2 border-right-radius bg-white">
+    <div v-if="relationData" class="flex-fill pl-1 pt-1 border-right-radius bg-white">
       <div v-if="isActive && relationData['user']" class="text-sm ml-2 pr-3 d-flex justify-content-end">
         <div v-if="isActive" class="flex-fill">
           <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
@@ -48,7 +48,7 @@
         class="sub-statement border-width border-dark pr-2"
         style="min-height: 35px;"
       >
-        <div class="d-flex align-items-center  pl-1 pt-1 pr-0 mr-0 h-100">
+        <div class="d-flex align-items-center pt-1 pr-0 mr-0 h-100">
           <div>
             <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
               <fa icon="spinner" spin />
@@ -62,20 +62,20 @@
           </div>
           <div @click="statementClicked" class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div v-if="relationData" class="d-flex text-dark text-left align-items-center pl-2" >
-                  <div class="text-break">
+              <div v-if="relationData" class="d-flex text-dark text-left align-items-center" >
+                  <div class="text-break" style="line-height:1.8">
                     <RelationTypeLabel :relation-type-id="relationData['relation_type_id'] * 1" />
-                    <TextDisplayer :text="statementText"  />
+                    <TextDisplayer :text="statementText" />
                   </div>
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
-                  <template v-if="isDevelopment">
+                  <!-- <template v-if="isDevelopment">
                     <small class="text-muted">r#{{relationId}}</small>
                     <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
-                  </template>
+                  </template> -->
               </div>
             </div>
           </div>
-          <div v-if="relationData" class="pl-1 d-flex my-auto align-self-center">
+          <div v-if="relationData" class="d-flex my-auto align-self-center">
             <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
               <small v-if="showOpinion">{{(relationOpinionScoreRelation * 100).toFixed(0)}}%</small>
               <small v-else-if="showCTOpinion">-100%</small>

@@ -11,21 +11,21 @@ export default {
     if(typeof typeDescriptions[type] === 'undefined'){
       return 'Unknown opinion'
     }
-    let message = '"' + typeDescriptions[type]
+    let message = typeDescriptions[type]
     //impact
     if(impact !== null && type > 0){
       if(impact === 0){
-        message += ' and has no impact'
+        if (type == 2) message += ' though it has no impact'
       }else {
         let percent_impact = (impact * 100).toFixed(0)
 
         let magnitude_message = ''
         if (impact == 1 || impact == -1)
-          magnitude_message = " and makes a critical"
+          magnitude_message += " and makes a critical"
         else if (impact * impact >= 0.25)
-          magnitude_message = " and makes a strong"
+          magnitude_message += " and makes a strong"
         else
-          magnitude_message = ` and makes a <em class="font-weight-bold">${percent_impact}%</em>`
+          magnitude_message += `and makes a <em class="font-weight-bold">${percent_impact}%</em>`
 
         if(impact < 0){
           message += ` ${magnitude_message} counter impact`

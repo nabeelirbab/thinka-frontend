@@ -1,8 +1,6 @@
 <template>
-  <span :title="relationTypeDescription" class="text-primary font-weight-bold">
-    <span :style="relationTypeSymbolStyle" class="" style="float:left">{{relationTypeSymbol}}</span>
-
-    <span class="pl-1">{{relationTypeName}}</span>
+  <span :title="relationTypeDescription" class="badge badge-pill" style="background-color: #d7e8e9;">
+    <span class="p-0">{{relationTypeSymbol}} {{relationTypeName}}</span>
   </span>
 </template>
 <script>
@@ -14,36 +12,6 @@ export default {
   computed: {
     relationTypes(){
       return RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value['data'] ? RelationTypeAPI.cachedData.value['data'] : []
-    },
-    relationTypeSymbolStyle(){
-      if(this.relationTypeSymbol && this.relationTypeSymbol !== '??'){
-        switch(this.relationTypeSymbol){
-          case '+':
-            return {
-              'font-size': '1.3em',
-              'line-height': '1.2em'
-            }
-          case '-':
-            return {
-              'font-size': '1.4em',
-              'line-height': '1.0em'
-            }
-          case '*':
-            return {
-              // 'font-size': '1.4em',
-              'line-height': '1.8em'
-            }
-          case '^':
-            return {
-              // 'font-size': '1.4em',
-              'line-height': '1.8em'
-            }
-          default:
-            return '1em'
-        }
-      }else{
-        return '1em'
-      }
     },
     relationTypeSymbol(){
       const relationTypeId = this.relationTypeId

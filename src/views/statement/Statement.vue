@@ -14,7 +14,7 @@
       <div ref="treeContainer" class="container px-0" :style="readingModeStyle()">
         <div class="py-2 px-1 border mb-2 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="mb-2 px-2" />
-          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%; z-index:10000"><fa icon="glasses" />
+          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
           </button>
           <MainStatement
             v-if="mainRelationData"
@@ -28,10 +28,10 @@
         </div>
 
         <div v-if="mainRelationData" class="toolbar-bottom-space" style="margin-left:-4px; margin-right: -4px">
-          <div @click="toggleReadingMode" class="text-center text-light">
+          <div @click="setSeparatorWindowSupports" class="text-center text-light">
             - &nbsp;SUPPORTS&nbsp; -
           </div>
-          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
+          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (20) + 'px'}">
             <draggable
               @start="startDragging(true)"
               @end="endDragging"
@@ -75,8 +75,8 @@
             </div>
             <div class="text-center text-secondary"><small>{{positiveStatements.length ? '- End of Line -' : 'No supporting statements'}}</small></div>
           </div>
-          <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
-          <div @click="toggleReadingMode" class="text-center text-light">
+          <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" @click="setSeparatorWindowCentre" />
+          <div @click="setSeparatorWindowCounters" class="text-center text-light">
             - &nbsp;COUNTERS&nbsp; -
           </div>
           <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
@@ -194,7 +194,7 @@ export default {
       if (this.$refs.topToolbar)
       {
         if (this.$refs.topToolbar.isReadingMode)
-          { return "position:absolute;top:0;left-margin:auto;min-height:100%;min-width:100%;z-index:10000" }
+          { return "position:absolute;top:0;left-margin:auto;min-height:100%;min-width:100%;z-index:1030" }
 
         else { return "" }
       }
@@ -285,6 +285,15 @@ export default {
           this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
         }
       }
+    },
+    setSeparatorWindowSupports(){
+      this.$refs.separator._setOffset(this.totaRelevanceWindowHeight)
+    },
+    setSeparatorWindowCounters(){
+      this.$refs.separator._setOffset(this.totaRelevanceWindowHeight/2 * -1)
+    },
+    setSeparatorWindowCentre(){
+      this.$refs.separator._setOffset(-30)
     },
     generateRecursiveRelationsSelect(currentDeep, deep = 20){
       let selectParam = {
