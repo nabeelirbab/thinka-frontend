@@ -20,7 +20,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 export default {
   data(){
     return {
-      deferredInstallPrompt: deferredInstallPrompt.value,
+      deferredInstallPrompt: deferredInstallPrompt,
       isLoading: false
     }
   },

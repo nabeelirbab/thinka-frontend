@@ -14,7 +14,7 @@
         <fa v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" icon="chevron-up" />
     </div>
     <div v-if="isActive || showCTOpinion" class="bg-white py-2">
-      <Opinions 
+      <Opinions
         @click="opinionSummaryClicked"
         :user-opinions="userOpinions"
         :user-opinion-type="relationOpinionType"
@@ -86,7 +86,7 @@
                   v-if="isVirtualRelation"
                   :relation="relationData"
                 />
-                <!-- <router-link 
+                <!-- <router-link
                   v-if="!enableDragging && !isVirtualRelation" 
                   :to="'/branch/' + relationId + '/t/' + toKebabCase(statementText.slice(0, 30)) + (isLocked === 1 ? '/context/' + mainRelationId : '')"
                 >
@@ -96,7 +96,6 @@
                 <CircleIconButton v-if="enableDragging && relationData && !relationData['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
               </div>
               <div v-else class="ml-2 mr-2 align-self-center">
-                
                 <span v-if="!relationData['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                   <fa  icon="briefcase"  />
                 </span>

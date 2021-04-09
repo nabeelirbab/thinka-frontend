@@ -94,7 +94,6 @@
               @change="listChanged"
             >
               <template #item="{element, index}">
-
                 <div v-if="element['relevance_window'] * 1 === 1">
                   <SubStatement
                     @save="addNewSubStatement($event, element['id'])"

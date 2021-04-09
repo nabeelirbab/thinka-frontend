@@ -5,7 +5,7 @@
       <div class="flex-grow-1" style="min-width:0">
         <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center">
           <!-- Please wait... <fa icon="spinner" spin /> -->
-          <Loader style="padding-top: 30vh" />
+          <Loader style="padding-top: 17vh" />
         </div>
         <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
         <div v-else class="text-center w-100 pt-4">
