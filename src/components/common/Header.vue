@@ -107,7 +107,7 @@ export default {
 
 .header-icon {
   font-size: larger;
-  height: 50px
+  height: 47px
 }
 .main-menu-height {
  height: 47px;
@@ -115,6 +115,9 @@ export default {
 @media (min-width: 768px) {
   .main-menu-height {
     height: 51px;
+  }
+  .header-icon {
+    height: 50px
   }
 }
 @media (min-width: 769px) and (max-width: 1230px) {

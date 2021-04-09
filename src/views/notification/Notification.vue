@@ -1,14 +1,14 @@
 <template>
   <div class="container px-0">
     <div class="shadow-md-light mt-md-3 rounded-md bg-white">
-      <div class="border-bottom px-3 py-3 d-flex align-items-center">
+      <div class="border-bottom border-width-6 px-3 py-2 d-flex align-items-center">
         <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
           <fa icon="bell" class="mr-2 text-lg" /> You have {{notifications.length ? notifications.length : 'no'}} notifications.
         </h6>
       </div>
       <div>
         <template v-for="notification in notifications">
-          <div :class="notification['status'] * 1 === 2 ? 'bg-whitesmoke' : ''" class="border-bottom p-3 d-flex">
+          <div :class="notification['status'] * 1 === 2 ? 'bg-whitesmoke' : ''" class="border-bottom border-width-6 p-3 d-flex">
             <NotificationRelationUpdate
               v-if="notification['notification']['type'] * 1=== 2"
               :notification-user-id="notification['id']"

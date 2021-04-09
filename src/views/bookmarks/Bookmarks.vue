@@ -11,7 +11,7 @@
           Searching... <fa icon="spinner" spin />
         </div>
         <div v-else class="mb-4">
-          <div class="border-bottom px-3 py-3 d-flex align-items-center">
+          <div class="border-bottom border-width-6 px-3 py-2 d-flex align-items-center">
             <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
               <fa icon="bookmark" class="mr-2 text-lg" /> Bookmarks: {{filteredBookmarks.length}}
             </h6>

@@ -24,7 +24,7 @@
             data-target="#collapseThree"
             icon="chart-line"
             text="Trending"
-            class=""
+            class="border-width-6"
           />
           <div id="collapseThree" class="collapse show border-bottom" aria-labelledby="headingThree" data-parent="#accordianList">
             <Trending />
@@ -35,6 +35,7 @@
             data-target="#collapseOne"
             icon="list"
             text="My Trees"
+            class="border-width-6"
           />
           <div id="collapseOne" class="collapse border-bottom" aria-labelledby="headingOne" data-parent="#accordianList">
             <MyList v-if="user" class=" p-0" />

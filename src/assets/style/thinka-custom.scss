@@ -15,12 +15,12 @@ input {
 .font-style-2 {
   font-family: 'Theme Font 2'!important;
 }
-.font-style-3 {
-  font-family: 'Theme Font 3'!important;
-}
-h6 {
-  font-family: 'Theme Font 3'!important;
-}
+// .font-style-3 {
+//   font-family: 'Theme Font 3'!important;
+// }
+// h6 {
+//   font-family: 'Theme Font 3'!important;
+// }
 .positive-statement {
   background-color: #f5dfdf
 }
@@ -30,8 +30,14 @@ h6 {
 .is-different-author {
   background-color: #e0e0e0
 }
+.border-bottom {
+  border-bottom-color: #eee!important;
+}
 .border-width {
   border-width: 2px!important;
+}
+.border-width-6 {
+  border-width: 6px!important;
 }
 .border-light {
   border-width: 1px!important;
