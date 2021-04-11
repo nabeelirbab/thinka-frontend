@@ -4,6 +4,7 @@
     @mousedown="dragStart"
     style1="{transform:'translate3d(' + 0 + 'px, ' + currentY + 'px, 0)'}"
     class="separator py-2"
+    style="cursor: pointer;"
   >
     <div :class="active ? 'bg-dark' : 'bg-secondary'" style="height:2px"></div>
   </div>
@@ -25,13 +26,15 @@ export default {
     window.removeEventListener('mouseup', this.dragEnd)
     window.removeEventListener('touchmove', this.drag)
     window.removeEventListener('mousemove', this.drag)
+    
   },
   data(){
     return {
       active: false,
       initialY: 0,
       initialX: 0,
-      yOffset: 0
+      yOffset: 0,
+      currentY: 0
     }
   },
   methods: {
@@ -47,20 +50,28 @@ export default {
       } else {
         this.initialY = e.clientY - this.yOffset
       }
-      this.active = true;
+      this.active = true
     },
     drag(e) {
-      const currentY = (e.type === "touchmove") ? e.touches[0].clientY - this.initialY : e.clientY - this.initialY
-      if (this.active && currentY >= (this.windowHeight * -1) && currentY <= this.windowHeight) {
-        this.yOffset = currentY;
+      this.currentY = (e.type === "touchmove") ? e.touches[0].clientY - this.initialY : e.clientY - this.initialY
+      if (this.active && this.currentY >= (this.windowHeight * -1) && this.currentY <= this.windowHeight) {
+        this.yOffset = this.currentY;
       }
     },
     dragEnd() {
-      if(this.active){
+      if(this.active){        
+        this.setSeparatorWindowMiddle()
         this.initialY = this.yOffset
         this.active = false
       }
-    }
+    },
+    setSeparatorWindowMiddle(){
+      
+      if (this.initialY == this.currentY) 
+      {
+        this.yOffset = -30
+      }
+    },
   },
   watch: {
     yOffset(){

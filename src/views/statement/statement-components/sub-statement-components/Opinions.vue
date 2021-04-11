@@ -1,12 +1,12 @@
 <template>
-  <div :class="isHorizontal ? 'd-flex' : ''" class="text-center">
-    <div :class="userOpinionType === 3 ? 'text-primary' : '' " class="text-nowrap flex-fill">
+  <div :class="isHorizontal ? 'd-flex' : ''" class="text-center pb-1">
+    <div :class="userOpinionType === 3 ? 'text-primary' : '' " class="text-nowrap flex-fill pl-1">
       <OpinionIcon type="3" /> {{counts[3]}}
     </div>
-    <div :class="userOpinionType === 2 ? 'text-primary' : '' " class="text-nowrap flex-fill">
+    <div :class="userOpinionType === 2 ? 'text-primary' : '' " class="text-nowrap flex-fill pl-1">
       <OpinionIcon type="2" /> {{counts[2]}}
     </div>
-    <div :class="userOpinionType === 1 ? 'text-primary' : '' " class="text-nowrap flex-fill">
+    <div :class="userOpinionType === 1 ? 'text-primary' : '' " class="text-nowrap flex-fill pl-1">
       <OpinionIcon type="1" /> {{counts[1]}}
     </div>
   </div>

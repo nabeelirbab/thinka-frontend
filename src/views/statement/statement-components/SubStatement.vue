@@ -2,13 +2,13 @@
   <div
     :class="statementClass"
     :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
-    class="d-flex mt-2  border-width-none border-radius"
+    class="d-flex mt-1  border-width-none border-radius"
     :style="level > 1 ? 'box-shadow: #29292959  0px -1px 4px' : ''"
   >
     <div
       @click.stop="showStatement = !showStatement"
       class="align-items-stretch align-items-center text-center px-1 border-left-radius border-width-none text-sm pt-1"
-      style="min-width: 17px"
+      style="min-width: 17px;"
     >
         <fa v-if="!showStatement && hasToggleableChildren" icon="chevron-down" />
         <fa v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" icon="chevron-up" />
@@ -45,10 +45,10 @@
       <div
         v-if="isLocked > 0"
         v-show="!isEditing && (!isFilteredOut || hasFilterPassChildren)"
-        class="sub-statement border-width border-dark pr-2"
+        class="sub-statement border-width border-dark"
         style="min-height: 35px;"
       >
-        <div class="d-flex align-items-center pt-1 pr-0 mr-0 h-100">
+        <div class="d-flex align-items-center py-1">
           <div>
             <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
               <fa icon="spinner" spin />
@@ -60,11 +60,11 @@
               </small>
             </div>
           </div>
-          <div @click="statementClicked" class="flex-fill c-pointer align-items-stretch">
+          <div v-show="relationData" @click="statementClicked" class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div v-if="relationData" class="d-flex text-dark text-left align-items-center" >
-                  <div class="text-break" style="line-height:1.8">
-                    <RelationTypeLabel class="p-2" :relation-type-id="relationData['relation_type_id'] * 1" />
+              <div v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
+                  <div class="pl-2" style="line-height:1.8">
+                    <RelationTypeLabel class="p-1.5" :relation-type-id="relationData['relation_type_id'] * 1" />
                     <TextDisplayer :text="' ' + statementText" />
                   </div>
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->

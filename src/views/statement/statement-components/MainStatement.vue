@@ -1,12 +1,23 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
+    <div>      
+      <div class="row justify-content-center" >
+        <div class="text-nowrap text-center px-1 "><fa icon="users" /> {{Object.keys(userFollowing).length}}</div>
+        <Opinions 
+          @click="opinionSummaryClicked"
+          :user-opinions="userOpinions" 
+          :is-horizontal="true" 
+          :user-opinion-type="userOpinionType"
+        />
+      </div>
+    </div>
     <div
       ref="mainStatementBox" 
       :class="(isSticky ? 'mainStatement fixed-top' : '') + ' ' + (isSelected ? 'border border-dark border-width' : '')" 
       :title="titleIds"
       :style="stickySeeMore === true ? 'max-height:'+stickStatementHeightLimit+'px!important' : ''" 
-      class="limitBoxborder bg-success shadow-sm px-2 pb-2 pt-2 mb-2 statement-radius" 
+      class="limitBoxborder bg-success shadow-sm px-2 py-1 mb-2 statement-radius" 
     >
       <div>
         <div >
@@ -19,7 +30,7 @@
                       <fa v-if="parentRelationId" icon="leaf"/> <fa v-else icon="tree"/>
                     </span>
                   </div>
-                  <div class="column text-break ">
+                  <div class="column text-break hyphens-auto">
                     <TextDisplayer :text="statement ? statement['text'] : 'No Text'" />
                   </div>
                 </div>
@@ -27,9 +38,9 @@
               <div class="d-flex align-items-center justify-content-center text-center">
                 <OpinionIcon v-if="selectedStatementId !== relation['id']" :type="relationOpinionType" class="mr-1 text-white" />
                 <div v-if="selectedStatementId === relation['id']" class=" ml-1">
-                  <CircleLabel>
+                  <!-- <CircleLabel>
                     <CTPoints :points="ctPoints * 1" class="text-dark" />
-                  </CircleLabel>
+                  </CircleLabel> -->
                   <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
                 </div>
                 <div
@@ -91,19 +102,7 @@
         </div>
       </div>
     </div>
-    <div class="row px-2 ">
-      <div class="col-3 text-nowrap text-center">
-        <fa icon="users" /> {{Object.keys(userFollowing).length}}
-      </div>
-      <div class="col-9" >
-        <Opinions 
-          @click="opinionSummaryClicked"
-          :user-opinions="userOpinions" 
-          :is-horizontal="true" 
-          :user-opinion-type="userOpinionType"
-        />
-      </div>
-    </div>
+    
   </div>
 </template>
 <script>
