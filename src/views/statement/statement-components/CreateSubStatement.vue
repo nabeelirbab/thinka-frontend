@@ -1,6 +1,6 @@
 <template>
   <div 
-    :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" 
+    :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement' : 'text-white')" 
     class="container bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3"
   >
     <div class="flex-fill">
