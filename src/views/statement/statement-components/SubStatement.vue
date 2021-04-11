@@ -64,8 +64,8 @@
             <div>
               <div v-if="relationData" class="d-flex text-dark text-left align-items-center" >
                   <div class="text-break" style="line-height:1.8">
-                    <RelationTypeLabel :relation-type-id="relationData['relation_type_id'] * 1" />
-                    <TextDisplayer :text="statementText" />
+                    <RelationTypeLabel class="p-2" :relation-type-id="relationData['relation_type_id'] * 1" />
+                    <TextDisplayer :text="' ' + statementText" />
                   </div>
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
                   <!-- <template v-if="isDevelopment">
