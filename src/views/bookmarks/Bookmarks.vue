@@ -2,7 +2,7 @@
   <div >
     <div class="image-background p-4 mb-0 mb-md-3">
       <div class="container px-4">
-        <SearchBar ref="searchBar" @search="filterSearch" />
+        <SearchBar ref="searchBar" @search="filterSearch" :init_focus="false" />
       </div>
     </div>
     <div class='container pb-2 px-0'>

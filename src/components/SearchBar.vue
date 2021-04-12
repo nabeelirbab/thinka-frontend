@@ -36,7 +36,8 @@
 <script>
 export default {
   props: {
-    modelValue: String
+    modelValue: String,
+    init_focus: Boolean
   },
   emits: ['search', 'update:modelValue'],
   data(){
@@ -46,15 +47,15 @@ export default {
     }
   },
   mounted(){
-    this._clear()
+    this._clear(this.init_focus)
   },
   methods: {
-    _clear(){
-      this.isFocused = false,
+    _clear(focus){
+      this.isFocused = focus,
       this.keyword = ''
     },
     focus(){
-      console.log('focused?')
+      // console.log('focused?')
       this.isFocused = true
       setTimeout(() => {
         this.$refs.searchInput.focus()
