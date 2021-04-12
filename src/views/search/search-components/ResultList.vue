@@ -4,7 +4,7 @@
       Searching... <fa icon="spinner" spin />
     </div>
     <div v-else class="mb-4">
-      <div class="border-bottom px-3 py-3 d-flex align-items-center">
+      <div class="border-bottom px-3 py-2 d-flex align-items-center">
         <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
           <fa icon="search" class="mr-2 text-lg" /> Search Results: {{relations.length}}
         </h6>
