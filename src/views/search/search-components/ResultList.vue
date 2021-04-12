@@ -116,23 +116,29 @@ export default {
         }
       }
       this.relations = []
-      RelationAPI.retrieve(param).then(result => {
-        if(filter){
-          localStorage.setItem('search_page_filter', JSON.stringify(filter))
-          localStorage.setItem('search_page_result_cache', JSON.stringify(result['data']))
-        }else{
-          localStorage.removeItem('search_page_filter')
-          localStorage.removeItem('search_page_result_cache')
-        }
-        if(result['data']){
-          this.relations = result['data']
-        }
-        if(typeof result['additional_data']['total_result'] !== 'undefined'){
-          this.totalPageResult = result['additional_data']['total_result']
-        }
-      }).finally(() => {
+      if (filter['statementText'] != '')  
+              RelationAPI.retrieve(param).then(result => {
+                if(filter){
+                  localStorage.setItem('search_page_filter', JSON.stringify(filter))
+                  localStorage.setItem('search_page_result_cache', JSON.stringify(result['data']))
+                }else{
+                  localStorage.removeItem('search_page_filter')
+                  localStorage.removeItem('search_page_result_cache')
+                }
+                if(result['data']){
+                  this.relations = result['data']
+                }
+                if(typeof result['additional_data']['total_result'] !== 'undefined'){
+                  this.totalPageResult = result['additional_data']['total_result']
+                }
+              }).finally(() => {
+                this.isLoading = false
+              })
+      else {
         this.isLoading = false
-      })
+        localStorage.removeItem('search_page_filter')
+        localStorage.removeItem('search_page_result_cache')
+      }
     },
     clearSearch(){
       this.$emit('clear-search')
