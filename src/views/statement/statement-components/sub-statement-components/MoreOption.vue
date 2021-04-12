@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown show">
+  <div class="dropup show position-static">
     <!-- <button class="btn icon-size py-1 shadow-none" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="More tree options.">
       <fa icon="ellipsis-v" />
     </button> -->
