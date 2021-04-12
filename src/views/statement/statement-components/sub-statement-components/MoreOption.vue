@@ -9,12 +9,15 @@
     </button>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-      <router-link v-if="!isVirtualRelation" :to="'/branch/' + relation['id'] + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item"><fa icon="eye" /> Zoom</router-link>
+      <router-link :to="'/branch/' + (isVirtualRelation ? relation['virtual_relation_id']: relation['id']) + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item">        
+        <span v-if="!isVirtualRelation"><fa icon="eye" /> Zoom</span>
+        <span v-else-if="isVirtualRelation"><fa icon="link" /> Open Link</span>
+      </router-link>
       <button
         @click="showVirtualRelationLinkages = true" 
         class="dropdown-item" 
       >
-        <fa icon="link" /> Linkages
+        <fa icon="tree" /> Parent links
       </button>
       <button 
         @click="authenticationStatus === 'authenticated' ? (createSubStatementParentId = selectedStatementId) : null" 
@@ -22,7 +25,7 @@
         :disabled="(authenticationStatus !== 'authenticated' || isVirtualRelation)" 
         class="dropdown-item" 
       >
-        <fa icon="folder-plus" /> Add
+        <fa icon="folder-plus" /> Add child
       </button>
       <button 
         @click="editSelectedStatement = true" 

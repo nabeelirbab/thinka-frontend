@@ -1,6 +1,6 @@
 <template>
   <div v-if="mainRelationData" class="d-flex mb-1" @click="selectedStatementId = null">
-    <div class="d-flex flex-fill">
+    <div class="d-flex flex-fill pt-1">
       <div>
         <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
       </div>

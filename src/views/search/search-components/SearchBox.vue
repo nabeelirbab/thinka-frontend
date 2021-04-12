@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <SearchBar ref="searchBar" v-model="searchForm.statementText" @search="search" />
+    <SearchBar ref="searchBar" v-model="searchForm.statementText" @search="search" :init_focus="true" />
     <div v-if="user" class="text-center text-white mt-2">
       <div  class="form-check d-flex align-items-center justify-content-center">
         <CustomCheckbox
@@ -48,7 +48,6 @@ export default {
         this.searchForm = previousSearchFilter
         if(typeof this.$refs.searchInput !== 'undefined' && this.$refs.searchInput){
           this.$refs.searchBar.focus()
-          console.log('fo A')
         }
       }else{
         this.search()
@@ -61,12 +60,13 @@ export default {
       this.searchForm['statementText'] = ''
       this.searchForm['mineOnly'] = false
       this.search()
+      this.$refs.searchBar.focus()
     }
   },
   watch: {
     routeParamKeyword: {
       handler(routeParamKeyword){
-        console.log('routeParamKeyword', routeParamKeyword)
+        // console.log('routeParamKeyword', routeParamKeyword)
         if(routeParamKeyword){
           setTimeout(() => {
             this.searchForm['statementText'] = routeParamKeyword

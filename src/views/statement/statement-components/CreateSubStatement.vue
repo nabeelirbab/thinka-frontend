@@ -1,15 +1,15 @@
 <template>
   <div 
-    :c1lass="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement ' : 'text-white')" 
-    class="container bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3"
+    :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement' : 'text-white')" 
+    class="bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3"
   >
-    <div class="flex-fill">
+    <div class="">
       <select 
         v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" 
         v-model="statement.relation.relation_type_id"
         :disabled="isLoading"
         class="border-primary text-primary border rounded font-weight-bold mb-1"
-        style="padding:0.16em"
+        style="padding:0.16em;"
       >
         <option value="0" default >Please Select</option>
         <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
@@ -17,7 +17,7 @@
         </template>
       </select>
     </div>
-    <div class="flex-basis pt-2">
+    <div class="pt-2">
       <div v-if="toJoinRelation">
         {{toJoinRelation['statement']['text']}}
       </div>
@@ -56,7 +56,7 @@
       </button>
     </div>
     <Prompt ref="prompt"></Prompt>
-  </div>
+</div>
 </template>
 <script>
 import StatementAPI from '@/api/statement'

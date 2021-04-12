@@ -1,13 +1,20 @@
 <template>
-  <modal ref="modal" @close="close" title="Linkages">
+  <modal ref="modal" @close="close" title="Parent links" icon="tree">
     <div v-if="isLoading" class="text-center">
       Please wait... <fa icon="spinner" spin />
     </div>
     <div v-else-if="relations.length === 0" class="text-center">
-      No linkages found on this statement
+      No other parents found for this statement.
     </div>
-    <div v-else>
-      This relation has been used by the statements below:
+    <div v-else-if="selectedStatementData">
+      <span class="text-primary" style="overflow: hidden;white-space: nowrap;text-overflow: ellipsis;">
+        {{this.selectedStatementData['virtual_relation'] ? 
+          this.selectedStatementData['virtual_relation']['statement']['text']
+          : this.selectedStatementData['statement']['text']
+        }}
+        </span>
+      <br><hr>
+      This statement has been linked to these parents:
       <template v-for="relation in relations">
         <RelationRow @link-clicked="linkClicked" :relation="relation['parent_relation']" />
       </template>
@@ -67,12 +74,7 @@ export default {
         condition: [{
           column: 'virtual_relation_id',
           value: this.selectedStatementData['virtual_relation'] ? this.selectedStatementData['virtual_relation']['id'] : this.selectedStatementData['id']
-        }, {
-          column: 'id',
-          clause: '!=',
-          value: this.selectedStatementData['id']
-        }],
-        limit: 10
+        }]
       }
       RelationAPI.retrieve(param).then(result => {
         console.log(result['data'])
