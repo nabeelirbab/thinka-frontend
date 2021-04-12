@@ -1,12 +1,12 @@
 <template>
   <div >
-    <div class="image-background p-4 mb-0 mb-md-3">
+    <div class="image-background pt-3 px-4 mb-0 pb-8">
       <div class="container px-4">
         <SearchBar ref="searchBar" @search="filterSearch" :init_focus="false" />
       </div>
     </div>
-    <div class='container pb-2 px-0'>
-      <div class="bg-white rounded-md shadow-md-light">
+    <div class='container pb-2 px-2 mt-n-3'>
+      <div class="bg-white rounded-md shadow-light rounded-rounder">
         <div v-if="isLoading" class="text-center py-3">
           Searching... <fa icon="spinner" spin />
         </div>
