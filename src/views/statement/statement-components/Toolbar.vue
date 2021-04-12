@@ -95,7 +95,7 @@ export default {
       return this.selectedStatementData && this.selectedStatementData['is_virtual_relation']
     },
     isPublished(){
-      return this.selectedStatementData && this.selectedStatementData['published_at']
+      return this.selectedStatementData && (this.selectedStatementData['published_at'] != null)
     }
   }
 }
