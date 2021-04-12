@@ -65,7 +65,7 @@
                     @click="showVirtualRelationLinkages = true" 
                     class="dropdown-item"
                   >
-                    <fa icon="link" /> Linkages
+                    <fa icon="tree" /> Parent links
                   </button>
                   <button 
                     @click="showScope = !showScope"

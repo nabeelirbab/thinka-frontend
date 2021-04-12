@@ -31,7 +31,7 @@
           <div @click="setSeparatorWindowSupports" class="text-center text-light" style="cursor: pointer;">
             - &nbsp;SUPPORTS&nbsp; -
           </div>
-          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 25) + 'px', 'min-height': (20) + 'px'}">
+          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (20) + 'px'}">
             <draggable
               @start="startDragging(true)"
               @end="endDragging"
@@ -94,7 +94,7 @@
               @change="listChanged"
             >
               <template #item="{element, index}">
-                <div v-if="element['relevance_window'] * 1 === 1" class="container-fluid">
+                <div v-if="element['relevance_window'] * 1 === 1">
                   <SubStatement
                     @save="addNewSubStatement($event, element['id'])"
                     @update="updateNewSubStatement($event, index)"
