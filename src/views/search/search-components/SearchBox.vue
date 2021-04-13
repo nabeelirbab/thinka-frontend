@@ -1,11 +1,12 @@
 <template>
   <div class="">
     <SearchBar ref="searchBar" v-model="searchForm.statementText" @search="search" :init_focus="true" />
-    <div v-if="user" class="text-center text-white mt-2">
+    <div v-if="user" class="text-center text-white mt-3">
       <div  class="form-check d-flex align-items-center justify-content-center">
         <CustomCheckbox
           v-model="searchForm.mineOnly"
           class="mr-2 text-xl"
+          style="line-height:0px"
         />
         <label @click="searchForm.mineOnly = !searchForm.mineOnly" class="form-check-label c-pointer" >Show My Statements Only</label>
       </div>

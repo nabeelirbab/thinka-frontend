@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="image-background px-4 pt-3 pb-8 mb-0 ">
-      <div class="container px-4">
+    <div class="image-background pt-3 pb-8 mb-0 ">
+      <div class="container">
         <SearchBox ref="searchBox" @search="search" :is-loading="isLoading"/>
       </div>
     </div>

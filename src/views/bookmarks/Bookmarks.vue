@@ -1,7 +1,7 @@
 <template>
   <div >
-    <div class="image-background pt-3 px-4 mb-0 pb-8">
-      <div class="container px-4">
+    <div class="image-background pt-3 mb-0 pb-8">
+      <div class="container">
         <SearchBar ref="searchBar" @search="filterSearch" :init_focus="false" />
       </div>
     </div>
