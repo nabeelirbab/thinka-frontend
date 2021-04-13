@@ -46,7 +46,7 @@
       </template>
     </select>
     <div class="text-right">
-      <button @click="save" :disabled="(statement.text.length < 3 || statement['relation']['relation_type_id'] * 1 === 0) || isLoading" class="btn btn-primary py-1">
+      <button @click="save" :disabled="!canSave" class="btn btn-primary py-1">
         <fa v-if="isSuccess" icon="check" />
         <fa v-else-if="isLoading" icon="spinner" spin />
         <span v-else><fa  icon="save" /> Save</span>
@@ -217,7 +217,6 @@ export default {
       })
     },
     linkRelation(){
-      console.log('this.parentRelation', this.parentRelation)
       const selectedRelation = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
       const param = {
         ...this.statement['relation'],
@@ -385,6 +384,14 @@ export default {
     },
     contexts(){
       return ContextAPI.cachedData.value ? ContextAPI.cachedData.value['data'] : []
+    },
+    canSave(){
+      return typeof this.statement !== 'undefined'
+        && this.statement
+        && this.statement['relation']
+        && this.statement.text.length >= 3
+        && (this.statement['relation']['relation_type_id'] * 1 !== 0 || this.statement['relation']['parent_relation_id'] * 1 === 0)
+        && !this.isLoading
     }
   }
 }
