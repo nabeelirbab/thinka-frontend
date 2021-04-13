@@ -1,5 +1,5 @@
 <template>
-  <div v-if="relation" class="w-100 hover-border-dark border-bottom border-width-6 px-3 py-2">
+  <div v-if="relation" class="w-100 hover-border-dark border-bottom border-width-4 px-3 py-2">
     <router-link
       @click="$emit('link-clicked')"
       :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30))"

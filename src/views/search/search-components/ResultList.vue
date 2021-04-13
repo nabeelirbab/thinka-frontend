@@ -1,19 +1,24 @@
 <template>
-  <div class="">
+  <div class="" >
     <div v-if="isLoading" class="text-center py-3">
       Searching... <fa icon="spinner" spin />
     </div>
-    <div v-else class="mb-4">
-      <div class="border-bottom px-3 py-2 d-flex align-items-center">
+    <div v-else class="mb-4" >
+      <div class="px-3 py-2 d-flex align-items-center border-width border-bottom">
         <h6 class="text-primary mb-0 flex-fill text-uppercase d-flex align-items-center">
           <fa icon="search" class="mr-2 text-lg" /> Search Results: {{relations.length}}
         </h6>
         <fa @click="clearSearch" icon="trash" class="text-light text-lg c-pointer" />
       </div>
-      <template v-for="(relation, index) in relations" :key="'result' + index">
-        <ResultItem :relation="relation" />
-      </template>
-      <nav v-if="totalPageResult" aria-label="Page navigation example">
+      <div v-if="relations.length">
+        <template v-for="(relation, index) in relations" :key="'result' + index">
+          <ResultItem :relation="relation" />
+        </template>
+      </div>
+      <div v-else class="text-center py-1">
+        No results found
+      </div>
+      <nav v-if="totalPageResult" >
         <ul class="pagination justify-content-end">
           <li class="page-item disabled">
             <a class="page-link" href="#" tabindex="-1"><fa icon="chevron-left"></fa></a>

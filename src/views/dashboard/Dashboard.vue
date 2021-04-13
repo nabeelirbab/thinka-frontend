@@ -1,6 +1,6 @@
 <template class="overflow-hidden">
   <div>
-    <div class="image-background py-3 px-0 mb-0 mb-md-3">
+    <div class="image-background pt-3 px-0 pb-8">
       <div class="container ">
         <SearchTree />
         <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3 btn-sm-xl">
@@ -17,14 +17,14 @@
         </router-link>
       </div>
     </div>
-    <div class="container mb-4 pb-4 px-0">
-      <div class="shadow-md-light rounded-md bg-white" id="accordianList">
+    <div class="container mb-4 pb-4 px-2 mt-n-3">
+      <div class="shadow-light rounded-rounder bg-white" id="accordianList">
         <div class="">
           <AccordionHeader
             data-target="#collapseThree"
             icon="chart-line"
             text="Trending"
-            class="border-width-6"
+            class="border-width"
           />
           <div id="collapseThree" class="collapse show border-bottom" aria-labelledby="headingThree" data-parent="#accordianList">
             <Trending />
@@ -35,7 +35,7 @@
             data-target="#collapseOne"
             icon="list"
             text="My Trees"
-            class="border-width-6"
+            class="border-width"
           />
           <div id="collapseOne" class="collapse border-bottom" aria-labelledby="headingOne" data-parent="#accordianList">
             <MyList v-if="user" class=" p-0" />
