@@ -14,7 +14,7 @@
       <div ref="treeContainer" class="container-fluid px-0" :style="readingModeStyle()">
         <div class="px-1 border mb-1 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="px-2" />
-          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
+          <button v-show="isReadingMode()" @click="toggleReadingMode" class="shadow-none btn-primary btn py-0 px-1 my-2 mx-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
           </button>
           <MainStatement
             v-if="mainRelationData"

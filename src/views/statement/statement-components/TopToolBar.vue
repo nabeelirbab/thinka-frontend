@@ -12,20 +12,19 @@
           <input ref="searchText" v-model="searchText" @keydown.esc="blurSearch" @keypress.enter="searchText === '' ? showSearchText = false : null" @keyup="typing" @focusout="searchText === '' ? showSearchText = false : null"  class="form-control rounded-r-oval border-0 shadow-none" placeholder="Enter search criteria">
         </div>
       </div>
-      <button @click="toggleReadingMode" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Reading Mode."><fa icon="glasses" />
-      </button>
-      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Back.">
+      <button @click="toggleReadingMode" class="shadow-none btn-primary btn py-0 px-1 mx-2" title="Reading Mode."><fa icon="glasses" /></button>
+      <button @click="goBack" :disabled="backHistory.length <= 1" class="chevron-circle-button shadow-none btn-square btn py-1 px-0" title="Back.">
         <div ><fa icon="chevron-left" /></div>
       </button>
-      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-1" title="Forward.">
+      <button @click="goForward" :disabled="!forwardHistory.length" class="chevron-circle-button shadow-none btn-square btn py-1 px-0" title="Forward.">
         <div><fa icon="chevron-right" /></div>
       </button>
       <div>
         <button @click="bookmark" :class="rootBookmarkId ? 'text-primary-2' : ''" :disabled="isBookmarkLoading" class="btn icon-size py-1 text-white btn-square px-2 shadow-none" title="Bookmark">
           <fa-layers full-width v-if="!isBookmarkLoading">
               <fa icon="bookmark" />
-              <fa icon="minus" class="text-primary pb-1" style="width:.4em" v-show="rootBookmarkId" />
-              <fa icon="plus" class="text-primary pb-1" style="width:.4em" v-show="!rootBookmarkId" />
+              <fa icon="star" class="text-primary pb-1" style="width:.4em" v-show="rootBookmarkId" />
+              <!-- <fa icon="plus" class="text-primary pb-1" style="width:.4em" v-show="!rootBookmarkId" /> -->
           </fa-layers>
           <fa v-else icon="spinner" spin />
         </button>
