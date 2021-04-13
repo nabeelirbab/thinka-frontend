@@ -1,7 +1,7 @@
 <template>
   <div 
     :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement' : 'text-white')" 
-    class="bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3"
+    class="bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3" style="position:fixed;left:0;right:0;top:inherit;"
   >
     <div class="">
       <select 

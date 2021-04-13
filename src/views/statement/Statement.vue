@@ -14,7 +14,7 @@
       <div ref="treeContainer" class="container-fluid px-0" :style="readingModeStyle()">
         <div class="px-1 border mb-1 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="px-2" />
-          <button v-show="isReadingMode()" @click="toggleReadingMode" class="chevron-circle-button shadow-1 btn-square btn py-1 px-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
+          <button v-show="isReadingMode()" @click="toggleReadingMode" class="shadow-none btn-primary btn py-0 px-1 my-2 mx-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
           </button>
           <MainStatement
             v-if="mainRelationData"
@@ -31,7 +31,7 @@
           <div @click="setSeparatorWindowSupports" class="text-center text-light" style="cursor: pointer;">
             - &nbsp;SUPPORTS&nbsp; -
           </div>
-          <div ref="positiveWindow" class="statement-window " :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (20) + 'px'}">
+          <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (20) + 'px'}">
             <draggable
               @start="startDragging(true)"
               @end="endDragging"
@@ -486,7 +486,7 @@ export default {
   padding-bottom: 0px
 }
 .statement-window {
-  /* overflow:visible; */
+  overflow-x: hidden;
   overflow-y: auto;
   padding:0px 5px
 }
