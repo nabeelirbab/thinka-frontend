@@ -55,8 +55,8 @@
           </div>
           <div v-show="relationData" class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
-                  <div @click="statementClicked" class="pl-2" style="line-height:1.8">
+              <div @click="statementClicked" v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
+                  <div class="pl-2" style="line-height:1.8">
                     <RelationTypeLabel class="p-1.5" :relation-type-id="relationData['relation_type_id'] * 1" />                    
                     <TextDisplayer :text="' ' + statementText" />                                 
                   </div>                  
