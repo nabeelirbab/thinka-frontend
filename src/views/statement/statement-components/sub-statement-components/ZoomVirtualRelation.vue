@@ -1,5 +1,6 @@
 <template>
-  <CircleIconButton @click="attempZoomVirtualRelation" icon="link" button-class="btn-light bg-whitesmoke text-primary" />
+  <!-- <CircleIconButton @click="attempZoomVirtualRelation" icon="link" button-class="btn-light bg-whitesmoke text-primary" /> -->
+  <fa @click="attempZoomVirtualRelation" icon="link" class="mr-1 " /> &#8226;
   <Prompt ref="prompt" />
 </template>
 <script>

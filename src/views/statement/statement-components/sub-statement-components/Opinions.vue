@@ -1,14 +1,10 @@
 <template>
-  <div :class="isHorizontal ? 'd-flex' : ''" class="text-center pb-1">
-    <div class="text-nowrap flex-fill pl-1">
-      <OpinionIcon type="3" :user_type="userOpinionType"  /> {{counts[3]}}
-    </div>
-    <div class="text-nowrap flex-fill pl-1">
-      <OpinionIcon type="2" :user_type="userOpinionType"  /> {{counts[2]}}
-    </div>
-    <div class="text-nowrap flex-fill pl-1">
-      <OpinionIcon type="1" :user_type="userOpinionType" /> {{counts[1]}}
-    </div>
+  <div class="">
+    
+      <span :class="userOpinionType === 3 ? 'text-dark' : 'text-primary'"><OpinionIcon type="3" :user_type="userOpinionType"  /> {{counts[3]}}</span>
+      <span :class="userOpinionType === 2 ? 'text-dark' : 'text-primary'"><OpinionIcon type="2" :user_type="userOpinionType"  /> {{counts[2]}}</span>
+      <span :class="userOpinionType === 1 ? 'text-dark' : 'text-primary'"><OpinionIcon type="1" :user_type="userOpinionType" /> {{counts[1]}}</span>
+    
   </div>
 </template>
 <script>
