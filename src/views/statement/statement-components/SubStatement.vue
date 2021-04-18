@@ -13,21 +13,14 @@
         <fa v-if="!showStatement && hasToggleableChildren" icon="chevron-down" />
         <fa v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" icon="chevron-up" />
     </div>
-    <div v-if="isActive || showCTOpinion" class="bg-white py-2">
-      <Opinions
-        @click="opinionSummaryClicked"
-        :user-opinions="userOpinions"
-        :user-opinion-type="relationOpinionType"
-        class="border-right px-2 c-pointer"
-      />
-    </div>
     <div v-if="relationData" class="flex-fill pl-1 pt-1 border-right-radius bg-white">
       <div v-if="isActive && relationData['user']" class="text-sm ml-2 pr-3 d-flex justify-content-end">
         <div v-if="isActive" class="flex-fill">
           <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
         </div>
-        <div v-if="isVirtualRelation" class="text-info text-sm text-right text-dark">
-          <fa icon="link" class="mr-1 " /> &#8226;
+        <div v-if="isActive && isVirtualRelation" class="text-info text-sm text-right text-dark">
+          <!-- <fa icon="link" class="mr-1 " /> &#8226; -->
+          <ZoomVirtualRelation v-if="isVirtualRelation" :relation="relationData" />
         </div>
         <div v-if="isActive" class="">
           <span v-if="publishedAt"  class="pl-2 text-light">
@@ -60,32 +53,40 @@
               </small>
             </div>
           </div>
-          <div v-show="relationData" @click="statementClicked" class="flex-fill c-pointer align-items-stretch">
+          <div v-show="relationData" class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
+              <div @click="statementClicked" v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
                   <div class="pl-2" style="line-height:1.8">
-                    <RelationTypeLabel class="p-1.5" :relation-type-id="relationData['relation_type_id'] * 1" />
-                    <TextDisplayer :text="' ' + statementText" />
-                  </div>
+                    <RelationTypeLabel class="p-1.5" :relation-type-id="relationData['relation_type_id'] * 1" />                    
+                    <TextDisplayer :text="' ' + statementText" />                                 
+                  </div>                  
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
                   <!-- <template v-if="isDevelopment">
                     <small class="text-muted">r#{{relationId}}</small>
                     <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
                   </template> -->
               </div>
-            </div>
+              <div v-if="isActive || showCTOpinion" class="bg-white">
+                <Opinions
+                  @click="opinionSummaryClicked"
+                  :user-opinions="userOpinions"
+                  :user-opinion-type="relationOpinionType"
+                  class="text-right px-2 c-pointer no-wrap"
+                />
+              </div>              
+            </div>        
           </div>
           <div v-if="relationData" class="d-flex my-auto align-self-center">
-            <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
+            <!-- <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
               <small v-if="showOpinion">{{(relationOpinionScoreRelation * 100).toFixed(0)}}%</small>
               <small v-else-if="showCTOpinion">-100%</small>
-            </div>
+            </div> -->
             <div v-else class="d-inline-flex">
               <div v-if="isActive" class="mr-1" >
-                <ZoomVirtualRelation 
+                <!-- <ZoomVirtualRelation 
                   v-if="isVirtualRelation"
                   :relation="relationData"
-                />
+                /> -->
                 <!-- <router-link
                   v-if="!enableDragging && !isVirtualRelation" 
                   :to="'/branch/' + relationId + '/t/' + toKebabCase(statementText.slice(0, 30)) + (isLocked === 1 ? '/context/' + mainRelationId : '')"
@@ -104,7 +105,7 @@
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
-                <OpinionIcon v-if="relationOpinionType" :type="relationOpinionType" class="ml-1" />
+                <OpinionIcon v-if="relationOpinionType && !showCTOpinion" :type="relationOpinionType" class="ml-1" />
               </div>
               <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
                 <MoreOption :relation="relationData" :level="level" />
