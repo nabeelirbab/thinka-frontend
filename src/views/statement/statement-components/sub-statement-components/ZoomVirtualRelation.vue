@@ -15,7 +15,6 @@ export default {
   },
   methods: {
     attempZoomVirtualRelation(){
-      console.log('attempting')
       this.$router.push('/branch/' + this.relation['virtual_relation_id'] + '/t/' + this.toKebabCase(this.statementText.slice(0, 30)))
       // this.$refs.prompt._open('Are you sure you want to open the linked relation?', [{
       //   label: 'Open',

@@ -192,12 +192,12 @@ export default {
       this.$refs.topToolbar.toggleReadingMode()
     },
     readingModeStyle() {
-      if (this.$refs.topToolbar)
-      {
-        if (this.$refs.topToolbar.isReadingMode)
-          { return "position:absolute;top:0;min-height:20%;min-width:100%;z-index:1030;" }
-
-        else { return "" }
+      if (this.$refs.topToolbar){
+        if (this.$refs.topToolbar.isReadingMode){
+          return "position:absolute;top:0;min-height:20%;min-width:100%;z-index:1030;"
+        } else {
+          return "" 
+        }
       }
     },
     isReadingMode() {

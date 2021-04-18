@@ -2,7 +2,7 @@
   <div class="">
     <div v-if="!isVirtualRelation || isRootVirtualRelation" class="fixed-bottom px-2 px-md-4" style1="padding-bottom:20px">
       <!-- Only the authors -->
-      <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1">
+      <template v-if="user && selectedStatementData && selectedStatementData['user_id'] * 1 === user['id'] * 1 && !isVirtualRelation">
         <ScopeSlider v-if="showScope" />
       </template>
       <!-- Must be logged in user -->
