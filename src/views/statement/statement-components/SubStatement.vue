@@ -81,7 +81,7 @@
               <small v-if="showOpinion">{{(relationOpinionScoreRelation * 100).toFixed(0)}}%</small>
               <small v-else-if="showCTOpinion">-100%</small>
             </div> -->
-            <div v-else class="d-inline-flex">
+            <div class="d-inline-flex">
               <div v-if="isActive" class="mr-1" >
                 <!-- <ZoomVirtualRelation 
                   v-if="isVirtualRelation"
@@ -129,7 +129,7 @@
           class="mt-2"
         />
         <CreateSubStatement
-          v-if="createSubStatementParentId === relationId" 
+          v-if="createSubStatementParentId === relationId"
           @cancel="createSubStatementParentId = null"
           @save="addNewSubStatement($event, relationId)"
           @sav1e="$emit('save', {event: $event, mappingIndex: []})"

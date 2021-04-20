@@ -224,7 +224,6 @@ export default {
     statement(){
       return this.relation && this.relation['statement'] ? this.relation['statement'] : null
     },
-    
     statementId(){
       return this.statement && typeof this.statement['id'] !== 'undefined' && this.statement['id'] ? this.statement['id'] : null
     },

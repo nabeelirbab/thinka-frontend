@@ -192,10 +192,11 @@ export default {
     },
     joinRelation(){
       const selectedRelationType = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
+      let relevanceWindow = this.determineRelevanceWindow(selectedRelationType)
       RelationAPI.post('/join', {
         parent_relation_id: this.parentRelationId,
         relation_id: this.toJoinRelation['id'],
-        relevance_window: this.isPositiveStatement ? 0 : 1,
+        relevance_window: relevanceWindow,
         relation_type_id: this.statement['relation']['relation_type_id'],
         impact_amount: (typeof selectedRelationType !== 'undefined') ? selectedRelationType['default_impact'] : 0,
       }).then(result => {
@@ -203,7 +204,7 @@ export default {
           this.$emit('save', {
             ...this.toJoinRelation,
             retrieve_relations: true, // retrieve the relation's tree on success
-            relevance_window: this.isPositiveStatement ? 0 : 1,
+            relevance_window: relevanceWindow,
           })
           this.isSuccess = true
             setTimeout(() => {
@@ -216,11 +217,21 @@ export default {
         this.isLoading = false
       })
     },
+    determineRelevanceWindow(relationType){
+      let relevanceWindow = 0
+      if(relationType['default_impact'] * 1 === 0){
+        relevanceWindow = this.isPositiveStatement ? 0 : 1
+      }else{
+        relevanceWindow = relationType['default_impact'] * 1 === 1 ? 0 : 1
+      }
+      return relevanceWindow
+    },
     linkRelation(){
-      const selectedRelation = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
+      const selectedRelationType = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
+      let relevanceWindow = this.determineRelevanceWindow(selectedRelationType)
       const param = {
         ...this.statement['relation'],
-        impact_amount: (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0,
+        impact_amount: (typeof selectedRelationType !== 'undefined') ? selectedRelationType['default_impact'] : 0,
         parent_relation_id: this.parentRelationId,
         is_published: this.parentRelation['published_at'] ? true : false,
         virtual_relation_id: this.toLinkRelation['id'],
@@ -240,7 +251,7 @@ export default {
             virtual_relation_id: this.toLinkRelation['id'],
             id: result['data']['id'],
             retrieve_relations: true, // retrieve the relation's tree on success
-            relevance_window: this.isPositiveStatement ? 0 : 1,
+            relevance_window: relevanceWindow,
           })
           this.isSuccess = true
             setTimeout(() => {
@@ -372,7 +383,7 @@ export default {
       let relationTypes = []
       if((this.level === 1 || this.level === 2 || typeof this.level === 'undefined') && RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
         RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
-          const relevanceWindow = relationType['relevance_window'] !== null ? relationType['relevance_window'] * 1 : null
+          const relevanceWindow = this.determineRelevanceWindow(relationType)
           if(relevanceWindow === -1 || (relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
             relationTypes.push(relationType)
           }
