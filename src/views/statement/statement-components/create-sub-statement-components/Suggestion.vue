@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div >
     <div :class="typedText === '' ? 'invisible' : '' " class="d-md-flex text-sm">
       <div>Suggestions: </div>
       <div class="flex-fill mx-1">
@@ -25,7 +25,7 @@
         </template>
       </div>
     </div>
-    <modal ref="moreSuggestionModal" title="Statement Suggestions" class="text-dark">
+    <modal ref="moreSuggestionModal" title="Statement Suggestions" class="text-dark" >
       <div v-if="isLoadingSuggestion">
         Please wait... <fa icon="spinner" spin />
       </div>
@@ -33,6 +33,7 @@
         <SuggestionList
           @join-suggestion="joinSuggestion($event, true)"
           @select-suggestion="selectSuggestion($event, true)"
+          @link-suggestion="linkSuggestion($event, true)"
           :suggestions="moreSuggestions"
           :selected-suggestion-id="selectedSuggestionId"
           :joined-suggestion-id="joinedSuggestionId"
@@ -129,6 +130,7 @@ export default {
       this.linkedSuggestionId = 0
     },
     _stopSuggesting(){
+      this.isLoadingSuggestion = false
       clearTimeout(this.suggestionTimeout)
     },
     showMore(){

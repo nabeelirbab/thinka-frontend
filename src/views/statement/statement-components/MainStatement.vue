@@ -2,7 +2,7 @@
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
     <div>      
-      <div class="row justify-content-center" >
+      <div class="d-flex  justify-content-center" >
         <div class="text-nowrap text-center px-1 "><fa icon="users" /> {{Object.keys(userFollowing).length}}</div>
         <Opinions 
           @click="opinionSummaryClicked"

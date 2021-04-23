@@ -1,62 +1,67 @@
 <template>
-  <div 
-    :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement' : 'text-white')" 
-    class="bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3" style="position:fixed;left:0;right:0;bottom:0"
-  >
-    <div class="">
-      <select 
-        v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" 
-        v-model="statement.relation.relation_type_id"
-        :disabled="isLoading"
-        class="border-primary text-primary border rounded font-weight-bold mb-1"
-        style="padding:0.16em;"
+  <div >
+    <div class="fixed-bottom" >
+      <div 
+        :class="isPositiveStatement ? 'positive-statement' : (isPositiveStatement === false && !isMainStatement ? 'negative-statement' : 'text-white')" 
+        class="bg-white shadow-sm align-items-center statement-radius border-width border-dark p-3 w-100" 
+        style="position:static"
       >
-        <option value="0" default >Please Select</option>
-        <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
-          <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
-        </template>
-      </select>
-    </div>
-    <div class="pt-2">
-      <div v-if="toJoinRelation">
-        {{toJoinRelation['statement']['text']}}
+        <div class="">
+          <select 
+            v-if="!(isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null)" 
+            v-model="statement.relation.relation_type_id"
+            :disabled="isLoading"
+            class="border-primary text-primary border rounded font-weight-bold mb-1"
+            style="padding:0.16em;"
+          >
+            <option value="0" default >Please Select</option>
+            <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
+              <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
+            </template>
+          </select>
+        </div>
+        <div class="pt-2">
+          <div v-if="toJoinRelation">
+            {{toJoinRelation['statement']['text']}}
+          </div>
+          <div v-else-if="toLinkRelation">
+            {{toLinkRelation['statement']['text']}}
+          </div>
+          <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
+          <Suggestion ref="suggestion" 
+            @select="sugestionSelected" 
+            @join="suggestionJoined"
+            @link="suggestionLinked"
+            :logic-tree-id="logicTreeId"
+            :no-join="mode !== 'create'"
+            :no-link="mode !== 'create'"
+          />
+        </div>
+        <select 
+          v-if="isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null" 
+          v-model="statement.context_id"
+          :disabled="isLoading" 
+          class="border rounded font-weight-bold my-1 text-white bg-transparent text-capitalize"
+        >
+          <option default class="text-dark">Please Select</option>
+          <template v-for="context in contexts">
+            <option :value="context['id']" class="text-dark">{{context['description']}}</option>
+          </template>
+        </select>
+        <div class="text-right">
+          <button @click="save" :disabled="!canSave" class="btn btn-primary py-1">
+            <fa v-if="isSuccess" icon="check" />
+            <fa v-else-if="isLoading" icon="spinner" spin />
+            <span v-else><fa  icon="save" /> Save</span>
+          </button>
+          <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 px-3 ml-2">
+            Cancel
+          </button>
+        </div>
       </div>
-      <div v-else-if="toLinkRelation">
-        {{toLinkRelation['statement']['text']}}
-      </div>
-      <textarea v-else ref="statementText" v-model="statement.text" @keydown="isTextTyping" @keypress.enter="enterPressed" :disabled="isLoading || (statement['id'] && mode === 'create')" class="bg-transparent border-0" :placeholder="'Type your statement here...'"   style="min-width: 100%;" rows="3"></textarea>
-      <Suggestion ref="suggestion" 
-        @select="sugestionSelected" 
-        @join="suggestionJoined"
-        @link="suggestionLinked"
-        :logic-tree-id="logicTreeId"
-        :no-join="mode !== 'create'"
-        :no-link="mode !== 'create'"
-      />
-    </div>
-    <select 
-      v-if="isMainStatement && relation['parent_relation_id'] === null && relation['virtual_relation_id'] === null" 
-      v-model="statement.context_id"
-      :disabled="isLoading" 
-      class="border rounded font-weight-bold my-1 text-white bg-transparent text-capitalize"
-    >
-      <option default class="text-dark">Please Select</option>
-      <template v-for="context in contexts">
-        <option :value="context['id']" class="text-dark">{{context['description']}}</option>
-      </template>
-    </select>
-    <div class="text-right">
-      <button @click="save" :disabled="!canSave" class="btn btn-primary py-1">
-        <fa v-if="isSuccess" icon="check" />
-        <fa v-else-if="isLoading" icon="spinner" spin />
-        <span v-else><fa  icon="save" /> Save</span>
-      </button>
-      <button @click="cancel" :disabled="isLoading" class="btn btn-outline-dark py-1 px-2 px-3 ml-2">
-        Cancel
-      </button>
     </div>
     <Prompt ref="prompt"></Prompt>
-</div>
+  </div>
 </template>
 <script>
 import StatementAPI from '@/api/statement'

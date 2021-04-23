@@ -10,6 +10,7 @@ const deletedRelationId = ref(null)
 const selectedStatementData = ref(null) // this is actually selectedRelationData
 const userFollowing = ref({})
 
+const isReadingMode = ref(false)
 const showImpact = ref(false)
 const showOpinion = ref(false)
 const showScope = ref(false)
@@ -306,6 +307,7 @@ export default {
   mainRelationUserId: mainRelationUserId,
   showImpactOpinionDialog: showImpactOpinionDialog,
   showVirtualRelationLinkages: showVirtualRelationLinkages,
+  isReadingMode: isReadingMode,
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,

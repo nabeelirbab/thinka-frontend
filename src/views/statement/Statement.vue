@@ -10,12 +10,19 @@
       <router-link v-else class="btn btn btn-outline-dark" to="/search"><fa icon="search" /> Find Statements</router-link>
     </div>
     <div v-show="!isLoading && mainRelationData" class="statement-container-body">
-      <TopToolbar ref="topToolbar" :main-relation="mainRelationData ? mainRelationData : {}" :statement-id="statementId" :parent-relation-id="parentRelationId" />
-      <div ref="treeContainer" class="container-fluid px-0" :style="readingModeStyle()">
-        <div class="px-1 border mb-1 main-statement-container shadow-sm bg-white">
+      <TopToolbar
+        ref="topToolbar"
+        v-show="!isReadingMode"
+        :main-relation="mainRelationData ? mainRelationData : {}"
+        :statement-id="statementId"
+        :parent-relation-id="parentRelationId"
+      />
+      <div ref="treeContainer" :class="isReadingMode ? 'readingMode' : ''" class="container-fluid px-0">
+        <div ref="mainStatementContainer" class="px-1 border mb-1 main-statement-container shadow-sm bg-white">
           <MainStatementProfile class="px-2" />
-          <button v-show="isReadingMode()" @click="toggleReadingMode" class="shadow-none btn-primary btn py-0 px-1 my-2 mx-1" title="Reading Mode." style="position:absolute;top:0px;left: 48%;"><fa icon="glasses" />
-          </button>
+          <div v-if="isReadingMode" class="text-center">
+            <button  @click="isReadingMode = false" class="shadow-none btn-primary btn py-0 px-1" title="Reading Mode."><fa icon="glasses" /></button>
+          </div>
           <MainStatement
             v-if="mainRelationData"
             ref="mainStatement"
@@ -68,7 +75,7 @@
               :parent-relation-id="mainRelationData['id']"
               :parent-relation="mainRelationData"
               :statement-id="statementId"
-              class="mt-2"
+              class="mt-1"
             />
             <div v-else class="text-center pt-3 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'support'" class="btn btn-outline-secondary">Add Supporting Statement</button>
@@ -117,7 +124,7 @@
               :parent-relation-id="mainRelationData['id']"
               :parent-relation="mainRelationData"
               :statement-id="statementId"
-              class="mt-2"
+              class="mt-1"
             />
             <div v-else class="text-center pt-3 add-statement-container">
               <button v-if="authenticationStatus === 'authenticated' && (!selectedStatementId || selectedStatementId === mainRelationId)" @click="activeCreateWindow = 'counter'" class="btn btn-outline-secondary">Add Counter Statement</button>
@@ -188,25 +195,14 @@ export default {
     }
   },
   methods: {
-    toggleReadingMode() {
-      this.$refs.topToolbar.toggleReadingMode()
-    },
     readingModeStyle() {
-      if (this.$refs.topToolbar){
-        if (this.$refs.topToolbar.isReadingMode){
-          return "position:absolute;top:0;min-height:20%;min-width:100%;z-index:1030;"
-        } else {
-          return "" 
-        }
-      }
-    },
-    isReadingMode() {
-      if (this.$refs.topToolbar)
-      {
-        return this.$refs.topToolbar.isReadingMode
-      }
-
-      return false
+      // if (this.$refs.topToolbar){
+      //   if (this.$refs.topToolbar.isReadingMode){
+      //     return "position:fixed;top:0;min-height:20%;min-width:100%;z-index:1030;"
+      //   } else {
+      //     return "" 
+      //   }
+      // }
     },
     clickedOutside(event){ //deselect bubble when clicking outside
       const whiteListClass = ['statement-window', 'statement-container-body', 'add-statement-container']
@@ -419,20 +415,22 @@ export default {
   },
   computed: {
     totaRelevanceWindowHeight(){
-      var headerHeight = 93 // px
-      var toolbarHeight = 76 //px
+      let headerHeight = 96 // px
+      let topToolbarHeight = 41
       const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
-      const bodyTopPadding = 10 // px
       const windowHeight = window.innerHeight // px
-      const mainStatementProfile = 66
-      const mainStatementBorder = 4
-      if (this.isReadingMode())
-      {
+      const mainStatement = this.mainStatementHeight 
+      const mainStatementProfile = (this.$refs.mainStatementContainer).offsetHeight - mainStatement + mainStatement // just to trigger this commputed value everytime the main statement text is changed
+      if (this.isReadingMode){
         headerHeight = 0
-        toolbarHeight = 0
+        topToolbarHeight = 25
       }
-      const totaRelevanceWindowHeight = windowHeight - headerHeight - separatorHeight - bodyTopPadding - toolbarHeight - mainStatementProfile - mainStatementBorder
-      return totaRelevanceWindowHeight - this.mainStatementHeight
+      const totaRelevanceWindowHeight = windowHeight 
+        - headerHeight 
+        - separatorHeight 
+        - mainStatementProfile 
+        - topToolbarHeight
+      return totaRelevanceWindowHeight
     },
     parentRelationId(){
       return this.mainRelationData ? this.mainRelationData['parent_relation_id'] : null
@@ -498,5 +496,10 @@ export default {
 .main-statement-container {
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+}
+.readingMode {
+  z-index: 1030;
+  position: absolute;
+  margin-top: -95px
 }
 </style>

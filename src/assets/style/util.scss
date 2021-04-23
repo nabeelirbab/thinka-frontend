@@ -74,6 +74,14 @@ li.borderless { border-top: 0 none; }
 .mt-n-3 {
   margin-top: -3em
 }
+.modal-backdrop {
+  background-color: transparent!important;
+  z-index: 0!important;
+}
+.modal.fade.show {
+  background-color: rgba(0, 0, 0, 0.555);
+
+}
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {
     width: 100%

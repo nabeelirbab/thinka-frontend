@@ -43,9 +43,9 @@
         </span>
       </div> -->
     </div>
+    <LogInModal ref="logInModal" />
+    <Prompt ref="prompt" />
   </div>
-  <LogInModal ref="logInModal" />
-  <Prompt ref="prompt" />
 </template>
 <script>
 import Auth from '@/core/auth'
@@ -88,7 +88,6 @@ export default {
       authenicationStatus: Auth.status(),
       user: Auth.user(),
       isPublishing: false,
-      isReadingMode: false
     }
   },
   methods: {

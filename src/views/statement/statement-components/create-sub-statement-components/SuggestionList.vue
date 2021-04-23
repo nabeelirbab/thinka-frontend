@@ -62,7 +62,7 @@
                 class="c-pointer text-info text-hover-underline ml-1"
                 title="Link this Relation"
               >
-                <fa icon="link" /> 
+                <fa icon="link" />
               </span>
               <span v-else
                 @click="$emit('link-suggestion', null)"

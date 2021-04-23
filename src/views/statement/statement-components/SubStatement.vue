@@ -96,7 +96,7 @@
                 <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
                 <CircleIconButton v-if="enableDragging && relationData && !relationData['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
               </div>
-              <div v-else class="ml-2 mr-2 align-self-center">
+              <div v-else class="ml-2 mr-2 align-self-center text-nowrap">
                 <span v-if="!relationData['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                   <fa  icon="briefcase"  />
                 </span>

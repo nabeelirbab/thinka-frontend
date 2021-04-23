@@ -1,6 +1,6 @@
 <template>
     <template v-for="(formattedText, index) in formattedTextArray" :key="'tedisplayerext' + index + formattedText">
-      <span v-html="formattedText"></span>&nbsp;
+      <span v-html="formattedText" class="text-break"></span>&nbsp;
       <!-- <span style="hyphens:auto" v-html="formattedText"></span>&nbsp; -->
     </template>
 </template>
