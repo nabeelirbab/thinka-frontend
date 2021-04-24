@@ -38,7 +38,6 @@
       </div>
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
-
     <div class="d-flex align-items-center justify-content-center ">
       <div class="font-weight-bold" style="width: 100px">Confidence</div>
       <div class="text-center">
@@ -57,7 +56,6 @@
       <div class="mx-1 text-right" style="width: 75px!important">
       </div>
     </div>
-
     <div class="text-center">
       <button @click="this.showImpactOpinionDialog = false" :disabled="isLoading" class="btn btn-cancel"> Cancel</button>
       <fa v-if="isLoading" icon="spinner" spin />
@@ -107,7 +105,7 @@ export default {
       let param = {
         relation_id: this.selectedStatementId,
         confidence: this.confidence / 100,
-        impact_amount: this.impact / 100,
+        impact_amount: this.impact / 100
       }
       if(this.type){
         param['type'] = this.type
@@ -157,38 +155,32 @@ export default {
             {  // thumbs down counter
               this.impact = 0
               this.disableImpactSlider = true
-            }
-            else
-            { // thumbs down support
+            } else { // thumbs down support
               this.impact = 0
               this.disableImpactSlider = true
             }
             break;
           }
-          case 2:
-          {
+          case 2: {
             this.impact = 0
             this.disableImpactSlider = true
             break
           }
           case 3:
           {
-            if (relevance_window == 0)
-            {  // thumbs up support
+            if (relevance_window == 0){  // thumbs up support
               this.minImpactLimit = 1
               this.maxImpactLimit = 100
               this.impact = 100
               this.disableImpactSlider = false
-            }
-            else
-            { // thumbs up counter
+            }else{ // thumbs up counter
               this.minImpactLimit = -100
               this.maxImpactLimit = -1
               this.impact = -100
               this.disableImpactSlider = false
             }
             break;
-            }
+          }
         } // switch
       } // if(this.selectedStatementData){
     },
@@ -201,7 +193,6 @@ export default {
         this.type = 0
         this.isPublic = false
         if(this.selectedStatementData){
-
           if(typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
             this.type = this.selectedStatementData['user_opinion']['type']
             this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100

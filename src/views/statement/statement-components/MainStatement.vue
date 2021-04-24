@@ -171,7 +171,7 @@ export default {
       this.isSticky = (headerHeight + this.statementTextHeight + allowance) <= window.pageYOffset
     },
     opinionSummaryClicked(){
-      if(this.selectedStatementId === this.relation['id']){
+      if(this.selectedStatementId === this.relation['id'] && this.relation['parent_relation_id']){
         this.showImpactOpinionDialog = !this.showImpactOpinionDialog
       }else{
         this._statementClicked()

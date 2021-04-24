@@ -1,14 +1,25 @@
 <template>
-  <fa v-if="type * 1 === 0" :icon="['far', 'flag']"  class="ml-2" />
-  <fa v-else-if="type * 1 === 1" :icon="[user_type === 1 ? 'fas' : 'far', 'thumbs-down']"  class="ml-2" />
-  <fa v-else-if="type * 1 === 2" :icon="[user_type === 2 ? 'fas' : 'far', 'hand-point-down']" rotation="180"  class="ml-2"/>
-  <fa v-else-if="type * 1 === 3" :icon="[user_type === 3 ? 'fas' : 'far', 'thumbs-up']"  class="ml-2"/>
+  <span v-if="type * 1 === 0">
+    <fa  :icon="['far', 'flag']"  class="ml-2" />
+  </span>
+  <span v-else-if="type * 1 === 1" class="ml-2" >
+    <fa  v-if="userType === 1" :icon="['fas', 'thumbs-down']" />
+    <fa  v-else :icon="['far', 'thumbs-down']" />
+  </span>
+  <span v-else-if="type * 1 === 2" class="ml-2" >
+    <fa  v-if="userType === 2" :icon="['fas', 'hand-point-down']" />
+    <fa  v-else :icon="['far', 'hand-point-down']" />
+  </span>
+  <span v-else-if="type * 1 === 3" class="ml-2" >
+    <fa  v-if="userType === 3" :icon="['fas', 'thumbs-up']" />
+    <fa  v-else :icon="['far', 'thumbs-up']" />
+  </span>
 </template>
 <script>
 export default {
   props: {
     type: [String, Number],
-    user_type: Number
+    userType: Number
   }
 }
 </script>

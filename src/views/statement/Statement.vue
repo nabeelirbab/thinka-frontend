@@ -419,7 +419,7 @@ export default {
       let topToolbarHeight = 41
       const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
       const windowHeight = window.innerHeight // px
-      const mainStatement = this.mainStatementHeight 
+      const mainStatement = this.mainStatementHeight + 4 // 4px for mainstatement border when active
       const mainStatementProfile = (this.$refs.mainStatementContainer).offsetHeight - mainStatement + mainStatement // just to trigger this commputed value everytime the main statement text is changed
       if (this.isReadingMode){
         headerHeight = 0
