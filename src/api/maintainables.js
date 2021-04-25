@@ -46,7 +46,7 @@ export default {
         }
       })
       const statementTypeParam = {
-        select: ['description', 'explanation', 'color'],
+        select: ['description', 'explanation', 'color', 'support_label', 'counter_label'],
         sort: [{
           column: 'id',
           order: 'asc'

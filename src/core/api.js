@@ -4,7 +4,7 @@ import { ref } from 'vue'
 export default class API {
   apiName
   createCachedDataLookUpById = false
-  cachedDataLookUpById = ref({})
+  cachedDataLookUpById = ref({}) // if the look up seems empty, make sure is set to true
   cachedData = ref(null) // stores all data retrieved here for reusing
   basePath = process.env.VUE_APP_API_URL // . 'http://localhost/thinka-api/public/api/'
   mockAPI = {

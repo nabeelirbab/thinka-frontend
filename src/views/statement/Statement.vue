@@ -36,7 +36,7 @@
 
         <div v-if="mainRelationData" class="toolbar-bottom-space" style="margin-left:-4px;s margin-right: -4px;">
           <div @click="setSeparatorWindowSupports" class="text-center text-light" style="cursor: pointer;">
-            - &nbsp;SUPPORTS&nbsp; -
+            - <span class="mx-1 text-uppercase">{{supportCounterLabels['support']}}</span> -
           </div>
           <div ref="positiveWindow" class="statement-window" :style="{height: positiveStatementHeight + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (20) + 'px'}">
             <draggable
@@ -84,7 +84,7 @@
           </div>
           <WindowSeparator ref="separator" :y-range="totaRelevanceWindowHeight - 50" @move="resizePositiveStatement" />
           <div @click="setSeparatorWindowCounters" class="text-center text-light" style="cursor: pointer;">
-            - &nbsp;COUNTERS&nbsp; -
+            - <span class="mx-1 text-uppercase">{{supportCounterLabels['counter']}}</span> -
           </div>
           <div ref="negativeWindow" class="statement-window" :style="{height: (totaRelevanceWindowHeight - positiveStatementHeight) + 'px', 'max-height': (totaRelevanceWindowHeight - 50) + 'px', 'min-height': (50) + 'px'}">
             <draggable
@@ -143,6 +143,7 @@
 import WindowSeparator from './statement-components/WindowSeperator.vue'
 // import StatementAPI from '@/api/statement.js'
 import RelationAPI from '@/api/relation.js'
+import StatementTypeAPI from '@/api/statement-type.js'
 import MainStatement from './statement-components/MainStatement'
 import MainStatementProfile from './statement-components/MainStatementProfile'
 import SubStatement from './statement-components/SubStatement'
@@ -191,7 +192,7 @@ export default {
       authenticationStatus: Auth.status(),
       user: Auth.user(),
       activeCreateWindow: false,
-      startScroll: false
+      startScroll: false,
     }
   },
   methods: {
@@ -475,6 +476,21 @@ export default {
       }else{
         return {}
       }
+    },
+    supportCounterLabels(){
+      let labels = {
+        'support': 'Support',
+        'counter': 'Counter',
+      }
+      const statementTypes = StatementTypeAPI.cachedData.value ? StatementTypeAPI.cachedData.value['data'] : null
+      console.log('supportCounterLabels A', this.mainRelationData, statementTypes)
+      if(this.mainRelationData && statementTypes){
+        const statementTypeId = this.mainRelationData['statement']['statement_type_id']
+        const statementType = StatementTypeAPI.cachedDataLookUpById.value[statementTypeId]
+        labels['support'] = statementType['support_label']
+        labels['counter'] = statementType['counter_label']
+      }
+      return labels
     }
   }
 }
