@@ -15,7 +15,7 @@
             style="padding:0.16em;"
           >
             <option value="0" default >Please Select</option>
-            <template v-for="relationType in relationTypes" :key="'relationType' + relationType['id']">
+            <template v-for="relationType in relationTypesDropDown" :key="'relationType' + relationType['id']">
               <option :value="relationType['id']">{{relationType['symbol']}} {{relationType['description']}}</option>
             </template>
           </select>
@@ -385,18 +385,23 @@ export default {
   },
   computed: {
     relationTypes(){
-      let relationTypes = []
-      if((this.level === 1 || this.level === 2 || typeof this.level === 'undefined') && RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
-        RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
-          const relevanceWindow = this.determineRelevanceWindow(relationType)
-          if(relevanceWindow === -1 || (relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
-            relationTypes.push(relationType)
-          }
-        })
-      }else{
-        relationTypes = RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
-      }
-      return  relationTypes
+      return RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value ? RelationTypeAPI.cachedData.value['data'] : []
+    },
+    relationTypesDropDown(){
+      const selectedRelationType = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
+      let relevanceWindow = this.determineRelevanceWindow(selectedRelationType)
+      console.log(relevanceWindow)
+      
+      let relationTypesDropDown = []      
+      RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
+        if(relationType['default_impact'] == 0 || 
+            (relevanceWindow === 0 && relationType['default_impact'] == 1) || 
+            (relevanceWindow === 1 && relationType['default_impact'] == -1)){
+          relationTypesDropDown.push(relationType)
+        }
+      })
+      
+      return  relationTypesDropDown
     },
     contexts(){
       return ContextAPI.cachedData.value ? ContextAPI.cachedData.value['data'] : []
