@@ -10,7 +10,7 @@
             <option :value="statementType['id']">{{statementType['description']}} </option>
           </template>
         </select>
-        <small v-if="statement.statement_type_id * 1"><fa icon="info-circle" /> {{statementTypes[findArrayIndex(statement.statement_type_id, statementTypes, 'id')]['explaination']}}</small>
+        <small v-if="statement.statement_type_id * 1"><fa icon="info-circle" /> {{statementTypes[findArrayIndex(statement.statement_type_id, statementTypes, 'id')]['explanation']}}</small>
         <small v-else>Please select a statement type</small>
       </div>
       
@@ -145,7 +145,7 @@ export default {
     initialize(){
       this.isInitializing = true
       const param = {
-        select: ['description', 'explaination']
+        select: ['description', 'explanation']
       }
       StatementTypeAPI.retrieve(param).then(result => {
         this.statementTypes = result['data']

@@ -109,7 +109,7 @@
                     :relation="element"
                     :level="1"
                     :logic-tree-id="logicTreeId"
-                    :is-positive-statement="true"
+                    :is-positive-statement="false"
                     group-name="g2"
                   />
                 </div>
@@ -421,7 +421,7 @@ export default {
       const separatorHeight = 18 + 48 + 10// px, 48 is  the Support and Counter label height
       const windowHeight = window.innerHeight // px
       const mainStatement = this.mainStatementHeight + 4 // 4px for mainstatement border when active
-      const mainStatementProfile = (this.$refs.mainStatementContainer).offsetHeight - mainStatement + mainStatement // just to trigger this commputed value everytime the main statement text is changed
+      const mainStatementProfile = (typeof this.$refs.mainStatementContainer !== 'undefined' ? (this.$refs.mainStatementContainer).offsetHeight : 0) - mainStatement + mainStatement // just to trigger this commputed value everytime the main statement text is changed
       if (this.isReadingMode){
         headerHeight = 0
         topToolbarHeight = 25
@@ -483,7 +483,6 @@ export default {
         'counter': 'Counter',
       }
       const statementTypes = StatementTypeAPI.cachedData.value ? StatementTypeAPI.cachedData.value['data'] : null
-      console.log('supportCounterLabels A', this.mainRelationData, statementTypes)
       if(this.mainRelationData && statementTypes){
         const statementTypeId = this.mainRelationData['statement']['statement_type_id']
         const statementType = StatementTypeAPI.cachedDataLookUpById.value[statementTypeId]

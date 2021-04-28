@@ -1,13 +1,13 @@
 <template>
   <div class="">
     <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white" :style="{'height':statementTextHeight + 'px'}"></div>
-    <div>      
+    <div>
       <div class="d-flex  justify-content-center" >
-        <div class="text-nowrap text-center px-1 "><fa icon="users" /> {{Object.keys(userFollowing).length}}</div>
-        <Opinions 
+        <div :title="userFollowingNames" class="text-nowrap text-center px-1 "><fa icon="users" /> {{Object.keys(userFollowing).length}}</div>
+        <Opinions
           @click="opinionSummaryClicked"
-          :user-opinions="userOpinions" 
-          :is-horizontal="true" 
+          :user-opinions="userOpinions"
+          :is-horizontal="true"
           :user-opinion-type="userOpinionType"
         />
       </div>
@@ -174,6 +174,7 @@ export default {
       if(this.selectedStatementId === this.relation['id'] && this.relation['parent_relation_id']){
         this.showImpactOpinionDialog = !this.showImpactOpinionDialog
       }else{
+        this.showImpactOpinionDialog = false
         this._statementClicked()
       }
     }
@@ -270,6 +271,22 @@ export default {
       return hasContext ? this.relation['user_relation_context_locks'][0]['root_relation_id'] : null
       // return typeof this.$route.params.rootRelationId !== 'undefined' ? this.$route.params.rootRelationId * 1 : null
     },
+    userFollowingNames(){
+      let names = ''
+      for(let userId in this.userFollowing){
+        if(names !== ''){
+          names += ', '
+        }
+        if(typeof this.userFollowing[userId]['username'] !== 'undefined'){
+            names += this.userFollowing[userId]['username']
+        }else if(typeof this.userFollowing[userId]['user'] !== 'undefined' && this.userFollowing[userId]['user']){
+            names += this.userFollowing[userId]['user']['username'] + '(b)'
+        }else{
+          names += 'unknown-user-' + userId
+        }
+      }
+      return names
+    }
   }
 }
 </script>

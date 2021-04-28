@@ -142,8 +142,10 @@ export default {
       this.$emit('cancel')
     },
     enterPressed(e){
-      if(!e.shiftKey && e.keyCode === 13){ // 13 is enter
+      if(!e.shiftKey && e.keyCode === 13 && this.statement.text !== ''){ // 13 is enter
         this.save()
+      }else{
+        this.cancel()
       }
     },
     isTextTyping(e){
@@ -222,15 +224,7 @@ export default {
         this.isLoading = false
       })
     },
-    determineRelevanceWindow(relationType){
-      let relevanceWindow = 0
-      if(relationType['default_impact'] * 1 === 0){
-        relevanceWindow = this.isPositiveStatement ? 0 : 1
-      }else{
-        relevanceWindow = relationType['default_impact'] * 1 === 1 ? 0 : 1
-      }
-      return relevanceWindow
-    },
+    
     linkRelation(){
       const selectedRelationType = this.relationTypes[(this.findArrayIndex(this.statement['relation']['relation_type_id'], this.relationTypes, 'id'))]
       let relevanceWindow = this.determineRelevanceWindow(selectedRelationType)
@@ -242,10 +236,6 @@ export default {
         virtual_relation_id: this.toLinkRelation['id'],
       }
       RelationAPI.post('/link', param).then(result => {
-        console.log('link', {
-              ...this.statement['relation'],
-              statement: this.statement
-            })
         if(result['data']){
           this.$emit('save', {
             virtual_relation: {
@@ -274,7 +264,6 @@ export default {
       param['relation']['impact_amount'] = (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0
       StatementAPI.create(param).then(result => {
         if(result['data']){
-          console.log('new', result['data'])
           let newSubStatement = param
           newSubStatement['id'] = result['data']['id']
           newSubStatement['created_at'] = result['data']['created_at']
@@ -291,7 +280,6 @@ export default {
         if(typeof errorResult.response !== 'undefined' && typeof errorResult.response.status !== 'undefined'){
           if(errorResult.response.status === 422){ // unprocessible entity
             let responseError = errorResult.response.data.error
-            console.log(responseError, responseError['code'])
             if(responseError['code'] * 1 === 4){ // statement already existed error
               this.existingStatementPrompt(responseError['message']['statement'])
             }
@@ -348,7 +336,7 @@ export default {
       this.toLinkRelation = null
       this.statement['id'] = null
       this.statement['text'] = ''
-      this.statement['relation']['relation_type_id'] = '2'
+      this.statement['relation']['relation_type_id'] = this.isPositiveStatement ? '2' : '1'
       setTimeout(() => {
         if(this.$refs.suggestion){
           this.$refs.suggestion._reset()
@@ -357,7 +345,16 @@ export default {
           this.$refs.statementText.focus()
         }
       }, 200)
-    }
+    },
+    determineRelevanceWindow(relationType){
+      let relevanceWindow = 0
+      if(relationType['default_impact'] * 1 === 0){ // if 0, relevance window is determined by isPositivieStatement
+        relevanceWindow = this.isPositiveStatement ? 0 : 1
+      }else{
+        relevanceWindow = relationType['default_impact'] * 1 === 1 ? 0 : 1 // if 1, then positive, if -1 then negative
+      }
+      return relevanceWindow
+    },
   },
   watch: {
     'statement.relation.relation_type_id'(newData){
@@ -389,7 +386,7 @@ export default {
       if((this.level === 1 || this.level === 2 || typeof this.level === 'undefined') && RelationTypeAPI.cachedData.value && typeof RelationTypeAPI.cachedData.value['data']){
         RelationTypeAPI.cachedData.value['data'].forEach(relationType => {
           const relevanceWindow = this.determineRelevanceWindow(relationType)
-          if(relevanceWindow === -1 || (relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
+          if((relevanceWindow === 0 && this.isPositiveStatement) || (relevanceWindow === 1 && !this.isPositiveStatement)){
             relationTypes.push(relationType)
           }
         })

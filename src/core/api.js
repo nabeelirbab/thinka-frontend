@@ -11,17 +11,6 @@ export default class API {
     'statement': require('../api/mock-db/statement.js').default
   }
   preFormattedSelect = {}
-  // retrieve(param = null){
-  //   return new Promise((resolve) => {
-  //     if(param === null){
-  //       resolve(this.mockAPI[this.apiName]['entries'])
-  //     }else if(typeof param === 'object'){
-  //       if(typeof param['id'] !== 'undefined'){
-  //         resolve((this.mockAPI[this.apiName]).getById(param['id'] * 1))
-  //       }
-  //     }
-  //   })
-  // }
   retrieve(parameter = {}, cache = false){
     return new Promise((resolve, reject) => {
       this.post('/retrieve', parameter).then(response => {

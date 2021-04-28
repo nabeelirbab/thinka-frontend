@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     search(searchForm){
+      console.log('searching')
       this.$refs.resultList._search(searchForm)
     },
     clearSearch(){

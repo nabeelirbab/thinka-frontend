@@ -9,7 +9,6 @@ const mainRelationId = ref(0)
 const deletedRelationId = ref(null)
 const selectedStatementData = ref(null) // this is actually selectedRelationData
 const userFollowing = ref({})
-
 const isReadingMode = ref(false)
 const showImpact = ref(false)
 const showOpinion = ref(false)
@@ -55,11 +54,13 @@ const contextPassed = (userRelationContextLocks) => {
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0, ) => {
   if(relation === null){
     relation = mainRelationData.value
+    
   }
   if(parentIndexIds.length === 0){ // head of statement
     authors.value = {}
     subRelationIds.value = []
     subRelationMap.value = {}
+    userFollowing.value = {}
     for(let key in relation['parent_relation_user_following']){
       const userId = relation['parent_relation_user_following'][key]['id']
       userFollowing.value[userId] = relation['parent_relation_user_following'][key]
@@ -68,7 +69,9 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   userFollowing.value[relation['user_id']] = relation['user']
   for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
     const userId = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]['user_id']
-    userFollowing.value[userId] = (typeof userFollowing.value[userId] !== 'undefined') ? userFollowing.value[userId] : {}
+    if(typeof userFollowing.value[userId] === 'undefined'){
+      userFollowing.value[userId] = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]
+    }
   }
 
   subRelationIds.value.push({id: relation['id']})
