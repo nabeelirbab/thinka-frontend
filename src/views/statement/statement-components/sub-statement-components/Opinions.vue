@@ -1,8 +1,11 @@
 <template>
   <div class="">
-    <span :class="userOpinionType === 3 ? 'text-dark' : 'text-primary'"><OpinionIcon type="3" :user-type="userOpinionType"  /> {{counts[3]}}</span>
-    <span :class="userOpinionType === 2 ? 'text-dark' : 'text-primary'"><OpinionIcon type="2" :user-type="userOpinionType"  /> {{counts[2]}}</span>
-    <span :class="userOpinionType === 1 ? 'text-dark' : 'text-primary'"><OpinionIcon type="1" :user-type="userOpinionType" /> {{counts[1]}}</span>
+    <span :class="userOpinionType === 3 ? 'text-dark' : 'text-primary'"><OpinionIcon type="3" :user-type="userOpinionType"  />
+      <span class="ml-1 mr-2">{{counts[3]}}</span></span>
+    <span :class="userOpinionType === 2 ? 'text-dark' : 'text-primary'"><OpinionIcon type="2" :user-type="userOpinionType"  />
+      <span class="ml-1 mr-2">{{counts[2]}}</span></span>
+    <span :class="userOpinionType === 1 ? 'text-dark' : 'text-primary'"><OpinionIcon type="1" :user-type="userOpinionType" />
+      <span class="ml-1 mr-2">{{counts[1]}}</span></span>
   </div>
 </template>
 <script>
