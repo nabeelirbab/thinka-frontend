@@ -196,8 +196,10 @@ export default {
     statementId: {
       handler: function(){
         setTimeout(() => {
-          this.statementTextHeight = (this.$refs.mainStatementBox).offsetHeight
-        }, 500)
+          if(this.$refs.mainStatementBox){
+            this.statementTextHeight = (this.$refs.mainStatementBox).offsetHeight
+          }
+        }, 700)
         this.selectedStatementId = null
       },
       immediate: true

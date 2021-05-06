@@ -105,7 +105,7 @@ export default {
       let param = {
         relation_id: this.selectedStatementId,
         confidence: this.confidence / 100,
-        impact_amount: this.impact / 100
+        impact: this.impact / 100
       }
       if(this.type){
         param['type'] = this.type
@@ -201,7 +201,7 @@ export default {
             let impactAmount = 0
             for(let x = 0; x < this.selectedStatementData['user_opinions'].length; x++){
               if(this.selectedStatementData['user_opinions'][x]['user_id'] * 1 === this.user.id){
-                impactAmount =  this.selectedStatementData['user_opinions'][x]['impact_amount']
+                impactAmount =  this.selectedStatementData['user_opinions'][x]['impact']
                 break
               }
             }

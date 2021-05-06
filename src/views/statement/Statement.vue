@@ -54,6 +54,7 @@
             >
               <template #item="{element, index}">
                 <div v-if="element['relevance_window'] === 0">
+                  <!-- {{index}} - {{element['id']}} - {{logicTreeId}} - {{element}} -->
                   <SubStatement
                     @save="addNewSubStatement($event, element['id'])"
                     @update="updateNewSubStatement($event, index)"
@@ -375,11 +376,9 @@ export default {
           const lastViewRelationId = localStorage.getItem('last_viewed_relation_id')
           if(lastViewRelationId !== statementId + '' || this.mainRelationData === null){
             localStorage.removeItem('last_viewed_relation_id')
-            console.log('init')
             this.initialize(statementId)
           }else{
             this.setMainRelation(this.mainRelationData)
-            console.log('not initialized')
           }
           localStorage.setItem('last_viewed_relation_id', this.statementId)
         }

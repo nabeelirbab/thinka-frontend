@@ -14,7 +14,7 @@
         <template v-if="!isLoading">
           <button @click="logIn" :disabled="!hasCredentials" type="button" class="btn btn-primary mr-1">Log In</button>
           <div>
-            Dont have an account yet? <router-link to="/register" :disabled="!hasCredentials"  class="">Sign up</router-link>
+            Dont have an account yet? <router-link @click="goToRegistration" to="/register" :disabled="!hasCredentials"  class="">Sign up</router-link>
           </div>
         </template>
         <template v-else>
@@ -52,6 +52,10 @@ export default {
         }
         this.isLoading = false
       })
+    },
+    goToRegistration(){
+      console.log('asdjasodiasd')
+      this.$emit('go-to-registration')
     }
   },
   computed: {

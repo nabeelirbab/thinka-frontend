@@ -14,13 +14,13 @@
         <fa v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)" icon="chevron-up" />
     </div>
     <div v-if="relationData" class="flex-fill pl-1 pt-1 border-right-radius bg-white">
-      <div v-if="isActive && relationData['user']" class="text-sm ml-2 pr-3 d-flex justify-content-end">
+      <div v-if="isActive && relation['user']" class="text-sm ml-2 pr-3 d-flex justify-content-end">
         <div v-if="isActive" class="flex-fill">
-          <span class="font-weight-bold mr-1">{{relationData['user']['username']}}</span>
+          <span class="font-weight-bold mr-1">{{relation['user']['username']}}</span>
         </div>
         <div v-if="isActive && isVirtualRelation" class="text-info text-sm text-right text-dark">
           <!-- <fa icon="link" class="mr-1 " /> &#8226; -->
-          <ZoomVirtualRelation v-if="isVirtualRelation" :relation="relationData" />
+          <ZoomVirtualRelation v-if="isVirtualRelation" :relation="relation" />
         </div>
         <div v-if="isActive" class="">
           <span v-if="publishedAt"  class="pl-2 text-light">
@@ -31,7 +31,7 @@
           <span v-else>
             <fa icon="briefcase" />
             &#8226;
-            <span>{{timeSince(relationData['created_at'] + ' UTC', 2592000000, 'm d, Y')}}</span>
+            <span>{{timeSince(relation['created_at'] + ' UTC', 2592000000, 'm d, Y')}}</span>
           </span>
         </div>
       </div>
@@ -46,24 +46,28 @@
             <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
               <fa icon="spinner" spin />
             </CircleLabel>
-            <div v-else-if="(showImpact || showScope) && relationData" class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" style="height:35px; width:35px; overflow-wrap:anywhere">
+            <div 
+              v-else-if="(showImpact || showScope)" 
+              class="pr-1 text-wrap px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-1" 
+              style="height:35px; width:35px; overflow-wrap:anywhere"
+            >
               <small v-if="showImpact" class="text-nowrap">{{userOpinionImpact}}%</small>
-              <small v-if="relationData && relationData['statement'] && showScope" style="line-height: 1">
-                {{relationData['statement']['scope_id'] ? scopes[findArrayIndex(relationData['statement']['scope_id'], scopes, 'id')]['description'] : null}}
+              <small v-if="relation['statement'] && showScope" style="line-height: 1">
+                {{relation['statement']['scope_id'] ? scopes[findArrayIndex(relation['statement']['scope_id'], scopes, 'id')]['description'] : null}}
               </small>
             </div>
           </div>
-          <div v-show="relationData" class="flex-fill c-pointer align-items-stretch">
+          <div class="flex-fill c-pointer align-items-stretch">
             <div>
-              <div @click="statementClicked" v-if="relationData" class="d-flex text-dark text-left m-0 p-0" >
+              <div @click="statementClicked" class="d-flex text-dark text-left m-0 p-0" >
                   <div class="pl-2" style="line-height:1.8">
-                    <RelationTypeLabel class="p-1.5" :relation-type-id="relationData['relation_type_id'] * 1" />                    
+                    <RelationTypeLabel class="p-1.5" :relation-type-id="relation['relation_type_id'] * 1" />                    
                     <TextDisplayer :text="' ' + statementText" />                                 
                   </div>                  
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
                   <!-- <template v-if="isDevelopment">
                     <small class="text-muted">r#{{relationId}}</small>
-                    <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relationData['virtual_relation_id']}} | hvr#{{relationData['is_virtual_relation']}}]</small>
+                    <small v-if="isVirtualRelation" class="text-muted"> | [vr#{{relation['virtual_relation_id']}} | hvr#{{relation['is_virtual_relation']}}]</small>
                   </template> -->
               </div>
               <div v-if="isActive || showCTOpinion" class="bg-white">
@@ -76,7 +80,7 @@
               </div>              
             </div>        
           </div>
-          <div v-if="relationData" class="d-flex my-auto align-self-center">
+          <div class="d-flex my-auto align-self-center">
             <!-- <div v-if="showOpinion || showCTOpinion" class="bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center text-center mr-2" style="height:35px!important; width:35px!important">
               <small v-if="showOpinion">{{(relationOpinionScoreRelation * 100).toFixed(0)}}%</small>
               <small v-else-if="showCTOpinion">-100%</small>
@@ -85,7 +89,7 @@
               <div v-if="isActive" class="mr-1" >
                 <!-- <ZoomVirtualRelation 
                   v-if="isVirtualRelation"
-                  :relation="relationData"
+                  :relation="relation"
                 /> -->
                 <!-- <router-link
                   v-if="!enableDragging && !isVirtualRelation" 
@@ -94,21 +98,21 @@
                   <CircleIconButton icon="eye" button-class="btn-light bg-whitesmoke text-primary" />
                 </router-link> -->
                 <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="editStatement" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
-                <CircleIconButton v-if="enableDragging && relationData && !relationData['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
+                <CircleIconButton v-if="enableDragging && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
               </div>
               <div v-else class="ml-2 mr-2 align-self-center text-nowrap">
-                <span v-if="!relationData['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
+                <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
                   <fa  icon="briefcase"  />
                 </span>
                 <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
-                <span v-else-if="isDifferentAuthor" data-toggle="tooltip" :title="relationData['user']['username']">
+                <span v-else-if="isDifferentAuthor && relation['user']" data-toggle="tooltip" :title="relation['user']['username']">
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
                 <OpinionIcon v-if="relationOpinionType && !showCTOpinion" :type="relationOpinionType" class="ml-1" />
               </div>
               <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
-                <MoreOption :relation="relationData" :level="level" />
+                <MoreOption :relation="relation" :level="level" />
               </div>
             </div>
           </div>
@@ -143,7 +147,7 @@
         />
         <draggable
           v-if="relation && isLocked > 0"
-          v-show="(showStatement || (subRelations.length === 0)) && !(isDraggingStatement && selectedStatementId === relationId * 1) && ((isDraggingStatement && !hasVirtualRelations) || !isDraggingStatement)"
+          v-show="showSubStatements"
           :relation-id="relationId"
           :list="!hasVirtualRelations ? relation['relations'] : relation['virtual_relation']['relations']"
           class="dragArea"
@@ -221,7 +225,10 @@ export default {
       type: Number,
       required: true
     },
-    relation: Object,
+    relation: {
+      type: Object,
+      required: true
+    },
     groupName: {
       type: String,
       default: 'g1'
@@ -293,6 +300,7 @@ export default {
     },
     listChanged(event){ // for dragging
       if(typeof event['added'] !== 'undefined' && this.relationData['relations']){
+        this.mapRelations()
         const addedIndex = event['added']['newIndex']
         this.isUpdating = true
         this.relationData['relations'][addedIndex]['parent_relation_id'] = this.relationId
@@ -300,7 +308,8 @@ export default {
           id: this.relationData['relations'][addedIndex]['id'],
           parent_relation_id: this.relationData['relations'][addedIndex]['parent_relation_id'],
         }).finally(() => {
-          this.mapRelations()
+          console.log('maping sub list change')
+          
           this.isUpdating = false
         })
       }
@@ -336,7 +345,7 @@ export default {
       handler(){
         setTimeout(() => {
           if(this.relation && typeof this.relation['id'] !== 'undefined'){
-            this.mapRelations()
+            // this.mapRelations()
             let relationData = this.getRelationInstance(this.relation['id'])
             if(typeof relationData !== 'undefined'){
               this.relationData = relationData
@@ -364,9 +373,9 @@ export default {
       return this.isActive && this.editSelectedStatement
     },
     isLocked(){ // if < 0, do not show, if 1 context lock active here, if 2 no context lock set
-      if(this.relationData && typeof this.relationData['user_relation_context_locks'] !== 'undefined' && this.relationData['user_relation_context_locks'].length){
-        for(let x = 0; x < this.relationData['user_relation_context_locks'].length; x++){
-          if(this.relationData['user_relation_context_locks'][x]['root_relation_id'] * 1 === this.mainRelationData['id'] * 1){
+      if(typeof this.relation['user_relation_context_locks'] !== 'undefined' && this.relation['user_relation_context_locks'].length){
+        for(let x = 0; x < this.relation['user_relation_context_locks'].length; x++){
+          if(this.relation['user_relation_context_locks'][x]['root_relation_id'] * 1 === this.mainRelationData['id'] * 1){
             return 1
           }
         }
@@ -376,40 +385,41 @@ export default {
       }
     },
     isActive(){
-      return this.relationData && this.relationId * 1 === this.selectedStatementId * 1
+      return this.relationId * 1 === this.selectedStatementId * 1
     },
     statementId(){
-      return this.relationData && typeof this.relationData['statement'] !== 'undefined' ? this.relationData['statement']['id'] : 'ERROR: Statement text not found'
+      return typeof this.relation['statement'] !== 'undefined' ? this.relation['statement']['id'] : 'ERROR: Statement text not found'
     },
     statementText(){
-      if(this.relationData){
-        if(this.relationData['virtual_relation_id']){ // if root virtual relation
-          if(this.relationData['virtual_relation'] && this.relationData['virtual_relation']['statement']){
-            return this.relationData['virtual_relation']['statement']['text']
+        if(this.relation['virtual_relation_id']){ // if root virtual relation
+          if(this.relation['virtual_relation'] && this.relation['virtual_relation']['statement']){
+            return this.relation['virtual_relation']['statement']['text']
           }else{ // if no virtual relation found
-            return 'ERROR: Virtual Relation has no statement. #' + this.relationData['virtual_relation_id']
+            return 'ERROR: Virtual Relation has no statement. #' + this.relation['virtual_relation_id']
           }
-        }else if(this.relationData['statement']){
-          return this.relationData['statement']['text']
+        }else if(this.relation['statement']){
+          return this.relation['statement']['text']
         }else{
           return 'ERROR: No Statement'
         }
-      }else{
-        return 'ERROR: No relation data.'
-      }
     },
     publishedAt(){
-      return this.relationData && typeof this.relationData['published_at'] !== 'undefined' ? this.relationData['published_at'] : ''
+      return typeof this.relation['published_at'] !== 'undefined' ? this.relation['published_at'] : ''
+    },
+    showSubStatements(){
+      return (this.showStatement || (this.subRelations.length === 0)) 
+        && !(this.isDraggingStatement && this.selectedStatementId === this.relationId * 1) 
+        && ((this.isDraggingStatement && !this.hasVirtualRelations) || !this.isDraggingStatement)
     },
     hasVirtualRelations(){
-      return this.relationData && this.relationData['virtual_relation_id'] && this.relationData['virtual_relation'] && this.relationData['virtual_relation']['relations']
+      return this.relation && this.relation['virtual_relation_id'] && this.relation['virtual_relation'] && this.relation['virtual_relation']['relations']
     },
     subRelations(){
-      if(this.relationData){
-        if(this.relationData['virtual_relation_id'] && this.relationData['virtual_relation'] && this.relationData['virtual_relation']['relations']){
-          return this.relationData['virtual_relation']['relations']
+      if(this.relation){
+        if(this.relation['virtual_relation_id'] && this.relation['virtual_relation'] && this.relation['virtual_relation']['relations']){
+          return this.relation['virtual_relation']['relations']
         }else{
-          return this.relationData['relations']
+          return this.relation['relations']
         }
       }else{
         return []
@@ -422,33 +432,33 @@ export default {
         for(let x = 0; x < this.userOpinions.length; x++){
           const userId = this.userOpinions[x]['user_id']
           if(typeof this.authorFilter[userId] !== 'undefined'){
-            impactAmount += this.userOpinions[x]['impact_amount']
+            impactAmount += this.userOpinions[x]['impact']
           }
         }
         impactAmount = impactAmount / this.userOpinions.length
       }else{
         for(let x = 0; x < this.userOpinions.length; x++){
           if(this.userOpinions[x]['user_id'] * 1 === this.mainRelationUserId){
-            impactAmount = this.userOpinions[x]['impact_amount']
+            impactAmount = this.userOpinions[x]['impact']
           }
         }
       }
       return impactAmount !== '' ? (impactAmount * 100).toFixed(0) : ''
     },
     userOpinions(){
-      return typeof this.relationData['user_opinions'] === 'object' ? this.relationData['user_opinions'] : []
+      return typeof this.relation['user_opinions'] === 'object' ? this.relation['user_opinions'] : []
     },
     hasToggleableChildren(){
       return this.subRelations.length && (!this.hasFilterApplied || (this.hasFilterApplied && typeof this.parentRelationIdsWithPassedFilterChildren[this.relationId] !== 'undefined'))
     },
     isVirtualRelation(){
-      return this.relationData && this.relationData['is_virtual_relation']
+      return this.relation['is_virtual_relation']
     },
     isDifferentAuthor(){
-      return this.relationData && this.mainRelationData && this.mainRelationData['user_id'] * 1 !== this.relationData['user_id'] * 1
+      return this.mainRelationData && this.mainRelationData['user_id'] * 1 !== this.relation['user_id'] * 1
     },
     isAuthorFilterPassed(){
-      return this.relationData === null || typeof this.relationData['is_author_filter_passed'] === 'undefined' || this.relationData['is_author_filter_passed']
+      return this.relation === null || typeof this.relation['is_author_filter_passed'] === 'undefined' || this.relation['is_author_filter_passed']
     },
     hasFilterPassChildren(){
       return typeof this.parentRelationIdsWithPassedFilterChildren[this.relationId] !== 'undefined'
@@ -459,29 +469,25 @@ export default {
     },
     relationOpinionScoreRelation(){
       let userOpinionScoreRelation = 0
-      if(this.relationData){
-        // if(this.relationData['virtual_relation_id']){
-        //   userOpinionScoreRelation = this.relationData['virtual_relation'] && this.relationData['virtual_relation']['user_opinion'] ? this.relationData['virtual_relation']['user_opinion']['opinion_calculated_column']['score_relation'] : 0
-        // }else 
-        if(this.relationData['user_opinion']){
-          userOpinionScoreRelation = this.relationData['user_opinion']['opinion_calculated_column']['score_relation']
-        }
+      // if(this.relation['virtual_relation_id']){
+      //   userOpinionScoreRelation = this.relation['virtual_relation'] && this.relation['virtual_relation']['user_opinion'] ? this.relation['virtual_relation']['user_opinion']['opinion_calculated_column']['score_relation'] : 0
+      // }else 
+      if(this.relation['user_opinion']){
+        userOpinionScoreRelation = this.relation['user_opinion']['opinion_calculated_column']['score_relation']
       }
       return userOpinionScoreRelation
     },
     relationOpinionType(){
       let userOpinionType = -1
-      if(this.relationData){
-        // if(this.relationData['virtual_relation_id']){
-        //   userOpinionType = this.relationData['virtual_relation'] && this.relationData['virtual_relation']['user_opinion'] ? this.relationData['virtual_relation']['user_opinion']['type'] : 0
-        if(this.relationData['user_opinion']){
-          userOpinionType = this.relationData['user_opinion']['type']
-        }
+      // if(this.relation['virtual_relation_id']){
+      //   userOpinionType = this.relation['virtual_relation'] && this.relation['virtual_relation']['user_opinion'] ? this.relation['virtual_relation']['user_opinion']['type'] : 0
+      if(this.relation['user_opinion']){
+        userOpinionType = this.relation['user_opinion']['type']
       }
       return userOpinionType
     },
     titleIds(){
-        return '('+this.relationData['parent_relation_id']+') [' + this.relationId + ']'
+        return '('+this.relation['parent_relation_id']+') [' + this.relationId + ']'
     }
   }
 }

@@ -3,7 +3,7 @@
   <modal ref='modal' title="Log In">
     <div class="text-left">
       <div v-if="message" class="mb-3"><fa icon="info-circle" class="text-info" /> {{message}}</div>
-      <LogInForm @login="logInSuccess" />
+      <LogInForm @login="logInSuccess" @go-to-registration="close" />
     </div>
   </modal>
 </template>
@@ -35,6 +35,9 @@ export default {
     _open(callback = null){
       this.$refs.modal._open()
       this.logInSuccessCallback = callback
+    },
+    close(){
+      this.$refs.modal._close()
     },
     logInSuccess(){
       if(this.refreshOnLogIn && typeof this.logInSuccessCallback !== 'function'){

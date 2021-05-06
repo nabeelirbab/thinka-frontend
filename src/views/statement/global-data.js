@@ -54,16 +54,21 @@ const contextPassed = (userRelationContextLocks) => {
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0, ) => {
   if(relation === null){
     relation = mainRelationData.value
-    
+  }
+  if(relation === null){
+    console.error('mainRelationData.value is null?')
+    return null
   }
   if(parentIndexIds.length === 0){ // head of statement
     authors.value = {}
     subRelationIds.value = []
     subRelationMap.value = {}
     userFollowing.value = {}
-    for(let key in relation['parent_relation_user_following']){
-      const userId = relation['parent_relation_user_following'][key]['id']
-      userFollowing.value[userId] = relation['parent_relation_user_following'][key]
+    if(relation && typeof relation['parent_relation_user_following'] !== 'undefined'){
+      for(let key in relation['parent_relation_user_following']){
+        const userId = relation['parent_relation_user_following'][key]['id']
+        userFollowing.value[userId] = relation['parent_relation_user_following'][key]
+      }
     }
   }
   userFollowing.value[relation['user_id']] = relation['user']
@@ -117,8 +122,8 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   toDeleteIndices.forEach(index => {
     subRelations.splice(index, 1)
   })
-  if(parentIndexIds.length === 0){
-    console.log('done')
+  if(relation['id'] * 1 === mainRelationData.value['id'] * 1){
+    console.log('done na gyud', relation['id'])
   }
 }
 const countUserFollowing = (relation = null) => {
@@ -220,7 +225,7 @@ const getRelationInstance = (relationId) => {
     if(typeof currentRelation === 'undefined'){
       return null
     }else if(currentRelation['id'] * 1 !== relationId * 1){
-      // console.error('There is problem with subRelationMap. Id not match', currentRelation, relationId)
+      console.error('There is problem with subRelationMap. Id not match', currentRelation, relationId)
     }
     return currentRelation
   }else{
@@ -269,17 +274,14 @@ const addNewSubStatement = (newSubStatement, parentRelationId = null) => {
         newSubRelations = result['data'][0]
       }
       parentRelation['relations'].push(newSubRelations)
-      mapRelations()
     }).catch(error => {
       console.error(error)
       newSubRelations['is_Loading_relations'] = false
-      mapRelations()
     })
     
   }else{
     newSubRelations['is_Loading_relations'] = false
     parentRelation['relations'].push(newSubRelations)
-    mapRelations()
   }
 }
 export default {
