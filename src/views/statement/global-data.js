@@ -274,6 +274,7 @@ const addNewSubStatement = (newSubStatement, parentRelationId = null) => {
         newSubRelations = result['data'][0]
       }
       parentRelation['relations'].push(newSubRelations)
+      mapRelations()
     }).catch(error => {
       console.error(error)
       newSubRelations['is_Loading_relations'] = false

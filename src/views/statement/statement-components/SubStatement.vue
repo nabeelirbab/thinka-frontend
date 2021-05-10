@@ -345,8 +345,11 @@ export default {
       handler(){
         setTimeout(() => {
           if(this.relation && typeof this.relation['id'] !== 'undefined'){
-            // this.mapRelations()
             let relationData = this.getRelationInstance(this.relation['id'])
+            if(relationData === null){
+              this.mapRelations()
+              relationData = this.getRelationInstance(this.relation['id'])
+            }
             if(typeof relationData !== 'undefined'){
               this.relationData = relationData
             }
