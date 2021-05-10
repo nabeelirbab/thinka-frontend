@@ -109,7 +109,7 @@
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
-                <OpinionIcon v-if="relationOpinionType && !showCTOpinion" :type="relationOpinionType" class="ml-1" />
+                <OpinionIcon v-if="relationOpinionType && !showCTOpinion" :type="relationOpinionType" @click="statementClicked" class="ml-1" />
               </div>
               <div v-if="isActive && !enableDragging" class="pr-1 align-self-center">
                 <MoreOption :relation="relation" :level="level" />
