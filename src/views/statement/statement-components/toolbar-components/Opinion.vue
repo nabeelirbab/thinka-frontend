@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <div class="">
-      <!-- <button
+      <button
         @click="tryChangeOpinion(0)"
         :class="modelValue === 0 ? 'bg-primary text-white' : 'bg-white text-primary'"
         :title="typeDescriptions[0]"
@@ -9,9 +9,7 @@
         class="opinionButton btn btn-circle mx-1 shadow-none"
       >
         <OpinionIcon type="0" />
-      </button> -->
-      
-      
+      </button>
       <button
         @click="tryChangeOpinion(1)"
         :class="modelValue === 1 ? 'bg-primary text-white' : 'bg-white text-primary'"
