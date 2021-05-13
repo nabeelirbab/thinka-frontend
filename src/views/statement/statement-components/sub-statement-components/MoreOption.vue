@@ -25,7 +25,7 @@
         :disabled="(authenticationStatus !== 'authenticated' || isVirtualRelation)" 
         class="dropdown-item" 
       >
-        <fa icon="folder-plus" /> Add child
+        <fa icon="folder-plus" /> Add statement
       </button>
       <button 
         @click="editSelectedStatement = true" 
