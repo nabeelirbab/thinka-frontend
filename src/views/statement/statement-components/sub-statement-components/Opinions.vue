@@ -46,12 +46,12 @@ export default {
           this.counts[userOpinion['type']] += 1
         })
       },
+      deep: true,
       immediate: true
     }
   },
   computed: {
     type0Count(){
-
       return 0
     },
     type1Count(){

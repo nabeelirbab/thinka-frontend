@@ -4,11 +4,14 @@
     <div>
       <div class="d-flex  justify-content-center" >
         <div :title="userFollowingNames" class="text-nowrap text-center px-1 "><fa icon="users" /> {{Object.keys(userFollowing).length}}</div>
-        <Opinions
+        <!-- <Opinions
           @click="opinionSummaryClicked"
           :user-opinions="userOpinions"
           :is-horizontal="true"
           :user-opinion-type="userOpinionType"
+        /> -->
+        <LogicScoreSummary
+          :user-statement-logic-scores="userStatementLogicScores"
         />
       </div>
     </div>
@@ -115,6 +118,7 @@ import RelationTypeAPI from '@/api/relation-type'
 import TextDisplayer from '@/components/TextDisplayer'
 import OpinionIcon from '@/views/statement/statement-components/sub-statement-components/OpinionIcon'
 import Opinions from '@/views/statement/statement-components/sub-statement-components/Opinions'
+import LogicScoreSummary from './LogicScoreSummary'
 import Auth from '@/core/auth'
 // import NoProfile from '@/components/NoProfile' 
 export default {
@@ -125,7 +129,8 @@ export default {
     CircleLabel,
     TextDisplayer,
     OpinionIcon,
-    Opinions
+    Opinions,
+    LogicScoreSummary
     // NoProfile
   },
   props: {
@@ -256,6 +261,9 @@ export default {
     },
     userOpinions(){
       return typeof this.relation['user_opinions'] === 'object' ? this.relation['user_opinions'] : []
+    },
+    userStatementLogicScores(){
+      return typeof this.relation['statement'] === 'object' && this.relation['statement']['user_statement_logic_scores'] ? this.relation['statement']['user_statement_logic_scores'] : []
     },
     userOpinionType(){
       let userOpinionType = -1

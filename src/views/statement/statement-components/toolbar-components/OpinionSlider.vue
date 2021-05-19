@@ -2,7 +2,7 @@
   <div class="bg-white border border-secondary p-2 mb-1">
     <div v-if="type !== -1" v-html="message" class="text-center py-2"></div>
     <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold " style="width: 100px">Opinion</div>
+      <div class="font-weight-bold " style="width: 100px">Opinion{{type}}</div>
       <div >
         <Opinion
           v-if="selectedStatementData"
@@ -17,7 +17,7 @@
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
     <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold" style="width: 100px">Impact</div>
+      <div class="font-weight-bold" style="width: 100px">Impact {{disableImpactSlider}}</div>
       <div>
         <div class="" >
           <vue-slider
@@ -39,7 +39,7 @@
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
     <div class="d-flex align-items-center justify-content-center ">
-      <div class="font-weight-bold" style="width: 100px">Confidence</div>
+      <div class="font-weight-bold" style="width: 100px">Confidence {{confidence}}</div>
       <div class="text-center">
         <vue-slider
           v-model="confidence"
@@ -108,7 +108,7 @@ export default {
         impact: this.impact / 100
       }
       if(this.type){
-        param['type'] = this.type
+        param['type'] = this.type * 1
       }
       OpinionAPI.create(param).then(result => {
         if(typeof statementToChange['user_opinions'] === 'undefined'){
@@ -141,60 +141,69 @@ export default {
     }
   },
   watch: {
-    type(type){ // 1 - thumbsdown, 2 - point up, 3 - thumbs up
-      if(type <= 0){
-        this.confidence = 0
-      }
-      // setting impact if the type is manually set
-      if(this.selectedStatementData){
-        const relevance_window = this.selectedStatementData['relevance_window'];
-        switch(type * 1){
-          case 1:
-          {
-            if (relevance_window == 1)
-            {  // thumbs down counter
+    type: {
+      handler(type){ // 1 - thumbsdown, 2 - point up, 3 - thumbs up
+        // setting impact if the type is manually set
+        if(this.selectedStatementData){
+          const relevance_window = this.selectedStatementData['relevance_window'];
+          this.confidence = 100 // default of confidence is 100%
+          switch(type * 1){
+            case 1:
+            {
+              if (relevance_window == 1)
+              {  // thumbs down counter
+                this.impact = 0
+                this.disableImpactSlider = true
+              } else { // thumbs down support
+                this.impact = 0
+                this.disableImpactSlider = true
+              }
+              break;
+            }
+            case 2: {
               this.impact = 0
               this.disableImpactSlider = true
-            } else { // thumbs down support
+              break
+            }
+            case 3:
+            {
+              if (relevance_window == 0){  // thumbs up support
+                this.minImpactLimit = 1
+                this.maxImpactLimit = 100
+                this.impact = 100
+                this.disableImpactSlider = false
+              }else{ // thumbs up counter
+                this.minImpactLimit = -100
+                this.maxImpactLimit = -1
+                this.impact = -100
+                this.disableImpactSlider = false
+              }
+              break;
+            }
+            default:
+              this.confidence = 0
               this.impact = 0
               this.disableImpactSlider = true
-            }
-            break;
           }
-          case 2: {
-            this.impact = 0
-            this.disableImpactSlider = true
-            break
-          }
-          case 3:
-          {
-            if (relevance_window == 0){  // thumbs up support
-              this.minImpactLimit = 1
-              this.maxImpactLimit = 100
-              this.impact = 100
-              this.disableImpactSlider = false
-            }else{ // thumbs up counter
-              this.minImpactLimit = -100
-              this.maxImpactLimit = -1
-              this.impact = -100
-              this.disableImpactSlider = false
-            }
-            break;
-          }
-        } // switch
-      } // if(this.selectedStatementData){
+        }else{
+          this.confidence = 0
+          this.impact = 0
+          this.disableImpactSlider = true
+        }
+      },
+      immediate: true
     },
     selectedStatementData: {
       handler(){
         this.minImpactLimit = -100
         this.maxImpactLimit = 100
         this.impact = 0
-        this.confidence = 100
+        this.confidence = 0
         this.type = 0
         this.isPublic = false
         if(this.selectedStatementData){
           if(typeof this.selectedStatementData['user_opinion'] !== 'undefined' && this.selectedStatementData['user_opinion']){
-            this.type = this.selectedStatementData['user_opinion']['type']
+            this.type = this.selectedStatementData['user_opinion']['type'] * 1
             this.confidence = this.selectedStatementData['user_opinion']['confidence'] * 100
             this.isPublic = this.selectedStatementData['published_at']
 
