@@ -51,12 +51,20 @@
         :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId) || isVirtualRelation"
         :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" 
         class="dropdown-item"><fa icon="lock" /> Context Lock</button>
-      <!-- <button
+      <button
+        v-if="user && !hasSubRelationBookmarked"
         @click="bookmark"
         class="dropdown-item"
       >
         <fa icon="leaf" /> Bookmark
-      </button> -->
+      </button>
+      <button
+        v-if="user && hasSubRelationBookmarked"
+        @click="removeBookmark"
+        class="dropdown-item"
+      >
+        <fa icon="leaf" /> Remove Bookmark
+      </button>
       <button
         @click="showScope = !showScope"
         class="dropdown-item"
@@ -93,6 +101,7 @@ import Prompt from '@/components/Prompt'
 import Auth from '@/core/auth'
 import RelationAPI from '@/api/relation'
 import DeletePrompt from '../toolbar-components/DeletePrompt'
+import UserRelationBookmark from '@/api/user-relation-bookmark'
 export default {
   components: {
     ContextLockModal,
@@ -112,7 +121,8 @@ export default {
       ...GlobalData,
       authenticationStatus: Auth.status(),
       isPublishing: false,
-      user: Auth.user()
+      user: Auth.user(),
+      isBookmarking: false
     }
   },
   methods: {
@@ -177,8 +187,60 @@ export default {
         this.relation['published_at'] ? 'Unpblishing Statement...' : 'Publishing Statement...'
       )
     },
+    bookmark(){
+      this.isBookmarking = true
+      UserRelationBookmark.create({
+        relation_id: this.mainRelationData['id'],
+        sub_relation_id: this.relation['id']
+      }).then(response => {
+        console.log('response', response)
+        if(response['data'] && response['data']['id']){
+          let relationData = this.getRelationInstance(this.relation['id'])
+          console.log('response', relationData['all_user_sub_relation_bookmarks'].length)
+          relationData['all_user_sub_relation_bookmarks'].push({
+            id: response['id'],
+            relation_id: this.mainRelationData['id'],
+            sub_relation_id: this.relation['id']
+          })
+          console.log('response', relationData['all_user_sub_relation_bookmarks'].length)
+        }
+      }).finally(() => {
+        this.isBookmarking = false
+      })
+      
+      // UserRelationBookmark.get()
+    },
+    removeBookmark(){
+      UserRelationBookmark.delete({
+        id: this.hasSubRelationBookmarked
+      }).then(response => {
+        if(response['data']['deleted']){
+          let relationData = this.getRelationInstance(this.relation['id'])
+          for(let x = 0; x < this.relation['all_user_sub_relation_bookmarks'].length; x++){
+            const userRelationBookmark = this.relation['all_user_sub_relation_bookmarks'][x]
+            if(userRelationBookmark['id'] * 1 === this.hasSubRelationBookmarked * 1){
+              relationData['all_user_sub_relation_bookmarks'].splice(x, 1)
+              break
+            }
+          }
+        }
+        console.log('response', response)
+      })
+    }
   },
   computed: {
+    hasSubRelationBookmarked(){
+      let hasBookmarked = false
+      for(let x = 0; x < this.relation['all_user_sub_relation_bookmarks'].length; x++){
+        const userRelationBookmark = this.relation['all_user_sub_relation_bookmarks'][x]
+        if(userRelationBookmark['user_id'] * 1 === this.user['id'] && userRelationBookmark['relation_id'] === this.mainRelationData['id'] && userRelationBookmark['sub_relation_id'] === this.relation['id']){
+          hasBookmarked = userRelationBookmark['id']
+          break;
+        }
+      }
+      console.log('hasBookmarked', hasBookmarked)
+      return hasBookmarked
+    },
     statementText(){
       if(typeof this.relation === 'undefined'){
         return ''

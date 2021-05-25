@@ -314,6 +314,7 @@ export default {
   showImpactOpinionDialog: showImpactOpinionDialog,
   showVirtualRelationLinkages: showVirtualRelationLinkages,
   isReadingMode: isReadingMode,
+  user: Auth.user(),
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,
   getRelationInstance: getRelationInstance,

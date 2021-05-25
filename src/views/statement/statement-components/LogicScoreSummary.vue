@@ -14,16 +14,20 @@
     </span>
   </div>
   <modal ref="modal" title="User Logic Scores" :closeabled="true">
-    <div>
+    <div v-if="userStatementLogicScores.length">
       <template v-for="userStatementLogicScore in userStatementLogicScores">
         <div class="d-flex">
           <div class="flex-fill">{{userStatementLogicScore['user']['username']}}</div>
+          <div class="pr-2 text-right">{{userStatementLogicScore['final_score']}}%</div>
           <div>
             <fa v-if="userStatementLogicScore['flag'] === 0" :icon="['far', 'flag']" />
             <fa v-else :class="'text-' + flagColor[userStatementLogicScore['flag']]" icon="flag" />
           </div>
         </div>
       </template>
+    </div>
+    <div v-else>
+      No opinions
     </div>
   </modal>
 </template>
