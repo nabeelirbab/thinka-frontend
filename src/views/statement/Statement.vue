@@ -176,6 +176,7 @@ export default {
   },
   mounted(){
     window.addEventListener('click', this.clickedOutside)
+    
   },
   unmounted(){
     window.removeEventListener('click', this.clickedOutside)
@@ -194,6 +195,7 @@ export default {
       user: Auth.user(),
       activeCreateWindow: false,
       startScroll: false,
+      hashedRelationId: null
     }
   },
   methods: {
@@ -282,6 +284,21 @@ export default {
           this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - positiveInnerHeight - 100) * -1)
         }else if(negativeInnerHeight < (this.totaRelevanceWindowHeight / 2)){
           this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
+        }
+      }
+      this.focusToSubRelation()
+    },
+    focusToSubRelation(){
+      const splitHash = location.hash.split('#')
+      if(splitHash.length > 2){ // has second hash
+        const lastHash = splitHash[splitHash.length - 1]
+        if(!isNaN(lastHash)){ // the last hash is a number
+          this.hashedRelationId = lastHash * 1
+          const relationContainer = document.getElementById('relation-container-' + this.hashedRelationId)
+          const windowContainer = relationContainer.getAttribute('is-support') === 'true' ? this.$refs.positiveWindow : this.$refs.negativeWindow
+          if(relationContainer){
+            (windowContainer).scrollTop = relationContainer.offsetTop - (windowContainer).offsetTop
+          }
         }
       }
     },

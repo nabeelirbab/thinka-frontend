@@ -11,17 +11,25 @@
           <p class="lead text-justify">Symbols are used to connect sentences so that readers know the logical basis of each point of view.</p>
           <div class="text-danger font-weight-bold mr-1" style="font-size:1.5em">+ Support     - Counter     * Note</div>
           <p class="lead text-justify"><br>When a sentence is marked with a symbol that indicates the sentence has impact so that agreements will cascade according to the lines of reasoning defined in the branches of the logical tree.<br><router-link to="/login" class="text-nowrap">Learn more about symbols.</router-link></p>
-`
-          <router-link to="/register" class="btn btn-primary btn-lg text-nowrap mb-2">Join Community Now</router-link>
-          <br />
-          Already have an account? <router-link to="/login" class="text-nowrap font-weight-bold">Log In Now</router-link>
+          <template v-if="!user">
+            <router-link to="/register" class="btn btn-primary btn-lg text-nowrap mb-2">Join Community Now</router-link>
+            <br />
+            Already have an account? <router-link to="/login" class="text-nowrap font-weight-bold">Log In Now</router-link>
+          </template>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-
+import Auth from '@/core/auth'
+export default {
+  data(){
+    return {
+      user: Auth.user()
+    }
+  }
+}
 </script>
 <style scoped>
 .banner {

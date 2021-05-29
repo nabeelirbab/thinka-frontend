@@ -2,7 +2,7 @@
   <div v-if="relation" class="w-100 hover-border-dark border-bottom border-width-4 px-3 py-2">
     <router-link
       @click="$emit('link-clicked')"
-      :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30))"
+      :to="'/branch/' + relation['id'] + '/t/' + toKebabCase((relationStatement['text']).slice(0,30)) + hash"
       class="text-dark"
       style="text-decoration-line: none"
     >
@@ -59,7 +59,11 @@ export default {
   },
   props: {
     relation: Object,
-    rootParentStatementText: String
+    rootParentStatementText: String,
+    hash: {
+      type: String,
+      default: ''
+    }
   },
   emits: ['link-clicked'],
   methods: {

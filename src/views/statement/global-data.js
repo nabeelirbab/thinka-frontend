@@ -244,6 +244,7 @@ const prepareNewSubStatement = (rawNewSubStatement) => {
   }
   newSubStatement['created_at'] = rawNewSubStatement['created_at']
   const user = Auth.user().value
+  newSubStatement['all_user_sub_relation_bookmarks'] = []
   newSubStatement['relations'] = []
   newSubStatement['user_id'] = user['id']
   newSubStatement['user'] = {

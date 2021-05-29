@@ -1,9 +1,10 @@
 <template>
   <div
+    :id="'relation-container-' + relationId"
     :class="statementClass"
-    :style1="{'padding-left': (level > 1 ? 10 : 0)+ 'px'}" 
-    class="d-flex mt-1  border-width-none border-radius"
+    :is-support="isPositiveStatement"
     :style="level > 1 ? 'box-shadow: #29292959  0px -1px 4px' : ''"
+    class="d-flex mt-1  border-width-none border-radius"
   >
     <div
       @click.stop="showStatement = !showStatement"
@@ -62,7 +63,7 @@
               <div @click="statementClicked" class="d-flex text-dark text-left m-0 p-0" >
                   <div class="pl-2" style="line-height:1.8">
                     <RelationTypeLabel class="p-1.5" :relation-type-id="relation['relation_type_id'] * 1" />                    
-                    <TextDisplayer :text="' ' + statementText" />                                 
+                    <TextDisplayer :text="' ' + statementText" />
                   </div>                  
                   <!-- Don't remove the line below. It will only appear in development but not on staging. This makes debugging faster-->
                   <!-- <template v-if="isDevelopment">

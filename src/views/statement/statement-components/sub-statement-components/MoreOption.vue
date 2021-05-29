@@ -51,20 +51,24 @@
         :disabled="user === null || !selectedStatementId || (selectedStatementId * 1 === mainRelationId) || isVirtualRelation"
         :title="user === null ? 'You need to login to use this feature' : 'Lock Context to Main Statement'" 
         class="dropdown-item"><fa icon="lock" /> Context Lock</button>
-      <button
-        v-if="user && !hasSubRelationBookmarked"
-        @click="bookmark"
-        class="dropdown-item"
-      >
-        <fa icon="leaf" /> Bookmark
-      </button>
-      <button
-        v-if="user && hasSubRelationBookmarked"
-        @click="removeBookmark"
-        class="dropdown-item"
-      >
-        <fa icon="leaf" /> Remove Bookmark
-      </button>
+      <template v-if="user && relationData">
+        <button
+          v-if="!hasSubRelationBookmarked"
+          @click="bookmark"
+          :disabled="isBookmarking"
+          class="dropdown-item"
+        >
+          <fa icon="leaf" /> Bookmark
+        </button>
+        <button
+          v-else
+          @click="removeBookmark"
+          :disabled="isBookmarking"
+          class="dropdown-item"
+        >
+          <fa icon="leaf" /> Remove Bookmark
+        </button>
+      </template>
       <button
         @click="showScope = !showScope"
         class="dropdown-item"
@@ -122,7 +126,8 @@ export default {
       authenticationStatus: Auth.status(),
       isPublishing: false,
       user: Auth.user(),
-      isBookmarking: false
+      isBookmarking: false,
+      relationData: null
     }
   },
   methods: {
@@ -193,16 +198,13 @@ export default {
         relation_id: this.mainRelationData['id'],
         sub_relation_id: this.relation['id']
       }).then(response => {
-        console.log('response', response)
         if(response['data'] && response['data']['id']){
-          let relationData = this.getRelationInstance(this.relation['id'])
-          console.log('response', relationData['all_user_sub_relation_bookmarks'].length)
-          relationData['all_user_sub_relation_bookmarks'].push({
-            id: response['id'],
+          this.relationData['all_user_sub_relation_bookmarks'].push({
+            id: response['data']['id'],
             relation_id: this.mainRelationData['id'],
-            sub_relation_id: this.relation['id']
+            sub_relation_id: this.relation['id'],
+            user_id: this.user['id']
           })
-          console.log('response', relationData['all_user_sub_relation_bookmarks'].length)
         }
       }).finally(() => {
         this.isBookmarking = false
@@ -211,34 +213,54 @@ export default {
       // UserRelationBookmark.get()
     },
     removeBookmark(){
+      this.isBookmarking = true
       UserRelationBookmark.delete({
         id: this.hasSubRelationBookmarked
       }).then(response => {
         if(response['data']['deleted']){
-          let relationData = this.getRelationInstance(this.relation['id'])
-          for(let x = 0; x < this.relation['all_user_sub_relation_bookmarks'].length; x++){
-            const userRelationBookmark = this.relation['all_user_sub_relation_bookmarks'][x]
+          let relationData = this.relationData
+          for(let x = 0; x < this.relationData['all_user_sub_relation_bookmarks'].length; x++){
+            const userRelationBookmark = this.relationData['all_user_sub_relation_bookmarks'][x]
             if(userRelationBookmark['id'] * 1 === this.hasSubRelationBookmarked * 1){
               relationData['all_user_sub_relation_bookmarks'].splice(x, 1)
               break
             }
           }
         }
-        console.log('response', response)
+      }).finally(() => {
+        this.isBookmarking = false
       })
+    }
+  },
+  watch: {
+    relation: {
+      handler(relation){
+        if(relation){
+          setTimeout(() => {
+            this.relationData = this.getRelationInstance(this.relation['id'])
+          }, 1000)
+        }
+      },
+      immediate: true
     }
   },
   computed: {
     hasSubRelationBookmarked(){
+      if(this.user === null || this.relationData === null || typeof this.relationData['all_user_sub_relation_bookmarks'] === 'undefined'){
+        return false
+      }
       let hasBookmarked = false
-      for(let x = 0; x < this.relation['all_user_sub_relation_bookmarks'].length; x++){
-        const userRelationBookmark = this.relation['all_user_sub_relation_bookmarks'][x]
-        if(userRelationBookmark['user_id'] * 1 === this.user['id'] && userRelationBookmark['relation_id'] === this.mainRelationData['id'] && userRelationBookmark['sub_relation_id'] === this.relation['id']){
+      for(let x = 0; x < this.relationData['all_user_sub_relation_bookmarks'].length; x++){
+        const userRelationBookmark = this.relationData['all_user_sub_relation_bookmarks'][x]
+        if(
+          userRelationBookmark['user_id'] * 1 === this.user['id'] * 1
+          && userRelationBookmark['relation_id'] === this.mainRelationData['id']
+          && userRelationBookmark['sub_relation_id'] === this.relationData['id']
+        ){
           hasBookmarked = userRelationBookmark['id']
           break;
         }
       }
-      console.log('hasBookmarked', hasBookmarked)
       return hasBookmarked
     },
     statementText(){

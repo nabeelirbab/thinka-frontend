@@ -20,7 +20,10 @@
           <div>
             <template v-for="userRelationBookmark in filteredBookmarks">
               <div v-if="userRelationBookmark['relation']" class=" border-bottom">
-                <RelationRow :relation="userRelationBookmark['relation']" />
+                <RelationRow 
+                  :relation="userRelationBookmark['relation']"
+                  :hash="userRelationBookmark['sub_relation_id'] ? '#' + userRelationBookmark['sub_relation_id'] : ''"
+                />
               </div>
             </template>
           </div>

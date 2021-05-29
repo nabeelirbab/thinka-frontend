@@ -18,7 +18,7 @@
       <template v-for="userStatementLogicScore in userStatementLogicScores">
         <div class="d-flex">
           <div class="flex-fill">{{userStatementLogicScore['user']['username']}}</div>
-          <div class="pr-2 text-right">{{userStatementLogicScore['final_score']}}%</div>
+          <div class="pr-2 text-right">{{(userStatementLogicScore['final_score'] * 100).toFixed(0)}}%</div>
           <div>
             <fa v-if="userStatementLogicScore['flag'] === 0" :icon="['far', 'flag']" />
             <fa v-else :class="'text-' + flagColor[userStatementLogicScore['flag']]" icon="flag" />

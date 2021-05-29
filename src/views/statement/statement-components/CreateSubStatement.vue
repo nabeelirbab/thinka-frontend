@@ -205,7 +205,6 @@ export default {
         relation_id: this.toJoinRelation['id'],
         relevance_window: relevanceWindow,
         relation_type_id: this.statement['relation']['relation_type_id'],
-        impact: (typeof selectedRelationType !== 'undefined') ? selectedRelationType['default_impact'] : 0,
       }).then(result => {
         if(result){
           this.$emit('save', {
@@ -230,7 +229,6 @@ export default {
       let relevanceWindow = this.determineRelevanceWindow(selectedRelationType)
       const param = {
         ...this.statement['relation'],
-        impact: (typeof selectedRelationType !== 'undefined') ? selectedRelationType['default_impact'] : 0,
         parent_relation_id: this.parentRelationId,
         is_published: this.parentRelation['published_at'] ? true : false,
         virtual_relation_id: this.toLinkRelation['id'],
@@ -260,8 +258,7 @@ export default {
       })
     },
     createStatement(param){
-      const selectedRelation = this.relationTypes[(this.findArrayIndex(param['relation']['relation_type_id'], this.relationTypes, 'id'))]
-      param['relation']['impact'] = (typeof selectedRelation !== 'undefined') ? selectedRelation['default_impact'] : 0
+      // const selectedRelation = this.relationTypes[(this.findArrayIndex(param['relation']['relation_type_id'], this.relationTypes, 'id'))]
       StatementAPI.create(param).then(result => {
         if(result['data']){
           let newSubStatement = param
