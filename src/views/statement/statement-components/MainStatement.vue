@@ -263,7 +263,7 @@ export default {
       return typeof this.relation['user_opinions'] === 'object' ? this.relation['user_opinions'] : []
     },
     userStatementLogicScores(){
-      return typeof this.relation['statement'] === 'object' && this.relation['statement']['user_statement_logic_scores'] ? this.relation['statement']['user_statement_logic_scores'] : []
+      return typeof this.relation['user_statement_logic_scores'] === 'object' && this.relation['user_statement_logic_scores'] ? this.relation['user_statement_logic_scores'] : []
     },
     userOpinionType(){
       let userOpinionType = -1

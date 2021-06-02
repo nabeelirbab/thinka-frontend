@@ -14,7 +14,7 @@
     </span>
   </div>
   <modal ref="modal" title="User Logic Scores" :closeabled="true">
-    <div v-if="userStatementLogicScores.length">
+    <div v-if="Object.keys(userStatementLogicScores).length">
       <template v-for="userStatementLogicScore in userStatementLogicScores">
         <div class="d-flex">
           <div class="flex-fill">{{userStatementLogicScore['user']['username']}}</div>
@@ -38,7 +38,7 @@ export default {
     Modal
   },
   props: {
-    userStatementLogicScores: Array,
+    userStatementLogicScores: Object,
     userOpinionType: {
       type: Number,
       default: -1
@@ -76,9 +76,9 @@ export default {
         this.counts[1] = 0
         this.counts[2] = 0
         this.counts[3] = 0
-        userStatementLogicScores.forEach(userStatementLogicScore => {
-          this.counts[userStatementLogicScore['flag']] += 1
-        })
+        for(let userId in userStatementLogicScores){
+          this.counts[userStatementLogicScores[userId]['flag']] += 1
+        }
       },
       deep: true,
       immediate: true

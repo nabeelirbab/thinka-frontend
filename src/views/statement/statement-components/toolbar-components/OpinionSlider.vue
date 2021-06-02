@@ -2,7 +2,7 @@
   <div class="bg-white border border-secondary p-2 mb-1">
     <div v-if="type !== -1" v-html="message" class="text-center py-2"></div>
     <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold " style="width: 100px">Opinion{{type}}</div>
+      <div class="font-weight-bold " style="width: 100px">Opinion</div>
       <div >
         <Opinion
           v-if="selectedStatementData"
@@ -17,7 +17,7 @@
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
     <div class="d-flex align-items-center justify-content-center">
-      <div class="font-weight-bold" style="width: 100px">Impact {{disableImpactSlider}}</div>
+      <div class="font-weight-bold" style="width: 100px">Impact </div>
       <div>
         <div class="" >
           <vue-slider
@@ -39,7 +39,7 @@
       <div class="mx-1 text-right" style="width: 75px!important"></div>
     </div>
     <div class="d-flex align-items-center justify-content-center ">
-      <div class="font-weight-bold" style="width: 100px">Confidence {{confidence}}</div>
+      <div class="font-weight-bold" style="width: 100px">Confidence</div>
       <div class="text-center">
         <vue-slider
           v-model="confidence"
@@ -110,6 +110,10 @@ export default {
       if(this.type){
         param['type'] = this.type * 1
       }
+      if(this.selectedStatementData['published_at'] !== null){
+        param['get_user_statement_logic_scores'] = true
+        param['sub_relation_statement_id_list'] = this.mainRelationData['sub_relation_statement_id_list']
+      }
       OpinionAPI.create(param).then(result => {
         if(typeof statementToChange['user_opinions'] === 'undefined'){
           statementToChange['user_opinions'] = []
@@ -127,6 +131,9 @@ export default {
                 return userOpinion['id'] * 1 !== previousUserOpinionId
               })
             }
+          }
+          if(typeof result['data']['user_statement_logic_scores'] !== 'undefined'){
+            this.mainRelationData['user_statement_logic_scores'] = result['data']['user_statement_logic_scores']
           }
           statementToChange['user_opinions'].push(result['data'])
         }
