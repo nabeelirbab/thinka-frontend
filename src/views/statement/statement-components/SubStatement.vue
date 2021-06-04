@@ -250,6 +250,7 @@ export default {
         $(this).tooltip('hide')
       }, autoCloseTime + 1000)
     })
+    this.focusToSubRelation()
   },
   data(){
     return {
@@ -321,9 +322,26 @@ export default {
       }else{
         this.statementClicked()
       }
-    }
+    },
+    focusToSubRelation(){
+      if(this.relationData && this.hashRelationId === this.relationData['id']){ // the last hash is a number
+        const relationContainer = document.getElementById('relation-container-' + this.hashRelationId)
+        const windowContainer = this.windowContainers[relationContainer.getAttribute('is-support') === 'true' ? 0 : 1]
+        setTimeout(() => {
+          this.statementClicked()
+          if(relationContainer){
+            (windowContainer).scrollTop = relationContainer.offsetTop - (windowContainer).offsetTop - 10
+          }
+        }, 100)
+      }
+    },
   },
   watch: {
+    hashRelationId(){
+      if(this.relationData && typeof this.expandedRelationIds[this.relationData['id']] !== 'undefined'){
+        this.showStatement = true
+      }
+    },
     enableDragging(enableDragging){
       this.statementClass['enableDragging'] = enableDragging
     },
@@ -353,11 +371,17 @@ export default {
             }
             if(typeof relationData !== 'undefined'){
               this.relationData = relationData
+              if(typeof this.expandedRelationIds[relationData['id']] !== 'undefined'){
+                this.showStatement = true
+              }
+              setTimeout(() => {
+                this.focusToSubRelation()
+              }, 100)
             }
           }else{
             console.error('No relation')
           }
-        }, 500)
+        }, 300)
       },
       immediate: true
     },
@@ -411,7 +435,7 @@ export default {
       return typeof this.relation['published_at'] !== 'undefined' ? this.relation['published_at'] : ''
     },
     showSubStatements(){
-      return (this.showStatement || (this.subRelations.length === 0)) 
+      return (this.showStatement || (this.subRelations.length === 0))
         && !(this.isDraggingStatement && this.selectedStatementId === this.relationId * 1) 
         && ((this.isDraggingStatement && !this.hasVirtualRelations) || !this.isDraggingStatement)
     },

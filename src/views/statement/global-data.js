@@ -6,6 +6,7 @@ const authors = ref({})
 const selectedStatementId = ref(0)
 const mainRelationData = ref(null)
 const mainRelationId = ref(0)
+const hashRelationId = ref(0)
 const deletedRelationId = ref(null)
 const selectedStatementData = ref(null) // this is actually selectedRelationData
 const userFollowing = ref({})
@@ -25,8 +26,10 @@ const authorFilter = ref({})
 const parentRelationIdsWithPassedFilterChildren = ref({}) // determine if the relation has children which passess the filter
 const backHistory = ref([])
 const forwardHistory = ref([])
-const subRelationMap = ref({}) // trace the location of the substatement given the statement id
+const windowContainers = ref([]) // 0 - support windows, 2 - counter window
+const subRelationMap = ref({}) // trace the location of the substatement given the relation id
 const subRelationParents = ref({}) // list of parents of a given relation id sorted from the top
+const expandedRelationIds = ref({}) // list of relations to be expanded upon load
 const subRelationIds = ref([]) // list of subrelation ids. Used to update all the sub statements
 const isMainRelationSelected = computed(() => {
   return mainRelationId.value && selectedStatementId.value && mainRelationId.value * 1 === selectedStatementId.value * 1
@@ -49,6 +52,18 @@ const contextPassed = (userRelationContextLocks) => {
       }
     })
     return hasPassed
+  }
+}
+const findPreExpandedRelation = () => { // expand if its the parent of sub relation bookmarked
+  expandedRelationIds.value = {}
+  const splitHash = location.hash.split('#')
+  if(splitHash.length > 2){ // has second hash
+    const lastHash = splitHash[splitHash.length - 1]
+    if(!isNaN(lastHash) && typeof subRelationParents.value[lastHash] !== 'undefined'){
+      subRelationParents.value[lastHash].forEach(relationId => {
+        expandedRelationIds.value[relationId] = true
+      })
+    }
   }
 }
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0, ) => {
@@ -122,8 +137,8 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
   toDeleteIndices.forEach(index => {
     subRelations.splice(index, 1)
   })
-  if(relation['id'] * 1 === mainRelationData.value['id'] * 1){
-    console.log('done na gyud', relation['id'])
+  if(parentIndexIds.length === 0){ // head of statement
+    findPreExpandedRelation()
   }
 }
 const countUserFollowing = (relation = null) => {
@@ -151,6 +166,9 @@ const hideToolbarDialog = () => {
   showOpinion.value = false
   showScope.value = false
 }
+watch(hashRelationId, () => {
+  findPreExpandedRelation()
+})
 watch(mainRelationData, (newMainRelationData) => {
   if(newMainRelationData){
     mainRelationId.value = newMainRelationData['id'] * 1
@@ -162,6 +180,7 @@ watch(mainRelationData, (newMainRelationData) => {
     subRelationMap.value = {}
     userFollowing.value = {}
   }
+  findPreExpandedRelation()
 })
 let filterByAuthor = (relationToFilter, authorFilters) => {
   relationToFilter['is_author_filter_passed'] = Object.keys(authorFilters).length === 0 || typeof authorFilters[relationToFilter['user_id']] !== 'undefined'
@@ -315,6 +334,9 @@ export default {
   showImpactOpinionDialog: showImpactOpinionDialog,
   showVirtualRelationLinkages: showVirtualRelationLinkages,
   isReadingMode: isReadingMode,
+  windowContainers: windowContainers,
+  expandedRelationIds: expandedRelationIds,
+  hashRelationId: hashRelationId,
   user: Auth.user(),
   mapRelations: mapRelations,
   hideToolbarDialog: hideToolbarDialog,

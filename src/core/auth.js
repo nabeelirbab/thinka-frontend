@@ -121,9 +121,7 @@ class Auth {
       const ttl = this.storedAuth['ttl'] * 0.85
       const timePassedSinceTokenCreated = new Date() - new Date(this.storedAuth['date']) // miliseconds
       let remainingTTL = timePassedSinceTokenCreated > ttl ? 0 : ttl - timePassedSinceTokenCreated
-      console.log('refreshToken', remainingTTL, ttl, this.storedAuth['date'])
       if(remainingTTL || isRefreshing.value){
-        console.log('still have remaining time')
         setTimeout(() => {
           this.refreshToken()
         }, remainingTTL ? remainingTTL : 2000)

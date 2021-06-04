@@ -176,7 +176,12 @@ export default {
   },
   mounted(){
     window.addEventListener('click', this.clickedOutside)
-    
+    const splitHash = location.hash.split('#')
+    if(splitHash.length > 2 && !isNaN(splitHash[splitHash.length - 1])){ // has second hash
+      this.hashRelationId = splitHash[splitHash.length - 1] * 1
+    }else{
+      this.hashRelationId = 0
+    }
   },
   unmounted(){
     window.removeEventListener('click', this.clickedOutside)
@@ -255,6 +260,13 @@ export default {
       this.statement = statement
       this.isLoading = true
       setTimeout(() => {
+        this.windowContainers = [
+          this.$refs.positiveWindow,
+          this.$refs.negativeWindow,
+        ]
+      }, 200)
+      setTimeout(() => {
+        
         this.resizePositiveStatement()
         if(this.mainRelationId){
           if(this.$refs.negativeWindow){
@@ -265,7 +277,7 @@ export default {
             }, 1000)
           }
         }
-      }, 1200)
+      }, 1000)
       this.isLoading = false
     },
     setDefaultSeparator(){
@@ -286,22 +298,9 @@ export default {
           this.$refs.separator._setOffset(((this.totaRelevanceWindowHeight / 2) - negativeInnerHeight) )
         }
       }
-      this.focusToSubRelation()
+      
     },
-    focusToSubRelation(){
-      const splitHash = location.hash.split('#')
-      if(splitHash.length > 2){ // has second hash
-        const lastHash = splitHash[splitHash.length - 1]
-        if(!isNaN(lastHash)){ // the last hash is a number
-          this.hashedRelationId = lastHash * 1
-          const relationContainer = document.getElementById('relation-container-' + this.hashedRelationId)
-          const windowContainer = relationContainer.getAttribute('is-support') === 'true' ? this.$refs.positiveWindow : this.$refs.negativeWindow
-          if(relationContainer){
-            (windowContainer).scrollTop = relationContainer.offsetTop - (windowContainer).offsetTop
-          }
-        }
-      }
-    },
+    
     setSeparatorWindowSupports(){
       this.$refs.separator._setOffset(this.totaRelevanceWindowHeight)
     },

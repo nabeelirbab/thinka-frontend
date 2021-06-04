@@ -13,7 +13,6 @@
 import {ref} from 'vue'
 const deferredInstallPrompt = ref(null)
 window.addEventListener('beforeinstallprompt', (e) => {
-  console.log('beforeinstallprompt triggered', e)
   // Stash the event so it can be triggered later.
   deferredInstallPrompt.value = e
 })
