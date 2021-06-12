@@ -9,7 +9,7 @@
     </button>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-      <router-link :to="'/branch/' + (isVirtualRelation ? relation['virtual_relation_id']: relation['id']) + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item">        
+      <router-link v-if="relation['virtual_relation_id'] || relation['id']" :to="'/branch/' + (relation['virtual_relation_id'] ? relation['virtual_relation_id']: relation['id']) + '/t/' + toKebabCase(statementText.slice(0, 30))" class="dropdown-item">        
         <span v-if="!isVirtualRelation"><fa icon="eye" /> Zoom</span>
         <span v-else-if="isVirtualRelation"><fa icon="link" /> Open Link</span>
       </router-link>
@@ -76,7 +76,7 @@
         <fa icon="microscope" /> Scope
       </button>
       <button
-        v-if="isAuthor"
+        v-if="isAuthor && !isVirtualRelatiolPrivate"
         @click="publish" 
         :disabled="isPublishing" 
         class="dropdown-item"
@@ -162,6 +162,7 @@ export default {
         <p>Are you sure you want to publish this statement now?</p>
       `
       const unpublishMessage = '<p>Unpublishing this statement will make it private and it can no longer be seen by other users</p>Are you sure you want to unplish this tree?'
+      // const privateVirtualRelation = '<p>You cannot publish private virtual relation</p>'
       this.$refs.prompt._open(
         this.relation['published_at'] ? unpublishMessage: publishMessage,
         [{
@@ -282,6 +283,9 @@ export default {
     },
     isAuthor(){
       return this.user && this.relation && this.user.id === this.relation.user_id
+    },
+    isVirtualRelatiolPrivate(){
+      return this.relation['virtual_relation'] && this.relation['virtual_relation']['published_at'] === null
     }
   }
 }

@@ -106,7 +106,7 @@
                   <fa  icon="briefcase"  />
                 </span>
                 <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
-                <span v-else-if="isDifferentAuthor && relation['user']" data-toggle="tooltip" :title="relation['user']['username']">
+                <span v-else-if="isAuthorNotUser" data-toggle="tooltip" :title="relation['user']['username']">
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
@@ -481,6 +481,9 @@ export default {
     },
     isVirtualRelation(){
       return this.relation['is_virtual_relation']
+    },
+    isAuthorNotUser(){
+      return this.user && this.user['id'] !==this.relation['user_id'] * 1
     },
     isDifferentAuthor(){
       return this.mainRelationData && this.mainRelationData['user_id'] * 1 !== this.relation['user_id'] * 1
