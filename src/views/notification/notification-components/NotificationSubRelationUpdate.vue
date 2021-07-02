@@ -15,9 +15,9 @@
       <div class="text-break">
         {{notificationRelationUpdate['message']}}
       </div>
-      <div v-for="notificationSubRelationUpdateUserRelation in notificationRelationUpdate['notification_sub_relation_update_user_relations']" class="text-truncate text-sm pl-1">
-        <fa icon="level-up-alt" rotation="90" /> {{notificationSubRelationUpdateUserRelation['relation']['statement']['text']}}
-      </div>
+      <!-- <div v-for="notificationSubRelationUpdateUserRelation in notificationRelationUpdate['notification_sub_relation_update_user_relations']" class="text-truncate text-sm pl-1">
+        <fa icon="level-up-alt" rotation="90" /> {{notificationSubRelationUpdateUserRelation['relation']['statement'] ? notificationSubRelationUpdateUserRelation['relation']['statement']['text'] : 'No Statement'}}
+      </div> -->
     </div>
   </div>
 </template>

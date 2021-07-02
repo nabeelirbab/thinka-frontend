@@ -43,10 +43,19 @@ class NotificationUser extends API {
                 ...(['id', 'notification_id', 'relation_id', 'user_id', 'message', 'type']),
                 relation: {
                   select: {
-                    ...(['statement_id']),
+                    ...(['statement_id', 'virtual_relation_id']),
                     statement: {
                       select: ['text'],
                       with_trash: true
+                    },
+                    virtual_relation: {
+                      select: {
+                        ...(['id', 'statement_id']),
+                        statement: {
+                          select: ['text'],
+                          with_trash: true
+                        }
+                      }
                     }
                   },
                   with_trash: true
@@ -94,7 +103,6 @@ class NotificationUser extends API {
                 relation: {
                   select: {
                     ...(['id']),
-                    
                   },
                   with_trash: true
                 },

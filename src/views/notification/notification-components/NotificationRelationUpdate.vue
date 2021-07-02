@@ -8,7 +8,7 @@
       <div v-if="notificationRelationUpdate['relation']" class="d-flex">
         <fa icon="quote-left" class="text-secondary text-sm" />
         <div @click="readNotification" class="font-italic text-truncate c-pointer -1" style="min-width:0">
-          {{notificationRelationUpdate['relation']['statement']['text']}}
+          {{statementText}}
         </div>
         <fa icon="quote-right" class="text-secondary text-sm ml-1" />
       </div>
@@ -62,6 +62,9 @@ export default {
         default:
           return this.notificationRelationUpdate['message']
       }
+    },
+    statementText(){
+      return this.notificationRelationUpdate['relation']['virtual_relation_id'] ? this.notificationRelationUpdate['relation']['virtual_relation']['statement']['text'] : this.notificationRelationUpdate['relation']['statement']['text']
     }
   }
 }
