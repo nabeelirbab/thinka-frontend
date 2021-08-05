@@ -3,18 +3,24 @@
     <div class="image-background pt-3 px-0 pb-8">
       <div class="container ">
         <SearchTree />
-        <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow mb-3 btn-sm-xl">
-          <div class="text-right flex-fill">
-            <fa icon="project-diagram" />
+        <div class="row">
+          <div class="col-12 col-md-6 pr-3 pr-sm-1">
+            <router-link to="/new-statement" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow btn-sm-xl mb-3 mb-md-0">
+              <div class="text-right flex-fill">
+                <fa icon="project-diagram" />
+              </div>
+              <span class="ml-2 flex-fill text-left">Create New Tree</span>
+            </router-link>
           </div>
-          <span class="ml-2 flex-fill text-left">Create New Tree</span>
-        </router-link>
-        <router-link to="/learning" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow btn-sm-xl">
-          <div class="text-right flex-fill">
-            <fa icon="book-reader" />
+          <div class="col-12 col-md-6 pl-3 pr-sm-1">
+            <router-link to="/learning" class="btn btn-lg btn-primary border-width-none d-flex align-items-center btn-shadow btn-sm-xl">
+              <div class="text-right flex-fill">
+                <fa icon="book-reader" />
+              </div>
+              <span class="ml-2 flex-fill text-left">Visit Learning Center</span>
+            </router-link>
           </div>
-          <span class="ml-2 flex-fill text-left">Visit Learning Center</span>
-        </router-link>
+        </div>
       </div>
     </div>
     <div class="container mb-4 pb-4 px-2 mt-n-3">

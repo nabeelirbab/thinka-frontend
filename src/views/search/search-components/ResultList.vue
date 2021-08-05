@@ -91,7 +91,10 @@ export default {
           },
           user: {
             select: {
-            ...(['id', 'username'])
+              ...(['id', 'username']),
+              user_profile_photo: {
+                select: ['user_id', 'file_name']
+              }
             }
           },
           ...(['logic_tree_id', 'statement_id', 'user_id', 'updated_at', 'user_id', 'virtual_relation_id', 'published_at'])

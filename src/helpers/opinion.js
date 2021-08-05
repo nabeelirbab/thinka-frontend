@@ -36,7 +36,7 @@ export default {
     }
     // confidence
     if(type){
-      message += ` with <em class="font-weight-bold"> ${(confidence * 100).toFixed(0)}%</em> confidence.`
+      message += ` with <em class="font-weight-bold"> ${(confidence * 100).toFixed(0)}% </em> confidence.`
     }
     return message
   }

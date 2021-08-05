@@ -8,12 +8,16 @@
     >
     <div class="d-flex mb-1">
       <div class="flex-fill d-flex align-items-center">
-        <fa icon="user-circle" class="mr-2 text-light" style="font-size:42px" />
+        <template v-if="!noUser">
+          <img v-if="profilePhoto" :src="profilePhoto" class="rounded-circle mr-2" style="width: 42px" />
+          <fa v-else icon="user-circle" class="mr-2 text-light" style="font-size:42px" />
+
+        </template>
         <div>
           <div class="text-uppercase">
             <StatementTypePill :statementTypeId="statementTypeId" />
           </div>
-          <div class="text-light text-sm pl-1">
+          <div v-if="!noUser" class="text-light text-sm pl-1">
             by {{relation['user'] ? relation['user']['username'] : 'Unknown User#' + relation['user_id']}}
           </div>
         </div>
@@ -53,6 +57,7 @@
 </template>
 <script>
 import StatementTypePill from '@/components/StatementTypePill'
+import FileServerHelper from '@/helpers/file-server'
 export default {
   components: {
     StatementTypePill
@@ -60,10 +65,14 @@ export default {
   props: {
     relation: Object,
     rootParentStatementText: String,
+    noUser: {
+      type: Boolean,
+      default: false
+    },
     hash: {
       type: String,
       default: ''
-    }
+    },
   },
   emits: ['link-clicked'],
   methods: {
@@ -89,6 +98,10 @@ export default {
       }else{
         return null
       }
+    },
+    profilePhoto(){
+      return !this.noUser && typeof this.relation['user']['user_profile_photo'] !== 'undefined' && this.relation['user']['user_profile_photo'] ? 
+        FileServerHelper.url(this.relation['user']['user_profile_photo']['file_name']) : null
     }
   }
 }

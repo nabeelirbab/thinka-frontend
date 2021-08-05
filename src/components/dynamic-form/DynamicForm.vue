@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Field ref="field" v-if="typeof form['fields'] !== 'undefined'" 
+    <Field ref="field" v-if="hasFormFields" 
       :fields="form['fields']"
       :form-data="formData"
       :readonly="readonly"
@@ -120,6 +120,11 @@ export default {
         this.form = formSettings
       },
       immediate: true
+    }
+  },
+  computed: {
+    hasFormFields(){
+      return typeof this.form['fields'] !== 'undefined'
     }
   }
 }

@@ -82,6 +82,14 @@ li.borderless { border-top: 0 none; }
   background-color: rgba(0, 0, 0, 0.555);
 
 }
+.no-text-selection {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 @media(max-width:768px) { /*SM Screen*/
   .w-sm-100 {
     width: 100%
@@ -100,3 +108,32 @@ li.borderless { border-top: 0 none; }
     border-radius: 0.4rem
   }
 }
+
+/* Tooltip */
+
+// .tooltip {
+//   position: relative;
+//   display: inline-block;
+//   border-bottom: 1px dotted black;
+// }
+
+// .tooltip .tooltiptext {
+//   visibility: hidden;
+//   width: 120px;
+//   background-color: black;
+//   color: #fff;
+//   text-align: center;
+//   border-radius: 6px;
+//   padding: 5px 0;
+  
+//   /* Position the tooltip */
+//   position: absolute;
+//   z-index: 1;
+//   bottom: 100%;
+//   left: 50%;
+//   margin-left: -60px;
+// }
+
+// .tooltip:hover .tooltiptext {
+//   visibility: visible;
+// }

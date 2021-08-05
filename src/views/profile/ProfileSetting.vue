@@ -1,7 +1,9 @@
 <template>
-  <div class="container bg-white height-max py-4 px-4">
-    <h4>Profile</h4>
-    <div class="border p-4 shadow-sm">
+  <div class="container py-4 px-4">
+    
+    <div class="shadow-md-light p-4 rounded-md bg-white">
+      <h4 class="mb-3">Profile</h4>
+      <ProfilePhoto class="mb-3" />
       <DynamicForm ref="form" :form-settings="formSettings" :readonly="isLoading" />
       <div class="text-right">
         <button @click="save" class="btn btn-success"><fa icon="check" /> Save</button>
@@ -10,12 +12,14 @@
   </div>
 </template>
 <script>
+import ProfilePhoto from './profile-setting-components/ProfilePhoto'
 import DynamicForm from '@/components/dynamic-form/DynamicForm'
 import Auth from '@/core/auth'
 import User from '@/api/user'
 export default {
   components: {
-    DynamicForm
+    DynamicForm,
+    ProfilePhoto
   },
   mounted(){
     this.getUser()

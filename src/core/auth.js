@@ -72,13 +72,16 @@ class Auth {
       }
       axios.post(userPath, {}, header).then(response => {
         const userData = response['data']['data']
+        console.log('userData', userPath, userData)
         user.value = {
           id: userData['id'],
           username: userData['username'],
           email: userData['email'],
           status: userData['status'],
+          user_profile_photo: userData['user_profile_photo'] ? userData['user_profile_photo']['file_name'] : null,
           first_name: userData['user_basic_information'] ? userData['user_basic_information']['first_name'] : null,
-          last_name: userData['user_basic_information']['last_name'] ? userData['user_basic_information']['last_name'] : null
+          last_name: userData['user_basic_information']['last_name'] ? userData['user_basic_information']['last_name'] : null,
+          // profile_photo_file_name: userData['user_basic_information']['profile_photo_file_name']
         }
         this.storedAuth = storedAuth
         this.startSession()
@@ -209,8 +212,10 @@ class Auth {
           email: userData['email'],
           status: userData['status'],
           first_name: userInformation['first_name'],
-          last_name: userInformation['last_name']
+          last_name: userInformation['last_name'],
+          profile_photo_file_name: userInformation['profile_photo_file_name']
         }
+        console.log('login', userInformation)
         authenticationStatus.value = 'authenticated'
         this.startSession()
         resolve(userData)

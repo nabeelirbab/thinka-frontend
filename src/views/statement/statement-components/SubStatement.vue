@@ -44,7 +44,7 @@
       >
         <div class="d-flex align-items-center py-1">
           <div>
-            <CircleLabel v-if="isUpdating" class="mr-1" title="Updating statement. Please wait..." data-toggle="tooltip" data-placement="top">
+            <CircleLabel v-if="isUpdating" class="mr-1 no-text-selection" title="Updating statement. Please wait..." v-tooltip="'Updating statement. Please wait...'" >
               <fa icon="spinner" spin />
             </CircleLabel>
             <div 
@@ -102,11 +102,11 @@
                 <CircleIconButton v-if="enableDragging && !relation['published_at'] && !isUpdating" icon="arrows-alt" button-class="move-icon btn-light bg-whitesmoke text-primary" />
               </div>
               <div v-else class="ml-2 mr-2 align-self-center text-nowrap">
-                <span v-if="!relation['published_at'] && mainRelationData['published_at']" data-toggle="tooltip" title="Private">
+                <span v-if="!relation['published_at'] && mainRelationData['published_at']" @click="showTooltip" v-tooltip="{ content: 'This statement is private' }" class="no-text-selection" title="Private">
                   <fa  icon="briefcase"  />
                 </span>
                 <!-- <fa v-else icon="sun" :title="relation['published_at']" /> -->
-                <span v-else-if="isAuthorNotUser" data-toggle="tooltip" :title="relation['user']['username']">
+                <span v-else-if="isAuthorNotUser" v-tooltip="relation['user']['username']" :title="relation['user']['username']" class="no-text-selection">
                   <fa  icon="user"  />
                 </span>
                 <fa v-if="isLocked == 1" icon="lock" title="Locked" />
@@ -240,16 +240,6 @@ export default {
     update: null
   },
   mounted(){
-    const $ = require('jquery')
-    $('[data-toggle="tooltip"]').tooltip({
-      trigger: 'click hover'
-    })
-    $('[data-toggle="tooltip"]').on('inserted.bs.tooltip', function () {
-      const autoCloseTime = $(this).attr('data-original-title').length * 200
-      setTimeout(() => {
-        $(this).tooltip('hide')
-      }, autoCloseTime + 1000)
-    })
     this.focusToSubRelation()
   },
   data(){
@@ -269,7 +259,7 @@ export default {
       },
       
       isUpdating: false,
-      isDevelopment: process.env.NODE_ENV === 'development'
+      isDevelopment: process.env.NODE_ENV === 'development',
     }
   },
   methods: {

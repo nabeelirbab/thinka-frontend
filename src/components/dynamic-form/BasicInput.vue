@@ -1,7 +1,9 @@
 <template>
   <div class="form-group row">
-    <label class="col-12 col-lg-4 col-form-label text-capitalize font-weight-bold">{{label}}</label>
-    <div class="col-12 col-lg-8">
+    <label :class="labelColSpan" class="col-form-label text-capitalize font-weight-bold">
+      {{label}}
+    </label>
+    <div :class="inputColSpan">
       <SelectInput
         v-if="type === 'select'"
         @value-change="updateValue"
@@ -14,6 +16,17 @@
         :required="isRequired"
         :readonly="readonly"
       />
+      <TextAreaInput
+        v-if="type === 'textarea'"
+        :modelValue="modelValue"
+        @value-change="updateValue"
+        :default-value="defaultValue"
+        :type="type"
+        :class="error ? 'is-invalid' : ''"
+        :placeholder="placeholder" 
+        :required="isRequired"
+        :readonly="readonly"
+        />
       <NormalInput
         v-else
         :modelValue="modelValue"
@@ -34,12 +47,14 @@
 </template>
 <script>
 import NormalInput from './input-components/NormalInput'
+import TextAreaInput from './input-components/TextAreaInput'
 import SelectInput from './input-components/SelectInput'
 import ValidationChecker from './validation-checker'
 export default {
   components: {
     NormalInput,
-    SelectInput
+    SelectInput,
+    TextAreaInput
   },
   props: {
     name: {
@@ -132,6 +147,12 @@ export default {
       }else{
         return this.toCapitalize((this.name.replace(/_/g, ' ')).replace(/\./g, ' '))
       } 
+    },
+    labelColSpan(){
+      return typeof this.field['label_col_span'] !== 'undefined' ? this.field['label_col_span'] : 'col-12 col-lg-4'
+    },
+    inputColSpan(){
+      return typeof this.field['input_col_span'] !== 'undefined' ? this.field['input_col_span'] : 'col-12 col-lg-8'
     },
     placeholder(){
       if(typeof this.field['placeholder'] !== 'undefined'){

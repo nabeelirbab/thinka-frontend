@@ -2,7 +2,8 @@
   <div v-if="mainRelationData" class="d-flex mb-1" @click="selectedStatementId = null">
     <div class="d-flex flex-fill pt-1">
       <div>
-        <fa icon="user-circle" class="text-secondary" style="font-size:2.7em" />
+        <img v-if="mainRelationData['user']['user_profile_photo']" :src="fileServerURL + mainRelationData['user']['user_profile_photo']['file_name']" class="rounded-circle" style="width:2.7em"/>
+        <fa v-else icon="user-circle" class="text-secondary" style="font-size:2.7em" />
       </div>
       <div class="pl-1">
         <StatementTypePill :statement-type-id="mainRelationData['statement'] ? mainRelationData['statement']['statement_type_id'] : 0" />
@@ -44,13 +45,15 @@
 <script>
 import GlobalData from '../global-data'
 import StatementTypePill from '@/components/StatementTypePill'
+import FileServerHelper from '@/helpers/file-server'
 export default {
   components: {
     StatementTypePill
   },
   data(){
     return {
-      ...GlobalData
+      ...GlobalData,
+      fileServerURL: FileServerHelper.url()
     }
   },
   methods: {

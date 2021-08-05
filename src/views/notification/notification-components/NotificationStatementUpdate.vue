@@ -2,6 +2,7 @@
   <div class="w-100">
     <NotificationHead
       :username="notificationStatementUpdate['user']['username']"
+      :userProfilePhoto="notificationStatementUpdate['user']['user_profile_photo']"
       :created-at="datetime"
     />
     <div style="min-width:0">

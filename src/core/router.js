@@ -12,6 +12,7 @@ import Notification from "@/views/notification/Notification.vue";
 import MoreMenu from "@/views/more-menu/MoreMenu";
 import Learning from "@/views/learning/Learning.vue";
 import ProfileSetting from "@/views/profile/ProfileSetting";
+import UserProfile from "@/views/profile/User";
 import Test from "@/views/Test.vue";
 
 const routes = [
@@ -136,6 +137,12 @@ const routes = [
     path: "/profile-setting",
     name: "ProfileSetting",
     component: ProfileSetting,
+
+  },
+  {
+    path: "/user/:userId",
+    name: "user",
+    component: UserProfile,
 
   },
   {

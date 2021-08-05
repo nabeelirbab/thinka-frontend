@@ -24,6 +24,7 @@ import 'vue-popperjs/dist/vue-popper.css'
 import '@/assets/style/custom-theme.scss'
 import '@/assets/style/util.scss'
 import '@/assets/style/thinka-custom.scss'
+import 'v-tooltip/dist/v-tooltip.css' // https://v-tooltip.netlify.app/guide/installation.html#node
 import Header from '@/components/common/Header'
 import Auth from '@/core/auth'
 import LogInModal from '@/components/login/LogInModal'

@@ -29,6 +29,9 @@ class NotificationUser extends API {
         ...(['id', 'username']),
         user_basic_information: {
           select: ['user_id', 'first_name', 'last_name']
+        },
+        user_profile_photo: {
+          select: ['user_id', 'file_name']
         }
       }
     }

@@ -1,7 +1,7 @@
 <template>
   <div >
     <div v-if="isLoading" class="text-center">Please wait... <fa icon="spinner" spin /></div>
-    <div style="overflow-y:auto; height: 50vh">
+    <div style="overflow-y:auto; height: 60vh">
       <div v-for="(trend) in trending" class="d-flex ">
         <RelationRow :relation="trend" />
       </div>
@@ -35,7 +35,10 @@ export default {
           },
           user: {
             select: {
-            ...(['id', 'username'])
+              ...(['id', 'username']),
+              user_profile_photo: {
+                select: ['user_id', 'file_name']
+              }
             }
           },
           ...(['id', 'parent_relation_id', 'statement_id', 'user_id', 'created_at', 'updated_at'])
