@@ -2,111 +2,141 @@
   <div :class="!hideBranding ? 'has-menu-top-padding' : 'top-padding'" style="">
     <Header />
     <div class="d-flex align-items-stretch">
-      <div class="flex-grow-1" style="min-width:0">
-        <div v-if="authenticationStatus === 'authenticating' || !isMaintableReady" class="text-center">
+      <div class="flex-grow-1" style="min-width: 0">
+        <div
+          v-if="authenticationStatus === 'authenticating' || !isMaintableReady"
+          class="text-center"
+        >
           <!-- Please wait... <fa icon="spinner" spin /> -->
           <Loader style="padding-top: 17vh" />
         </div>
-        <router-view v-else-if="!routeRequireUser || (routeRequireUser && authenticationStatus === 'authenticated')"></router-view>
+        <router-view
+          v-else-if="
+            !routeRequireUser ||
+            (routeRequireUser && authenticationStatus === 'authenticated')
+          "
+        ></router-view>
         <div v-else class="text-center w-100 pt-4">
           <div>You need to login to see this page</div>
-          <button @click="checkIfLogInRequired" class="btn btn-primary font-style-2 px-4" type="button">Log In</button>
+          <button
+            @click="checkIfLogInRequired"
+            class="btn btn-primary font-style-2 px-4"
+            type="button"
+          >
+            Log In
+          </button>
         </div>
-        <LogInModal ref="logInModal" message="You need to log in to use this page or functionality" />
+        <LogInModal
+          ref="logInModal"
+          message="You need to log in to use this page or functionality"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import 'bootstrap'
-import 'vue-popperjs/dist/vue-popper.css'
-import '@/assets/style/custom-theme.scss'
-import '@/assets/style/util.scss'
-import '@/assets/style/thinka-custom.scss'
-import 'v-tooltip/dist/v-tooltip.css' // https://v-tooltip.netlify.app/guide/installation.html#node
-import Header from '@/components/common/Header'
-import Auth from '@/core/auth'
-import LogInModal from '@/components/login/LogInModal'
-import Maintanables from '@/api/maintainables' // maintainables do not require authentication
-import Loader from '@/components/Loader'
+import "bootstrap";
+import "vue-popperjs/dist/vue-popper.css";
+import "@/assets/style/custom-theme.scss";
+import "@/assets/style/util.scss";
+import "@/assets/style/thinka-custom.scss";
+import "v-tooltip/dist/v-tooltip.css"; // https://v-tooltip.netlify.app/guide/installation.html#node
+import Header from "@/components/common/Header";
+import Auth from "@/core/auth";
+import LogInModal from "@/components/login/LogInModal";
+import Maintanables from "@/api/maintainables"; // maintainables do not require authentication
+import Loader from "@/components/Loader";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
     LogInModal,
-    Loader
+    Loader,
   },
-  mounted(){
+  mounted() {
     Maintanables.prepare().then(() => {
-      this.isMaintableReady = true
-    })
-    Auth.chechAuth()
+      this.isMaintableReady = true;
+    });
+    Auth.chechAuth();
   },
-  data(){
+  data() {
     return {
       isMaintableReady: false,
-      authenticationStatus: Auth.status()
-    }
+      authenticationStatus: Auth.status(),
+    };
   },
   methods: {
-    test(){
-      console.log('Auth', Auth, Auth.chechAuth)
+    test() {
+      console.log("Auth", Auth, Auth.chechAuth);
     },
-    checkIfLogInRequired(){
+    checkIfLogInRequired() {
       setTimeout(() => {
-        if(this.routePath !== '/' && this.routeRequireUser && this.authenticationStatus === 'unauthenticated' && this.authenticationStatus !== 'authenticating'){
-          this.$refs.logInModal._open()
+        if (
+          this.routePath !== "/" &&
+          this.routeRequireUser &&
+          this.authenticationStatus === "unauthenticated" &&
+          this.authenticationStatus !== "authenticating"
+        ) {
+          this.$refs.logInModal._open();
         }
-      }, 100)
-    }
+      }, 100);
+    },
   },
   watch: {
     authenticationStatus: {
-      handler(){
-        this.checkIfLogInRequired()
+      handler() {
+        this.checkIfLogInRequired();
       },
-      immediate: true
+      immediate: true,
     },
     routePath: {
-      handler(){
-        this.checkIfLogInRequired()
+      handler() {
+        this.checkIfLogInRequired();
       },
-      immediate: true
+      immediate: true,
     },
     // routeRequireUser(){
     //   this.checkIfLogInRequired()
     // }
   },
   computed: {
-    routePath(){
-      return this.$route['path']
+    routePath() {
+      return this.$route["path"];
     },
-    routeRequireUser(){
-      return typeof this.$route['meta']['auth'] !== 'undefined' && typeof this.$route['meta']['auth']['require_user'] !== 'undefined' && this.$route['meta']['auth']['require_user']
+    routeRequireUser() {
+      return (
+        typeof this.$route["meta"]["auth"] !== "undefined" &&
+        typeof this.$route["meta"]["auth"]["require_user"] !== "undefined" &&
+        this.$route["meta"]["auth"]["require_user"]
+      );
     },
-    hideBranding(){
-      return typeof this.$route['meta']['hideBranding'] !== 'undefined' && this.$route['meta']['hideBranding']
+    hideBranding() {
+      return (
+        typeof this.$route["meta"]["hideBranding"] !== "undefined" &&
+        this.$route["meta"]["hideBranding"]
+      );
     },
-    hasMenu(){
-      return true // this.authenticationStatus === 'authenticated'
-    }
-  }
-}
+    hasMenu() {
+      return true; // this.authenticationStatus === 'authenticated'
+    },
+  },
+};
 </script>
 
 <style scoped>
 body {
-  background: #EDEEF0;
+  background: #edeef0;
 }
 .top-padding {
-  padding-top:85px
+  padding-top: 85px;
 }
 .has-menu-top-padding {
   padding-top: 90px;
 }
-@media (min-width: 768px) { /* For non smartphone */
+@media (min-width: 768px) {
+  /* For non smartphone */
   .has-menu-top-padding {
     padding-top: 94px;
   }
