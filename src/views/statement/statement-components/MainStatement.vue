@@ -1,11 +1,7 @@
 <template>
   <div class="">
-    <div
-      v-show="isSticky"
-      ref="dummyStatementBox"
-      class="bg-dark text-white"
-      :style="{ height: statementTextHeight + 'px' }"
-    ></div>
+    <div v-show="isSticky" ref="dummyStatementBox" class="bg-dark text-white"
+      :style="{ height: statementTextHeight + 'px' }"></div>
     <div>
       <div class="d-flex justify-content-center">
         <div :title="userFollowingNames" class="text-nowrap text-center px-1">
@@ -17,41 +13,26 @@
           :is-horizontal="true"
           :user-opinion-type="userOpinionType"
         /> -->
-        <LogicScoreSummary
-          :user-statement-logic-scores="userStatementLogicScores"
-        />
+        <LogicScoreSummary :user-statement-logic-scores="userStatementLogicScores" />
       </div>
     </div>
-    <div
-      ref="mainStatementBox"
-      :class="
-        (isSticky ? 'mainStatement fixed-top' : '') +
-        ' ' +
-        (isSelected ? 'border border-dark border-width' : '')
-      "
-      :title="titleIds"
-      :style="
-        stickySeeMore === true
+    <div ref="mainStatementBox" :class="(isSticky ? 'mainStatement fixed-top' : '') +
+      ' ' +
+      (isSelected ? 'border border-dark border-width' : '')
+      " :title="titleIds" :style="stickySeeMore === true
           ? 'max-height:' + stickStatementHeightLimit + 'px!important'
           : ''
-      "
-      class="limitBoxborder bg-success shadow-sm px-2 py-1 mb-2 statement-radius"
-    >
+        " class="limitBoxborder bg-success shadow-sm px-2 py-1 mb-2 statement-radius">
       <div>
         <div>
           <div v-if="!isEditing" class="d-flex align-items-center text-break">
             <div @click="_statementClicked" class="d-flex flex-fill">
-              <div
-                ref="actualStatementTextDiv"
-                class="text-break limitText flex-fill statementTextContainer"
-                :style="
-                  stickySeeMore === true
-                    ? 'max-height: ' +
-                      (stickStatementHeightLimit - 32 - 21) +
-                      'px!important;'
-                    : ''
-                "
-              >
+              <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true
+                  ? 'max-height: ' +
+                  (stickStatementHeightLimit - 32 - 21) +
+                  'px!important;'
+                  : ''
+                ">
                 <div class="d-flex text-left mb-1 pt-1 text-white">
                   <div class="column mr-2 ml-0" style="padding-left: 0.1em">
                     <span>
@@ -60,45 +41,31 @@
                     </span>
                   </div>
                   <div class="column text-break hyphens-auto">
-                    <TextDisplayer
-                      :text="statement ? statement['text'] : 'No Text'"
-                    />
+                    <TextDisplayer :text="statement ? statement['text'] : 'No Text'" />
                   </div>
                 </div>
               </div>
-              <div
-                class="d-flex align-items-center justify-content-center text-center"
-              >
-                <OpinionIcon
-                  v-if="selectedStatementId !== relation['id']"
-                  :type="relationOpinionType"
-                  class="mr-1 text-white"
-                />
+              <div class="d-flex align-items-center justify-content-center text-center">
+                <OpinionIcon v-if="selectedStatementId !== relation['id']" :type="relationOpinionType"
+                  class="mr-1 text-white" />
                 <div v-if="selectedStatementId === relation['id']" class="ml-1">
                   <!-- <CircleLabel>
                     <CTPoints :points="ctPoints * 1" class="text-dark" />
                   </CircleLabel> -->
                   <!-- <CircleIconButton v-if="relation && !relation['published_at']" @click.stop="isEditing = true" icon="edit" button-class="btn-light bg-whitesmoke text-primary ml-1" /> -->
                 </div>
-                <div
-                  v-else-if="parentRelationId"
-                  @click.stop
+                <div v-else-if="parentRelationId" @click.stop
                   class="ml-1 px-1 bg-whitesmoke rounded-circle d-flex align-items-center justify-content-center"
-                  style="height: 35px !important; width: 35px !important"
-                >
-                  <router-link
-                    :to="
-                      '/branch/' +
-                      (contextRootRelationId
-                        ? contextRootRelationId + '/t/context-locked'
-                        : parentRelationId +
-                          '/t/' +
-                          toKebabCase(
-                            parentRelation['statement']['text'].slice(0, 30)
-                          ))
-                    "
-                    class="text-primary"
-                  >
+                  style="height: 35px !important; width: 35px !important">
+                  <router-link :to="'/branch/' +
+                    (contextRootRelationId
+                      ? contextRootRelationId + '/t/context-locked'
+                      : parentRelationId +
+                      '/t/' +
+                      toKebabCase(
+                        parentRelation['statement']['text'].slice(0, 30)
+                      ))
+                    " class="text-primary">
                     <fa icon="undo-alt" />
                   </router-link>
                 </div>
@@ -106,63 +73,37 @@
             </div>
             <div v-if="isActive && !enableDragging" class="align-self-center">
               <div class="dropdown show">
-                <button
-                  class="border-0 rounded bg-transparent text-white"
-                  href="#"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                  title="More options."
-                >
+                <button class="border-0 rounded bg-transparent text-white" href="#" role="button" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false" title="More options.">
                   <fa icon="ellipsis-v" />
                 </button>
-                <div
-                  class="dropdown-menu dropdown-menu-right"
-                  aria-labelledby="dropdownMenuLink"
-                >
-                  <button
-                    @click="showVirtualRelationLinkages = true"
-                    class="dropdown-item"
-                  >
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                  <button @click="showVirtualRelationLinkages = true" class="dropdown-item">
                     <fa icon="tree" /> Parent links
                   </button>
                   <button @click="showScope = !showScope" class="dropdown-item">
                     <fa icon="edit" /> Scope
                   </button>
-                  <button
-                    @click="editSelectedStatement = true"
-                    :disabled="user === null || isPublished || !isAuthor"
-                    class="dropdown-item"
-                  >
+                  <button @click="editSelectedStatement = true" :disabled="user === null || isPublished || !isAuthor"
+                    class="dropdown-item">
                     <fa icon="edit" /> Edit
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          <CreateSubStatement
-            v-if="isEditing"
-            @save="statementEdited"
-            @cancel="editSelectedStatement = false"
-            :is-main-statement="true"
-            :relation="relation"
-            :mode="'update'"
-            :logic-tree-id="logicTreeId"
-            :parent-relation-id="relation['parent_relation_id']"
-          />
+          <CreateSubStatement v-if="isEditing" @save="statementEdited" @cancel="editSelectedStatement = false"
+            :is-main-statement="true" :relation="relation" :mode="'update'" :logic-tree-id="logicTreeId"
+            :parent-relation-id="relation['parent_relation_id']" />
         </div>
 
-        <div
-          v-if="isSticky && stickySeeMore !== null"
-          class="w-100 text-center c-pointer hover-underline"
-        >
-          <span v-if="stickySeeMore === true" @click="stickySeeMore = false"
-            >Show more <fa icon="chevron-down"
-          /></span>
-          <span v-else @click="stickySeeMore = true"
-            >Show less <fa icon="chevron-up"
-          /></span>
+        <div v-if="isSticky && stickySeeMore !== null" class="w-100 text-center c-pointer hover-underline">
+          <span v-if="stickySeeMore === true" @click="stickySeeMore = false">Show more
+            <fa icon="chevron-down" />
+          </span>
+          <span v-else @click="stickySeeMore = true">Show less
+            <fa icon="chevron-up" />
+          </span>
         </div>
       </div>
     </div>
@@ -251,8 +192,16 @@ export default {
         this._statementClicked();
       }
     },
+    updateUserFollowingData() {
+      // Log the entire userFollowing object
+      console.log('userFollowing object:', this.mainRelationData['all_user_relation_bookmarks']);
+
+      // Save the data into the userFollowing state
+      this.userFollowing = this.mainRelationData['all_user_relation_bookmarks'];
+    },
   },
   watch: {
+
     selectedStatementId() {
       this.showCTOpinion = this.selectedStatementId === this.relation["id"];
     },
@@ -397,7 +346,14 @@ export default {
     },
     userFollowingNames() {
       let names = "";
+
+      // Log the entire userFollowing object
+      // console.log('userFollowing object:', this.mainRelationData['all_user_relation_bookmarks']);
+      // Ensure userFollowing data is updated before proceeding
+      this.updateUserFollowingData();
       for (let userId in this.userFollowing) {
+        // Log the current userId and its corresponding data
+        // console.log(`Processing userId: ${userId}`, this.userFollowing[userId]);
         if (names !== "") {
           names += ", ";
         }
@@ -412,6 +368,9 @@ export default {
           names += "unknown-user-" + userId;
         }
       }
+
+      // Log the final names string
+      // console.log('Generated names:', names);
       return names;
     },
   },
@@ -423,10 +382,12 @@ export default {
   margin-left: 4px;
   margin-right: 4px;
 }
+
 .mainStatement.limitBox {
   /* max-height: 15vh!important; */
   overflow: hidden;
 }
+
 .mainStatement.fixed-top .limitText {
   overflow: hidden;
 }
