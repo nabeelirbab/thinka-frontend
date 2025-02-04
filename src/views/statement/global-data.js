@@ -69,6 +69,7 @@ const findPreExpandedRelation = () => { // expand if its the parent of sub relat
 const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVirtualRelation = 0, ) => {
   if(relation === null){
     relation = mainRelationData.value
+    console.log('map relations', relation);
   }
   if(relation === null){
     console.error('mainRelationData.value is null?')
@@ -86,7 +87,9 @@ const mapRelations = (relation = null, parentIndexIds = [], parentIds = [], isVi
       }
     }
   }
-  userFollowing.value[relation['user_id']] = relation['user']
+  // userFollowing.value[relation['user_id']] = relation['user']
+  // userFollowing.value[relation];
+  // console.log('User Following', userFollowing.value);
   for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
     const userId = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]['user_id']
     if(typeof userFollowing.value[userId] === 'undefined'){
@@ -150,7 +153,8 @@ const countUserFollowing = (relation = null) => {
       userFollowing.value[userId] = relation['parent_relation_user_following'][key]
     }
   }
-  userFollowing.value[relation['user_id']] = relation['user']
+  // userFollowing.value[relation['user_id']] = relation['user']
+  // console.log('user following', userFollowing);
   for(let allUserRelationBookmarkIndex in relation['all_user_relation_bookmarks']){
     const userId = relation['all_user_relation_bookmarks'][allUserRelationBookmarkIndex]['user_id']
     userFollowing.value[userId] = (typeof userFollowing.value[userId] !== 'undefined') ? userFollowing.value[userId] : {}

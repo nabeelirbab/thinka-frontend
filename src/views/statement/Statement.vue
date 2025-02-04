@@ -356,6 +356,7 @@ export default {
       };
       RelationAPI.post("/retrieve-tree", param)
         .then((result) => {
+          console.log('Relation Tree', result['data'])
           if (result["data"] && result["data"].length) {
             this.mainRelationData = result["data"][0];
             this.setMainRelation(this.mainRelationData);
