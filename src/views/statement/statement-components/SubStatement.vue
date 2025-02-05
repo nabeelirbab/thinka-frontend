@@ -6,18 +6,15 @@
     :style="level > 1 ? 'box-shadow: #29292959  0px -1px 4px' : ''"
     class="d-flex mt-1 border-width-none border-radius"
   >
-    <div
+  <div
+      v-if="relation['relation_type_id'] !== 3"
       @click.stop="showStatement = !showStatement"
       class="align-items-stretch align-items-center text-center px-1 border-left-radius border-width-none text-sm pt-1"
       style="min-width: 17px"
     >
       <fa v-if="!showStatement && hasToggleableChildren" icon="chevron-down" />
       <fa
-        v-else-if="
-          showStatement &&
-          hasToggleableChildren &&
-          (!hasFilterApplied || hasFilterPassChildren)
-        "
+        v-else-if="showStatement && hasToggleableChildren && (!hasFilterApplied || hasFilterPassChildren)"
         icon="chevron-up"
       />
     </div>
