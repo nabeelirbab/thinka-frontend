@@ -32,7 +32,7 @@
               :key="'relationType' + relationType['id']"
             >
               <option :value="relationType['id']">
-                {{ relationType["symbol"] }} {{ relationType["description"] }}
+              {{ relationType["symbol"] }} {{ relationType["description"] }}
               </option>
             </template>
           </select>
@@ -479,14 +479,18 @@ export default {
         typeof RelationTypeAPI.cachedData.value["data"]
       ) {
         RelationTypeAPI.cachedData.value["data"].forEach((relationType) => {
-          const relevanceWindow = this.determineRelevanceWindow(relationType);
-          if (
-            (relevanceWindow === 0 && this.isPositiveStatement) ||
-            (relevanceWindow === 1 && !this.isPositiveStatement)
-          ) {
+          // change the logic here to match your data structure 
+          // for show the BUT relation type in positive relevance
+          // const relevanceWindow = this.determineRelevanceWindow(relationType);
+          // console.log('relation types ',RelationTypeAPI.cachedData.value["data"] )
+          // if (
+          //   (relevanceWindow === 0 && this.isPositiveStatement) ||
+          //   (relevanceWindow === 1 && !this.isPositiveStatement)
+          // ) {
             relationTypes.push(relationType);
-          }
+          // }
         });
+        
       } else {
         relationTypes =
           RelationTypeAPI.cachedData && RelationTypeAPI.cachedData.value
