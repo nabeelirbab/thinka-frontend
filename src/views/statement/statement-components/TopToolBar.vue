@@ -287,9 +287,9 @@ export default {
         this.rootBookmarkId = null
         if (mainRelation && typeof mainRelation['user_relation_bookmarks'] !== 'undefined') {
           mainRelation['user_relation_bookmarks'].forEach(userRelationBookmark => {
-            if (userRelationBookmark['sub_relation_id'] === null) {
+            // if (userRelationBookmark['sub_relation_id'] === null) {
               this.rootBookmarkId = userRelationBookmark['id']
-            }
+            // }
           })
         }
         this.isBookmarkLoading = false

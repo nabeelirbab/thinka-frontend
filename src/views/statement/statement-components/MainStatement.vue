@@ -20,18 +20,18 @@
       ' ' +
       (isSelected ? 'border border-dark border-width' : '')
       " :title="titleIds" :style="stickySeeMore === true
-          ? 'max-height:' + stickStatementHeightLimit + 'px!important'
-          : ''
+        ? 'max-height:' + stickStatementHeightLimit + 'px!important'
+        : ''
         " class="limitBoxborder bg-success shadow-sm px-2 py-1 mb-2 statement-radius">
       <div>
         <div>
           <div v-if="!isEditing" class="d-flex align-items-center text-break">
             <div @click="_statementClicked" class="d-flex flex-fill">
               <div ref="actualStatementTextDiv" class="text-break limitText flex-fill statementTextContainer" :style="stickySeeMore === true
-                  ? 'max-height: ' +
-                  (stickStatementHeightLimit - 32 - 21) +
-                  'px!important;'
-                  : ''
+                ? 'max-height: ' +
+                (stickStatementHeightLimit - 32 - 21) +
+                'px!important;'
+                : ''
                 ">
                 <div class="d-flex text-left mb-1 pt-1 text-white">
                   <div class="column mr-2 ml-0" style="padding-left: 0.1em">
@@ -141,6 +141,8 @@ export default {
   emits: ["height-changed"],
   mounted() {
     window.addEventListener("scroll", this.isScrolling);
+    this.relationIdfromURL = this.$route.params.relationId;
+    console.log("Initial Relation ID:", this.relationIdfromURL);
   },
   beforeUnmount() {
     window.removeEventListener("scroll", this.isScrolling);
@@ -193,13 +195,26 @@ export default {
       }
     },
     updateUserFollowingData() {
-      // Log the entire userFollowing object
-      console.log('userFollowing object:', this.mainRelationData['all_user_relation_bookmarks']);
+      console.log("Relation ID from URL:", this.relationIdfromURL);
+      console.log("All user relation bookmarks:", this.mainRelationData['all_user_relation_bookmarks']);
+      console.log("All user sub relation bookmarks:", this.mainRelationData['all_user_sub_relation_bookmarks']);
 
-      // Save the data into the userFollowing state
-      this.userFollowing = this.mainRelationData['all_user_relation_bookmarks'];
-    },
+      if (Array.isArray(this.mainRelationData['all_user_relation_bookmarks']) && this.mainRelationData['all_user_relation_bookmarks'].length > 0) {
+        // Filter out records where sub_relation_id is NOT null (keep only null values)
+        this.userFollowing = this.mainRelationData['all_user_relation_bookmarks'].filter(
+          (bookmark) => bookmark.sub_relation_id === null
+        );
+        console.log("Filtered userFollowing (only sub_relation_id = null):", this.userFollowing);
+      } else {
+        this.userFollowing = this.mainRelationData['all_user_sub_relation_bookmarks'] || [];
+      }
+
+      console.log("Updated userFollowing:", this.userFollowing);
+    }
+
+
   },
+
   watch: {
 
     selectedStatementId() {
@@ -232,6 +247,14 @@ export default {
     statementTextHeight() {
       this.$emit("height-changed", this.statementTextHeight);
     },
+    // change relation id from url then get updated 
+    '$route.params.relationId': {
+      handler(newRelationId) {
+        this.relationIdfromURL = newRelationId;
+        console.log("Updated Relation ID:", this.relationIdfromURL);
+      },
+      immediate: true,
+    }
   },
   computed: {
     isEditing() {
@@ -348,7 +371,7 @@ export default {
       let names = "";
 
       // Log the entire userFollowing object
-      // console.log('userFollowing object:', this.mainRelationData['all_user_relation_bookmarks']);
+      console.log('userFollowing object:', this.mainRelationData['all_user_relation_bookmarks']);
       // Ensure userFollowing data is updated before proceeding
       this.updateUserFollowingData();
       for (let userId in this.userFollowing) {

@@ -259,6 +259,22 @@ export default {
               user_id: this.user["id"],
             });
           }
+          // const newBookmark = {
+          //   id: response["data"]["id"], // New bookmark ID
+          //     user_id: this.user.id, // Current user ID
+          //     relation_id: this.mainRelationData['id'], // Relation ID
+          //     sub_relation_id: this.relation["id"], // Sub-relation ID (if applicable)
+          //     created_at: new Date().toISOString(), // Current timestamp
+          //     updated_at: new Date().toISOString(), // Current timestamp
+          //     deleted_at: null, // No deletion timestamp
+          //     user: this.user // User object
+          //   };
+
+          //   // Push the new bookmark object to the array
+          //   this.mainRelationData['all_user_relation_bookmarks'].push(newBookmark);
+          //   // Close New Added Code
+          //   this.rootBookmarkId = response["data"]["id"]
+          //   console.log("Root Bookmark ID:", this.rootBookmarkId);
         })
         .finally(() => {
           this.isBookmarking = false;
