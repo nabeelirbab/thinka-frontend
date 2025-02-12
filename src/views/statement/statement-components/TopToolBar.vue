@@ -219,83 +219,118 @@ export default {
       )
     },
     bookmark() {
-      this.isBookmarkLoading = true
-      if (this.authenicationStatus === 'unauthenticated') {
-        this.$refs.logInModal._open(() => {
-          this.isBookmarkLoading = true
-          UserRelationBookmarkAPI.checkIfBookmarked(this.mainRelation['id']).then(result => {
-            if (result) {
-              this.rootBookmarkId = result
-              this.isBookmarkLoading = false
-            } else {
-              UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelation['id']).then(result => {
-                this.rootBookmarkId = result
-              }).finally(() => {
-                this.isBookmarkLoading = false
-              })
-            }
-          }).catch(error => {
-            console.log(error)
-            this.isBookmarkLoading = false
-          })
-        })
-        this.isBookmarkLoading = false
-      } else {
-        this.isBookmarkLoading = true
-        UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelationData['id']).then(result => {
-          console.log('rootBookmarkId', this.rootBookmarkId, this.mainRelationData['all_user_relation_bookmarks'])
-          if (result === null && this.rootBookmarkId) { // unbookmark
-            const userRelationBookmarkIndex = this.findArrayIndex(this.rootBookmarkId, this.mainRelationData['all_user_relation_bookmarks'], 'id')
-            if (userRelationBookmarkIndex >= 0) {
-              this.mainRelationData['all_user_relation_bookmarks'].splice(userRelationBookmarkIndex, 1)
-            }
-          } else if (result) {
-            // this.mainRelationData['all_user_relation_bookmarks'].push({
-            //   id: result,
-            //   user: this.user
-            // })
-            
-            // Construct the new bookmark object in the same format as existing bookmarks
-            //  Added New Code
-            const newBookmark = {
-              id: result, // New bookmark ID
-              user_id: this.user.id, // Current user ID
-              relation_id: this.mainRelationData['id'], // Relation ID
-              sub_relation_id: null, // Sub-relation ID (if applicable)
-              created_at: new Date().toISOString(), // Current timestamp
-              updated_at: new Date().toISOString(), // Current timestamp
-              deleted_at: null, // No deletion timestamp
-              user: this.user // User object
-            };
+  this.isBookmarkLoading = true;
 
-            // Push the new bookmark object to the array
-            this.mainRelationData['all_user_relation_bookmarks'].push(newBookmark);
-            // Close New Added Code
-          }
-          this.countUserFollowing()
-          this.rootBookmarkId = result
-        }).finally(() => {
-          this.isBookmarkLoading = false
-        })
+  if (this.authenicationStatus === 'unauthenticated') {
+    this.$refs.logInModal._open(() => {
+      this.isBookmarkLoading = true;
+      UserRelationBookmarkAPI.checkIfBookmarked(this.mainRelation['id']).then(result => {
+        if (result) {
+          this.rootBookmarkId = result;
+          this.isBookmarkLoading = false;
+        } else {
+          UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelation['id']).then(result => {
+            this.rootBookmarkId = result;
+          }).finally(() => {
+            this.isBookmarkLoading = false;
+          });
+        }
+      }).catch(error => {
+        console.log(error);
+        this.isBookmarkLoading = false;
+      });
+    });
+    this.isBookmarkLoading = false;
+  } else {
+    this.isBookmarkLoading = true;
+ // Log the data before sending the request
+ console.log('Bookmarking with values:', {
+    parent_relation_id: this.mainRelationData['parent_relation_id'],
+    main_relation_id: this.mainRelationData['id'],
+    relation_id: this.mainRelationData['parent_relation_id'] 
+      ? this.mainRelationData['parent_relation_id'] 
+      : this.mainRelationData['id'], 
+    sub_relation_id: this.mainRelationData['parent_relation_id'] 
+      ? this.mainRelationData['id'] 
+      : null
+  });
+    UserRelationBookmarkAPI.toggleBookmark(this.rootBookmarkId, this.mainRelationData['id']).then(result => {
+      console.log('rootBookmarkId', this.rootBookmarkId, this.mainRelationData);
+
+      // Determine which list to update
+      let bookmarkListKey = 'all_user_relation_bookmarks';
+      if (this.mainRelationData['parent_relation_id']) {
+        bookmarkListKey = 'all_user_sub_relation_bookmarks';
       }
-    },
+
+      if (result === null && this.rootBookmarkId) { // Unbookmark
+        const userRelationBookmarkIndex = this.findArrayIndex(this.rootBookmarkId, this.mainRelationData[bookmarkListKey], 'id');
+        if (userRelationBookmarkIndex >= 0) {
+          this.mainRelationData[bookmarkListKey].splice(userRelationBookmarkIndex, 1);
+        }
+      } else if (result) {
+        // Construct the new bookmark object
+        const newBookmark = {
+          id: result, // New bookmark ID
+          user_id: this.user.id, // Current user ID
+          relation_id: this.mainRelationData['parent_relation_id'] ? this.mainRelationData['parent_relation_id'] : this.mainRelationData['id'], // Relation ID
+          sub_relation_id: this.mainRelationData['parent_relation_id'] ? this.mainRelationData['id'] : null, // Sub-relation ID (if applicable)
+          created_at: new Date().toISOString(), // Current timestamp
+          updated_at: new Date().toISOString(), // Current timestamp
+          deleted_at: null, // No deletion timestamp
+          user: this.user // User object
+        };
+
+        console.log('New bookmark object:', newBookmark);
+
+        // Push the new bookmark object to the appropriate array
+        this.mainRelationData[bookmarkListKey].push(newBookmark);
+      }
+
+      this.countUserFollowing();
+      this.rootBookmarkId = result;
+    }).finally(() => {
+      this.isBookmarkLoading = false;
+    });
+  }
+}
+
 
   },
   watch: {
     mainRelation: {
-      handler(mainRelation) {
-        this.rootBookmarkId = null
-        if (mainRelation && typeof mainRelation['user_relation_bookmarks'] !== 'undefined') {
-          mainRelation['user_relation_bookmarks'].forEach(userRelationBookmark => {
-            // if (userRelationBookmark['sub_relation_id'] === null) {
-              this.rootBookmarkId = userRelationBookmark['id']
-            // }
-          })
+  handler(mainRelation) {
+    console.log('checking mainrelationdata', this.mainRelationData);
+    this.rootBookmarkId = null;
+
+    if (
+      mainRelation && 
+      Array.isArray(mainRelation['user_relation_bookmarks']) && 
+      mainRelation['user_relation_bookmarks'].length > 0
+    ) {
+      mainRelation['user_relation_bookmarks'].forEach(userRelationBookmark => {
+        if (userRelationBookmark['sub_relation_id'] === null) {
+          this.rootBookmarkId = userRelationBookmark['id'];
         }
-        this.isBookmarkLoading = false
-      },
-      immediate: true
-    },
+      });
+    } else if (
+      mainRelation && 
+      Array.isArray(mainRelation['all_user_sub_relation_bookmarks']) && 
+      mainRelation['all_user_sub_relation_bookmarks'].length > 0
+    ) {
+      mainRelation['all_user_sub_relation_bookmarks'].forEach(userRelationBookmark => {
+        if (userRelationBookmark['user_id'] === this.user.id) {
+          
+          this.rootBookmarkId = userRelationBookmark['id'];
+        }
+      });
+    }
+
+    this.isBookmarkLoading = false;
+  },
+  immediate: true
+},
+
     showSearchText() {
       if (this.showSearchText === true) {
         setTimeout(() => {
