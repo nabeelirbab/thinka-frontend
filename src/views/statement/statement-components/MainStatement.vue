@@ -338,6 +338,7 @@ export default {
         : [];
     },
     userStatementLogicScores() {
+      console.log('user statement logic score',this.relation["user_statement_logic_scores"] )
       return typeof this.relation["user_statement_logic_scores"] === "object" &&
         this.relation["user_statement_logic_scores"]
         ? this.relation["user_statement_logic_scores"]

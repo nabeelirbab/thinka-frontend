@@ -115,6 +115,7 @@ export default {
         param['sub_relation_statement_id_list'] = this.mainRelationData['sub_relation_statement_id_list']
       }
       OpinionAPI.create(param).then(result => {
+        
         if(typeof statementToChange['user_opinions'] === 'undefined'){
           statementToChange['user_opinions'] = []
         }

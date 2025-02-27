@@ -1,7 +1,7 @@
 <template>
   <div @click="showUserList" class="">
     <span class="mr-1">
-      <fa icon="flag" :class="'text-' + flagColor[1]" /> {{counts[1]}}
+      <fa icon="flag" :class="'text-' + flagColor[1]" /> {{counts[1]}} 
     </span>
     <span class="mr-1">
       <fa :icon="['far', 'flag']"  /> {{counts[0]}}
@@ -20,9 +20,15 @@
           <div class="flex-fill">{{userStatementLogicScore['user']['username']}}</div>
           <div class="pr-2 text-right">{{(userStatementLogicScore['final_score'] * 100).toFixed(0)}}%</div>
           <div>
-            <fa v-if="userStatementLogicScore['flag'] === 0" :icon="['far', 'flag']" />
-            <fa v-else :class="'text-' + flagColor[userStatementLogicScore['flag']]" icon="flag" />
-          </div>
+          <fa v-if="userStatementLogicScore['flag'] === 0" :icon="['far', 'flag']" />  <span v-if="userStatementLogicScore['flag'] === 0" class=""> no explicit opinion </span>
+          <template v-else>
+            <fa :class="'text-' + flagColor[userStatementLogicScore['flag']]" icon="flag" />
+            <span v-if="userStatementLogicScore['flag'] === 2" class="text-danger"> statement is false </span>
+            <span v-if="userStatementLogicScore['flag'] === 1" class="text-blue"> statement is true </span>
+            <span v-if="userStatementLogicScore['flag'] === 3" class="text-blue"> contradaction </span>
+          </template>
+        </div>
+
         </div>
       </template>
     </div>
@@ -71,7 +77,6 @@ export default {
   watch: {
     userStatementLogicScores: {
       handler(userStatementLogicScores){
-        console.log('userStatementLogicScores', userStatementLogicScores)
         this.counts[0] = 0
         this.counts[1] = 0
         this.counts[2] = 0

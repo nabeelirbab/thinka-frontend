@@ -36,7 +36,7 @@
           class="text-info text-sm text-right text-dark"
         >
           <!-- <fa icon="link" class="mr-1 " /> &#8226; -->
-          <ZoomVirtualRelation v-if="isVirtualRelation" :relation="relation" />
+          <ZoomVirtualRelation v-if="isVirtualRelation" :relation="relation" /> 
         </div>
         <div v-if="isActive" class="">
           <span v-if="publishedAt" class="pl-2 text-light">

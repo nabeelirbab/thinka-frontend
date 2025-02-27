@@ -320,6 +320,7 @@ export default {
         });
     },
     createStatement(param) {
+    console.log( 'when creating new statement',param);
       // const selectedRelation = this.relationTypes[(this.findArrayIndex(param['relation']['relation_type_id'], this.relationTypes, 'id'))]
       StatementAPI.create(param)
         .then((result) => {
@@ -432,42 +433,62 @@ export default {
     },
   },
   watch: {
-    "statement.relation.relation_type_id"(newData) {
-      const selectedRelationTypeIndex = this.findArrayIndex(
-        newData,
-        this.relationTypes,
-        "id"
-      );
-      this.statement.relation.relevance_row =
-        selectedRelationTypeIndex >= 0
-          ? this.relationTypes[selectedRelationTypeIndex]["relevance"]
-          : -1;
-    },
-    relation: {
-      handler(relation) {
-        if (relation) {
-          this.statement["id"] = relation["statement"]["id"];
-          this.statement["statement_type_id"] =
-            relation["statement"]["statement_type_id"];
-          this.statement["text"] = relation["statement"]["text"];
-          this.statement["context_id"] = relation["statement"]["context_id"];
-          this.statement["relation"]["id"] = relation["id"];
-          this.statement["relation"]["parent_relation_id"] =
-            relation["parent_relation_id"];
-          this.statement["relation"]["relation_type_id"] =
-            relation["relation_type_id"];
-          this.statement["relation"]["relevance_window"] =
-            relation["relevance_window"];
-          this.statement["relation"]["relevance_row"] =
-            relation["relevance_row"];
-          this.statement["relation"]["logic_tree_id"] =
-            relation["logic_tree_id"];
-          this.statement["relation"]["published_at"] = relation["published_at"];
-        }
-      },
-      immediate: true,
-    },
+  "statement.relation.relation_type_id"(newData) {
+    // console.log("🟢 relation_type_id changed:", newData);
+
+      const relationTypeId = Number(newData);
+
+    if ([1, 8, 12].includes(relationTypeId)) {
+      this.statement.relation.relevance_window = 1;
+    } else if ([2, 9].includes(relationTypeId)) {
+      this.statement.relation.relevance_window = 0;
+    }
+
+    // console.log("🔵 Updated relevance_window:", this.statement.relation.relevance_window);
+
+
+    const selectedRelationTypeIndex = this.findArrayIndex(
+      newData,
+      this.relationTypes,
+      "id"
+    );
+
+    this.statement.relation.relevance_row =
+      selectedRelationTypeIndex >= 0
+        ? this.relationTypes[selectedRelationTypeIndex]["relevance"]
+        : -1;
   },
+  relation: {
+    handler(relation) {
+      if (relation) {
+        console.log("🔵 relation updated:", relation);
+
+        this.statement["id"] = relation["statement"]["id"];
+        this.statement["statement_type_id"] =
+          relation["statement"]["statement_type_id"];
+        this.statement["text"] = relation["statement"]["text"];
+        this.statement["context_id"] = relation["statement"]["context_id"];
+        this.statement["relation"]["id"] = relation["id"];
+        this.statement["relation"]["parent_relation_id"] =
+          relation["parent_relation_id"];
+        this.statement["relation"]["relation_type_id"] =
+          relation["relation_type_id"];
+        this.statement["relation"]["relevance_window"] =
+          relation["relevance_window"];
+        this.statement["relation"]["relevance_row"] =
+          relation["relevance_row"];
+        this.statement["relation"]["logic_tree_id"] =
+          relation["logic_tree_id"];
+        this.statement["relation"]["published_at"] =
+          relation["published_at"];
+
+        console.log("🟡 Updated relation_type_id:", this.statement.relation.relation_type_id);
+      }
+    },
+    immediate: true,
+  },
+},
+
   computed: {
     relationTypes() {
       let relationTypes = [];
