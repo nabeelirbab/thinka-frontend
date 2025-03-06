@@ -23,9 +23,9 @@
           <fa v-if="userStatementLogicScore['flag'] === 0" :icon="['far', 'flag']" />  <span v-if="userStatementLogicScore['flag'] === 0" class=""> no explicit opinion </span>
           <template v-else>
             <fa :class="'text-' + flagColor[userStatementLogicScore['flag']]" icon="flag" />
-            <span v-if="userStatementLogicScore['flag'] === 2" class="text-danger"> statement is false </span>
-            <span v-if="userStatementLogicScore['flag'] === 1" class="text-blue"> statement is true </span>
-            <span v-if="userStatementLogicScore['flag'] === 3" class="text-blue"> contradaction </span>
+            <!-- <span v-if="userStatementLogicScore['flag'] === 2" class="text-danger"></span>
+            <span v-if="userStatementLogicScore['flag'] === 1" class="text-blue"></span>
+            <span v-if="userStatementLogicScore['flag'] === 3" class="text-blue"></span> -->
           </template>
         </div>
 
